@@ -1,0 +1,3 @@
+**/target/**
+schedule-frontend/node_modules/**
+.idea/**
