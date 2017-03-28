@@ -16,7 +16,7 @@ public class Classroom implements Serializable {
 	private Set<Class> classes;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return this.id;
 	}

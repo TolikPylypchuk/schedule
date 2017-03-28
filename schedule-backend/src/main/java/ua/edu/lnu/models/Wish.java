@@ -18,7 +18,7 @@ public class Wish implements Serializable {
 	private Lecturer lecturer;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return this.id;
 	}

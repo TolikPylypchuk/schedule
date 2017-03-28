@@ -16,7 +16,7 @@ public class Group implements Serializable {
 	private Set<Subject> subjects;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return this.id;
 	}
