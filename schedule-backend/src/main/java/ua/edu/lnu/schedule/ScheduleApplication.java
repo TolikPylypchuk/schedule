@@ -1,4 +1,4 @@
-package ua.edu.lnu;
+package ua.edu.lnu.schedule;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

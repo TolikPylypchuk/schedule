@@ -1,61 +1,61 @@
-package ua.edu.lnu.controllers;
+package ua.edu.lnu.schedule.controllers;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.models.Building;
-import ua.edu.lnu.repositories.BuildingRepository;
+import ua.edu.lnu.schedule.models.Plan;
+import ua.edu.lnu.schedule.repositories.PlanRepository;
 
 @RestController
-@RequestMapping("/api/buildings")
-public class BuildingController {
-	private BuildingRepository buildings;
+@RequestMapping("/api/plans")
+public class PlanController {
+	private PlanRepository plans;
 	
 	@Autowired
-	public void setBuildings(BuildingRepository buildings) {
-		this.buildings = buildings;
+	public void setPlans(PlanRepository plans) {
+		this.plans = plans;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public @ResponseBody Iterable<Building> getAll() {
-		return this.buildings.findAll();
+	public @ResponseBody Iterable<Plan> getAll() {
+		return this.plans.findAll();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public @ResponseBody Building getById(@PathVariable("id") int id) {
-		return this.buildings.findOne(id);
+	public @ResponseBody Plan getById(@PathVariable("id") int id) {
+		return this.plans.findOne(id);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Building building, HttpServletResponse response) {
-		this.buildings.save(building);
+	public void post(@RequestBody Plan plan, HttpServletResponse response) {
+		this.plans.save(plan);
 		response.setStatus(HttpServletResponse.SC_CREATED);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public void put(
 		@PathVariable("id") int id,
-		@RequestBody Building building,
+		@RequestBody Plan plan,
 		HttpServletResponse response) {
-		if (!this.buildings.exists(id)) {
+		if (!this.plans.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
-		building.setId(id);
-		this.buildings.save(building);
+		plan.setId(id);
+		this.plans.save(plan);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
-		if (!this.buildings.exists(id)) {
+		if (!this.plans.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
-		this.buildings.delete(id);
+		this.plans.delete(id);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}

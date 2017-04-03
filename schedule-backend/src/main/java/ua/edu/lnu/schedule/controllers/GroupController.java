@@ -1,61 +1,61 @@
-package ua.edu.lnu.controllers;
+package ua.edu.lnu.schedule.controllers;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.models.Wish;
-import ua.edu.lnu.repositories.WishRepository;
+import ua.edu.lnu.schedule.models.Group;
+import ua.edu.lnu.schedule.repositories.GroupRepository;
 
 @RestController
-@RequestMapping("/api/wishes")
-public class WishController {
-	private WishRepository wishes;
+@RequestMapping("/api/groups")
+public class GroupController {
+	private GroupRepository groups;
 	
 	@Autowired
-	public void setWishes(WishRepository wishes) {
-		this.wishes = wishes;
+	public void setGroups(GroupRepository groups) {
+		this.groups = groups;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public @ResponseBody Iterable<Wish> getAll() {
-		return this.wishes.findAll();
+	public @ResponseBody Iterable<Group> getAll() {
+		return this.groups.findAll();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public @ResponseBody Wish getById(@PathVariable("id") int id) {
-		return this.wishes.findOne(id);
+	public @ResponseBody Group getById(@PathVariable("id") int id) {
+		return this.groups.findOne(id);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Wish wish, HttpServletResponse response) {
-		this.wishes.save(wish);
+	public void post(@RequestBody Group group, HttpServletResponse response) {
+		this.groups.save(group);
 		response.setStatus(HttpServletResponse.SC_CREATED);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public void put(
 		@PathVariable("id") int id,
-		@RequestBody Wish group,
+		@RequestBody Group group,
 		HttpServletResponse response) {
-		if (!this.wishes.exists(id)) {
+		if (!this.groups.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
 		group.setId(id);
-		this.wishes.save(group);
+		this.groups.save(group);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
-		if (!this.wishes.exists(id)) {
+		if (!this.groups.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
-		this.wishes.delete(id);
+		this.groups.delete(id);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}

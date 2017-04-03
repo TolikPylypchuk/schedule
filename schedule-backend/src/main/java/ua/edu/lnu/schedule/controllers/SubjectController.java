@@ -1,61 +1,61 @@
-package ua.edu.lnu.controllers;
+package ua.edu.lnu.schedule.controllers;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.models.Group;
-import ua.edu.lnu.repositories.GroupRepository;
+import ua.edu.lnu.schedule.models.Subject;
+import ua.edu.lnu.schedule.repositories.SubjectRepository;
 
 @RestController
-@RequestMapping("/api/groups")
-public class GroupController {
-	private GroupRepository groups;
+@RequestMapping("/api/subjects")
+public class SubjectController {
+	private SubjectRepository subjects;
 	
 	@Autowired
-	public void setGroups(GroupRepository groups) {
-		this.groups = groups;
+	public void setSubjects(SubjectRepository subjects) {
+		this.subjects = subjects;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public @ResponseBody Iterable<Group> getAll() {
-		return this.groups.findAll();
+	public @ResponseBody Iterable<Subject> getAll() {
+		return this.subjects.findAll();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public @ResponseBody Group getById(@PathVariable("id") int id) {
-		return this.groups.findOne(id);
+	public @ResponseBody Subject getById(@PathVariable("id") int id) {
+		return this.subjects.findOne(id);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Group group, HttpServletResponse response) {
-		this.groups.save(group);
+	public void post(@RequestBody Subject subject, HttpServletResponse response) {
+		this.subjects.save(subject);
 		response.setStatus(HttpServletResponse.SC_CREATED);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public void put(
 		@PathVariable("id") int id,
-		@RequestBody Group group,
+		@RequestBody Subject subject,
 		HttpServletResponse response) {
-		if (!this.groups.exists(id)) {
+		if (!this.subjects.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
-		group.setId(id);
-		this.groups.save(group);
+		subject.setId(id);
+		this.subjects.save(subject);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
-		if (!this.groups.exists(id)) {
+		if (!this.subjects.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
-		this.groups.delete(id);
+		this.subjects.delete(id);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}

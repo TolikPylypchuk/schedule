@@ -1,4 +1,4 @@
-package ua.edu.lnu.models;
+package ua.edu.lnu.schedule.models;
 
 import java.io.Serializable;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package ua.edu.lnu.models;
+package ua.edu.lnu.schedule.models;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
@@ -9,9 +9,16 @@ import javax.persistence.*;
 @Entity
 @Table(name = "classes")
 public class Class implements Serializable {
+	public enum Frequency {
+		WEEKLY,
+		NUMERATOR,
+		DENOMINATOR
+	}
+	
 	private Integer id;
 	private int number;
 	private DayOfWeek dayOfWeek;
+	private Frequency frequency;
 	private Set<Group> groups;
 	private Subject subject;
 	private Set<Classroom> classrooms;
@@ -44,6 +51,16 @@ public class Class implements Serializable {
 	
 	public void setDayOfWeek(DayOfWeek dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
+	}
+	
+	@Column(name = "frequency", nullable = false)
+	@Enumerated(EnumType.ORDINAL)
+	public Frequency getFrequency() {
+		return this.frequency;
+	}
+	
+	public void setFrequency(Frequency frequency) {
+		this.frequency = frequency;
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)

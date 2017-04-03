@@ -1,4 +1,4 @@
-package ua.edu.lnu.models;
+package ua.edu.lnu.schedule.models;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -11,7 +11,7 @@ public class Subject implements Serializable {
 	private Integer id;
 	private String name;
 	private String classroomType;
-	private Set<Group> groups;
+	private Set<Plan> plans;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,12 +41,12 @@ public class Subject implements Serializable {
 		this.classroomType = classroomType;
 	}
 	
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "subjects")
-	public Set<Group> getGroups() {
-		return this.groups;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
+	public Set<Plan> getPlans() {
+		return this.plans;
 	}
 	
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
+	public void setPlans(Set<Plan> plans) {
+		this.plans = plans;
 	}
 }

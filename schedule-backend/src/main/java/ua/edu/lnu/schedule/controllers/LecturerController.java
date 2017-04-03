@@ -1,12 +1,12 @@
-package ua.edu.lnu.controllers;
+package ua.edu.lnu.schedule.controllers;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.models.Lecturer;
-import ua.edu.lnu.repositories.LecturerRepository;
+import ua.edu.lnu.schedule.models.Lecturer;
+import ua.edu.lnu.schedule.repositories.LecturerRepository;
 
 @RestController
 @RequestMapping("/api/lecturers")
