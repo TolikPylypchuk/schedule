@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "plans")
 public class Plan implements Serializable {
@@ -11,7 +13,11 @@ public class Plan implements Serializable {
 	private int numLectures;
 	private int numPractice;
 	private int numLabs;
+	
+	@JsonIgnore
 	private Subject subject;
+	
+	@JsonIgnore
 	private Group group;
 	
 	@Id

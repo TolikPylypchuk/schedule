@@ -28,6 +28,12 @@ public class GroupController {
 		return this.groups.findOne(id);
 	}
 	
+	@RequestMapping(value = "/facultyId/{facultyId}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Group> getByFaculty(
+		@PathVariable("facultyId") int facultyId) {
+		return this.groups.findAllByFaculty_Id(facultyId);
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public void post(@RequestBody Group group, HttpServletResponse response) {
 		this.groups.save(group);

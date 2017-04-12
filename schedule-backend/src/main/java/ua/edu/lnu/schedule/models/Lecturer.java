@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "lecturers")
 public class Lecturer implements Serializable {
@@ -13,8 +15,14 @@ public class Lecturer implements Serializable {
 	private String middleName;
 	private String lastName;
 	private String position;
+	
+	@JsonIgnore
 	private Set<Subject> subjects;
+	
+	@JsonIgnore
 	private Set<Class> classes;
+	
+	@JsonIgnore
 	private Set<Wish> wishes;
 	
 	@Id

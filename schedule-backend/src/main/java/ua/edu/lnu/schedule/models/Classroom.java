@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "classrooms")
 public class Classroom implements Serializable {
@@ -12,7 +14,11 @@ public class Classroom implements Serializable {
 	private String number;
 	private String type;
 	private int capacity;
+	
+	@JsonIgnore
 	private Building building;
+	
+	@JsonIgnore
 	private Set<Class> classes;
 	
 	@Id

@@ -5,14 +5,22 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "groups")
 public class Group implements Serializable {
 	private Integer id;
 	private String name;
 	private int numStudents;
+	
+	@JsonIgnore
 	private Faculty faculty;
+	
+	@JsonIgnore
 	private Set<Class> classes;
+	
+	@JsonIgnore
 	private Set<Plan> plans;
 	
 	@Id

@@ -1,0 +1,48 @@
+<h1 class="text-center">Розклад занять</h1>
+
+<button class="btn btn-primary mb-3" type="button"
+        data-toggle="collapse" data-target="#collapseStudent"
+        aria-expanded="false" aria-controls="collapseStudent">
+	Для студентів
+</button>
+
+<div class="collapse" id="collapseStudent">
+	<div class="card card-block" *ngFor="let faculty of faculties">
+		<button class="btn btn-secondary mb-3" type="button"
+		        data-toggle="collapse" [attr.data-target]="'#collapse' + faculty.name + 'Student'"
+		        aria-expanded="false" [attr.aria-controls]="'collapse' + faculty.name + 'Student'">
+			{{ faculty.name }}
+		</button>
+
+		<div class="collapse" id="collapse{{ faculty.name }}Student">
+			<div class="card card-block" *ngFor="let year of [ 'I', 'II', 'III', 'IV', 'V', 'VI' ]">
+				<button class="btn btn-secondary mb-3" type="button"
+				        data-toggle="collapse" aria-expanded="false"
+				        [attr.data-target]="'#collapse' + faculty.name + year + 'Student'"
+				        [attr.aria-controls]="'collapse' + faculty.name + year + 'Student'">
+					{{ year }} курс
+				</button>
+
+				<div class="collapse" id="collapse{{ faculty.name }}{{ year }}Student">
+					<div class="card card-block" *ngFor="let semester of [ 1, 2 ]">
+						<button class="btn btn-secondary mb-3" type="button"
+						        data-toggle="collapse" aria-expanded="false"
+						        [attr.data-target]="'#collapse' + faculty.name + year + semester + 'Student'"
+						        [attr.aria-controls]="'collapse' + faculty.name + year + semester + 'Student'">
+							{{ semester }} семестр
+						</button>
+
+						<div class="collapse"
+						     id="collapse{{ faculty.name }}{{ year }}{{ semester }}Student">
+							<div class="card card-block" *ngFor="let group of getGroups()">
+								<button class="btn btn-secondary mb-3">
+									{{ group.name }}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

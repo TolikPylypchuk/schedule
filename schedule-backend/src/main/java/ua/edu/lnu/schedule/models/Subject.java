@@ -5,12 +5,16 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "subjects")
 public class Subject implements Serializable {
 	private Integer id;
 	private String name;
 	private String classroomType;
+	
+	@JsonIgnore
 	private Set<Plan> plans;
 	
 	@Id
