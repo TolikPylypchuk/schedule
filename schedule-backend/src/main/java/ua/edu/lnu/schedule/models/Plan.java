@@ -13,6 +13,8 @@ public class Plan implements Serializable {
 	private int numLectures;
 	private int numPractice;
 	private int numLabs;
+	private int year;
+	private Semester semester;
 	
 	@JsonIgnore
 	private Subject subject;
@@ -55,6 +57,25 @@ public class Plan implements Serializable {
 	
 	public void setNumLabs(int numLabs) {
 		this.numLabs = numLabs;
+	}
+	
+	@Column(name = "year", nullable = false)
+	public int getYear() {
+		return this.year;
+	}
+	
+	public void setYear(int year) {
+		this.year = year;
+	}
+	
+	@Column(name = "semester", nullable = false)
+	@Enumerated(EnumType.ORDINAL)
+	public Semester getSemester() {
+		return this.semester;
+	}
+	
+	public void setSemester(Semester semester) {
+		this.semester = semester;
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)

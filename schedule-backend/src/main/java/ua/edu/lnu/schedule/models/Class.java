@@ -21,6 +21,8 @@ public class Class implements Serializable {
 	private int number;
 	private DayOfWeek dayOfWeek;
 	private Frequency frequency;
+	private int year;
+	private Semester semester;
 	
 	@JsonIgnore
 	private Set<Group> groups;
@@ -71,6 +73,25 @@ public class Class implements Serializable {
 	
 	public void setFrequency(Frequency frequency) {
 		this.frequency = frequency;
+	}
+	
+	@Column(name = "year", nullable = false)
+	public int getYear() {
+		return this.year;
+	}
+	
+	public void setYear(int year) {
+		this.year = year;
+	}
+	
+	@Column(name = "semester", nullable = false)
+	@Enumerated(EnumType.ORDINAL)
+	public Semester getSemester() {
+		return this.semester;
+	}
+	
+	public void setSemester(Semester semester) {
+		this.semester = semester;
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)

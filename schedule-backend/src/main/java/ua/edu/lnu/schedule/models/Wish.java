@@ -17,6 +17,8 @@ public class Wish implements Serializable {
 	private boolean isSuitable;
 	private String comment;
 	private DayOfWeek dayOfWeek;
+	private int year;
+	private Semester semester;
 	
 	@JsonIgnore
 	private Lecturer lecturer;
@@ -75,6 +77,25 @@ public class Wish implements Serializable {
 	
 	public void setDayOfWeek(DayOfWeek dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
+	}
+	
+	@Column(name = "year", nullable = false)
+	public int getYear() {
+		return this.year;
+	}
+	
+	public void setYear(int year) {
+		this.year = year;
+	}
+	
+	@Column(name = "semester", nullable = false)
+	@Enumerated(EnumType.ORDINAL)
+	public Semester getSemester() {
+		return this.semester;
+	}
+	
+	public void setSemester(Semester semester) {
+		this.semester = semester;
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
