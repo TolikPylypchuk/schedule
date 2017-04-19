@@ -13,4 +13,10 @@ public enum Semester {
 	public int getNumber() {
 		return number;
 	}
+	
+	public static Semester fromNumber(int number) {
+		return number == 1
+			? FIRST
+			: number == 2 ? SECOND : null;
+	}
 }

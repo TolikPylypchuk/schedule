@@ -1,21 +1,31 @@
 package ua.edu.lnu.schedule.controllers;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.Classroom;
+import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 
 @RestController
 @RequestMapping("/api/classrooms")
 public class ClassroomController {
 	private ClassroomRepository classrooms;
+	private ClassRepository classes;
 	
 	@Autowired
 	public void setClassrooms(ClassroomRepository classrooms) {
 		this.classrooms = classrooms;
+	}
+	
+	@Autowired
+	public void setClasses(ClassRepository classes) {
+		this.classes = classes;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -24,8 +34,45 @@ public class ClassroomController {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public @ResponseBody Classroom getById(@PathVariable("id") int id) {
-		return this.classrooms.findOne(id);
+	public @ResponseBody Classroom getById(
+		@PathVariable("id") int id, HttpServletResponse response) {
+		Classroom classroom = this.classrooms.findOne(id);
+		
+		if (classroom == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+		
+		return classroom;
+	}
+	
+	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Classroom> getByClass(
+		@PathVariable("classId") int classId) {
+		Class c = this.classes.findOne(classId);
+		
+		return c == null
+			? new ArrayList<>()
+			: this.classrooms.findAllByClassesContaining(c);
+		
+	}
+	
+	@RequestMapping(value = "/buildingId/{buildingId}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Classroom> getByBuilding(
+		@PathVariable("buildingId") int buildingId) {
+		return this.classrooms.findAllByBuilding_Id(buildingId);
+	}
+	
+	@RequestMapping(value = "/capacity/{capacity}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Classroom> getByCapacity(
+		@PathVariable("capacity") int capacity) {
+		return this.classrooms.findAllByCapacityIsLessThanEqual(capacity);
+	}
+	
+	@RequestMapping(value = "/type/{type}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Classroom> getByType(
+		@PathVariable("type") String type) {
+		return this.classrooms.findAllByType(type);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
