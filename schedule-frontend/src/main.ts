@@ -1,4 +1,5 @@
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/catch";
 
 import { enableProdMode } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";

@@ -14,6 +14,11 @@ export enum DayOfWeek {
 	SUNDAY = 7
 }
 
+export enum Semester {
+	FIRST = 1,
+	SECOND = 2
+}
+
 export interface EntityBase {
 	id: number;
 }
@@ -28,6 +33,8 @@ export interface Class extends EntityBase {
 	number: number;
 	frequency: Frequency;
 	dayOfWeek: DayOfWeek;
+	year: number;
+	semester: Semester;
 }
 
 export interface Classroom extends EntityBase {
@@ -56,6 +63,8 @@ export interface Plan extends EntityBase {
 	numLectures: number;
 	numPractice: number;
 	numLabs: number;
+	year: number;
+	semester: Semester;
 }
 
 export interface Subject extends EntityBase {
@@ -68,4 +77,6 @@ export interface Wish extends EntityBase {
 	endTime: string;
 	isSuitable: boolean;
 	comment: string;
+	year: number;
+	semester: Semester;
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
-import { ApiService } from "../services/services";
+import { FacultyService } from "../services/services";
+import { GroupService } from "../services/services";
 
 import { Faculty, Group } from "../models/models";
 
@@ -10,23 +11,25 @@ import { Faculty, Group } from "../models/models";
 	styleUrls: [ "./start.component.css" ]
 })
 export class StartComponent implements OnInit {
-	private apiService: ApiService;
+	private facultyService: FacultyService;
+	private groupService: GroupService;
 
 	faculties: Faculty[];
 	groups: Map<number, Group[]>;
 
-	constructor(apiService: ApiService) {
-		this.apiService = apiService;
+	constructor(facultyService: FacultyService, groupService: GroupService) {
+		this.facultyService = facultyService;
+		this.groupService = groupService;
 		this.groups = new Map();
 	}
 
 	ngOnInit(): void {
-		this.apiService.getFaculties()
+		this.facultyService.getFaculties()
 			.subscribe(faculties => {
 				this.faculties = faculties;
 
 				for (let faculty of faculties) {
-					this.apiService.getGroupsByFaculty(faculty.id)
+					this.groupService.getGroupsByFaculty(faculty.id)
 						.subscribe(groups => this.groups.set(faculty.id, groups));
 				}
 			});

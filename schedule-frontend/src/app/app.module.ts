@@ -5,7 +5,7 @@ import { HttpModule } from "@angular/http";
 
 import { AppComponent } from "./app.component";
 import { StartComponent } from './start/start.component';
-import { ApiService } from "./services/api.service";
+import * as services from "./services/services";
 
 @NgModule({
     declarations: [
@@ -18,7 +18,15 @@ import { ApiService } from "./services/api.service";
         HttpModule
     ],
     providers: [
-	    ApiService
+	    services.BuildingService,
+        services.ClassService,
+        services.ClassroomService,
+	    services.FacultyService,
+	    services.GroupService,
+	    services.LecturerService,
+	    services.PlanService,
+	    services.SubjectService,
+	    services.WishService
     ],
     bootstrap: [
         AppComponent
