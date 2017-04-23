@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Classroom } from "../models/models";
+import {handleError} from "./services";
 
 @Injectable()
 export class ClassroomService {
@@ -26,6 +27,31 @@ export class ClassroomService {
 				response.status === 200
 					? response.json() as Classroom
 					: null);
+	}
+
+	addClassroom(classroom: Classroom): Observable<Response> {
+		return this.http.post(
+			`api/classrooms/`,
+			JSON.stringify(classroom),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	updateClassroom(classroom: Classroom): Observable<Response> {
+		return this.http.put(
+			`api/classrooms/${classroom.id}`,
+			JSON.stringify(classroom),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	deleteClassroom(classroom: Classroom): Observable<Response> {
+		return this.http.delete(`api/classrooms/${classroom.id}`)
+			.catch(handleError);
 	}
 }
 

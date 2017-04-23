@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Wish } from "../models/models";
+import {handleError} from "./services";
 
 @Injectable()
 export class WishService {
@@ -26,6 +27,31 @@ export class WishService {
 				response.status === 200
 					? response.json() as Wish
 					: null);
+	}
+
+	addWish(wish: Wish): Observable<Response> {
+		return this.http.post(
+			`api/wishes/`,
+			JSON.stringify(wish),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	updateWish(wish: Wish): Observable<Response> {
+		return this.http.put(
+			`api/wishes/${wish.id}`,
+			JSON.stringify(wish),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	deleteWish(wish: Wish): Observable<Response> {
+		return this.http.delete(`api/wishes/${wish.id}`)
+			.catch(handleError);
 	}
 }
 

@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Subject } from "../models/models";
+import {handleError} from "./services";
 
 @Injectable()
 export class SubjectService {
@@ -26,6 +27,31 @@ export class SubjectService {
 				response.status === 200
 					? response.json() as Subject
 					: null);
+	}
+
+	addSubject(subject: Subject): Observable<Response> {
+		return this.http.post(
+			`api/subjects/`,
+			JSON.stringify(subject),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	updateSubject(subject: Subject): Observable<Response> {
+		return this.http.put(
+			`api/subjects/${subject.id}`,
+			JSON.stringify(subject),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	deleteSubject(subject: Subject): Observable<Response> {
+		return this.http.delete(`api/subjects/${subject.id}`)
+			.catch(handleError);
 	}
 }
 

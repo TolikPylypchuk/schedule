@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Lecturer } from "../models/models";
+import {handleError} from "./services";
 
 @Injectable()
 export class LecturerService {
@@ -26,6 +27,31 @@ export class LecturerService {
 				response.status === 200
 					? response.json() as Lecturer
 					: null);
+	}
+
+	addLecturer(lecturer: Lecturer): Observable<Response> {
+		return this.http.post(
+			`api/lecturers/`,
+			JSON.stringify(lecturer),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	updateLecturer(lecturer: Lecturer): Observable<Response> {
+		return this.http.put(
+			`api/lecturers/${lecturer.id}`,
+			JSON.stringify(lecturer),
+			{
+				headers: new Headers({ "Content-Type": "application/json" })
+			})
+			.catch(handleError);
+	}
+
+	deleteLecturer(lecturer: Lecturer): Observable<Response> {
+		return this.http.delete(`api/lecturers/${lecturer.id}`)
+			.catch(handleError);
 	}
 }
 
