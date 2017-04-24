@@ -29,6 +29,14 @@ export class GroupService {
 					: null);
 	}
 
+	getGroupsByYear(year: number): Observable<Group[]> {
+		return this.http.get(`api/groups/year/${year}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null);
+	}
+
 	getGroupsByFaculty(facultyId: number): Observable<Group[]> {
 		return this.http.get(`api/groups/facultyId/${facultyId}`)
 			.map(response =>
