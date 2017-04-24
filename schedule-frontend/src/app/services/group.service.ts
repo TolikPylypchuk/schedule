@@ -37,6 +37,22 @@ export class GroupService {
 					: null);
 	}
 
+	getGroupsByClass(classId: number): Observable<Group[]> {
+		return this.http.get(`api/groups/classId/${classId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null);
+	}
+
+	getGroupByPlan(planId: number): Observable<Group> {
+		return this.http.get(`api/group/planId/${planId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group
+					: null);
+	}
+
 	addGroup(group: Group): Observable<Response> {
 		return this.http.post(
 			`api/groups/`,

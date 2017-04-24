@@ -29,6 +29,38 @@ export class ClassroomService {
 					: null);
 	}
 
+	getClassroomsByClass(classId: number): Observable<Classroom[]> {
+		return this.http.get(`api/classrooms/classId/${classId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Classroom[]
+					: null);
+	}
+
+	getClassroomsByBuilding(buildingId: number): Observable<Classroom[]> {
+		return this.http.get(`api/classrooms/buildingId/${buildingId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Classroom[]
+					: null);
+	}
+
+	getClassroomsByCapacity(capacity: number): Observable<Classroom[]> {
+		return this.http.get(`api/classrooms/capacity/${capacity}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Classroom[]
+					: null);
+	}
+
+	getClassroomsByType(type: number): Observable<Classroom[]> {
+		return this.http.get(`api/classrooms/type/${type}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Classroom[]
+					: null);
+	}
+
 	addClassroom(classroom: Classroom): Observable<Response> {
 		return this.http.post(
 			`api/classrooms/`,

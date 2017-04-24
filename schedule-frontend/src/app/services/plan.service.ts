@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Plan } from "../models/models";
+import { Plan, Semester } from "../models/models";
 import {handleError} from "./services";
 
 @Injectable()
@@ -26,6 +26,40 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan
+					: null);
+	}
+
+	getPlansByGroup(groupId: number): Observable<Plan[]> {
+		return this.http.get(`api/plans/groupId/${groupId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Plan[]
+					: null);
+	}
+
+	getPlansByGroupAndYearAndSemester(
+		groupId: number, year: number, semester: Semester): Observable<Plan[]> {
+		return this.http.get(`api/plans/groupId/${groupId}/year/${year}/semester/${semester}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Plan[]
+					: null);
+	}
+
+	getPlansBySubject(subjectId: number): Observable<Plan[]> {
+		return this.http.get(`api/plans/subjectId/${subjectId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Plan[]
+					: null);
+	}
+
+	getPlansBySubjectAndYearAndSemester(
+		subjectId: number, year: number, semester: Semester): Observable<Plan[]> {
+		return this.http.get(`api/plans/subjectId/${subjectId}/year/${year}/semester/${semester}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Plan[]
 					: null);
 	}
 

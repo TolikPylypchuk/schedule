@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Lecturer } from "../models/models";
+import {Lecturer, Subject} from "../models/models";
 import {handleError} from "./services";
 
 @Injectable()
@@ -23,6 +23,30 @@ export class LecturerService {
 
 	getLecturer(id: number): Observable<Lecturer> {
 		return this.http.get(`api/lecturers/${id}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Lecturer
+					: null);
+	}
+
+	getLecturersBySubject(subjectId: number): Observable<Lecturer[]> {
+		return this.http.get(`api/lecturers/subjectId/${subjectId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Lecturer[]
+					: null);
+	}
+
+	getLecturersByClass(classId: number): Observable<Lecturer[]> {
+		return this.http.get(`api/lecturers/classId/${classId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Lecturer[]
+					: null);
+	}
+
+	getLecturerByWish(wishId: number): Observable<Lecturer> {
+		return this.http.get(`api/lecturer/wishId/${wishId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer
