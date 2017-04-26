@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Group implements Serializable {
 	private Integer id;
 	private String name;
+	private int year;
 	private int numStudents;
 	
 	@JsonIgnore
@@ -41,7 +42,16 @@ public class Group implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	@Column(name = "year", nullable = false)
+	public int getYear() {
+		return this.year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
 	@Column(name = "num_students", nullable = false)
 	public int getNumStudents() {
 		return this.numStudents;
