@@ -50,6 +50,7 @@ export interface Faculty extends EntityBase {
 export interface Group extends EntityBase {
 	name: string;
 	numStudents: number;
+	year: number;
 }
 
 export interface Lecturer extends EntityBase {

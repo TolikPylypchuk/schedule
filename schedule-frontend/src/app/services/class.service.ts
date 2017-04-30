@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import {Class, Semester} from "../models/models";
-import {handleError} from "./services";
+import { Class, Semester } from "../models/models";
+import { handleError } from "./services";
 
 @Injectable()
 export class ClassService {

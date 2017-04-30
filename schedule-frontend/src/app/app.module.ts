@@ -4,18 +4,21 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 
 import { AppComponent } from "./app.component";
-import { StartComponent } from './start/start.component';
+import { RoutesModule } from "./routes.module";
+import { ScheduleModule } from "./schedule/schedule";
+
 import * as services from "./services/services";
 
 @NgModule({
     declarations: [
-        AppComponent,
-        StartComponent
+        AppComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
-        HttpModule
+        HttpModule,
+	    ScheduleModule,
+	    RoutesModule
     ],
     providers: [
 	    services.BuildingService,

@@ -1,0 +1,32 @@
+<h1 class="text-center">Розклад занять</h1>
+
+<div class="card card-block" *ngFor="let faculty of faculties">
+	<button class="btn btn-secondary mb-3" type="button"
+	        data-toggle="collapse"
+	        [attr.data-target]="'#collapse' + faculty.name + 'Student'"
+	        aria-expanded="false"
+	        [attr.aria-controls]="'collapse' + faculty.name + 'Student'">
+		{{ faculty.name }}
+	</button>
+
+	<div class="collapse" id="collapse{{ faculty.name }}Student">
+		<div class="card card-block" *ngFor="let course of [ 1, 2, 3, 4, 5, 6 ]">
+			<button class="btn btn-secondary mb-3" type="button"
+			        data-toggle="collapse" aria-expanded="false"
+			        [attr.data-target]="'#collapse' + faculty.name + course + 'Student'"
+			        [attr.aria-controls]="'collapse' + faculty.name + course + 'Student'">
+				{{ course }} курс
+			</button>
+
+			<div class="collapse"
+					 id="collapse{{ faculty.name }}{{ course }}Student">
+				<div class="card card-block" *ngFor="let group of getGroups(faculty.id, course)">
+					<button class="btn btn-secondary mb-3">
+						{{ groupService.getCurrentName(group) }}
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

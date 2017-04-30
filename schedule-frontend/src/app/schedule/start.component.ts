@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 import { FacultyService } from "../services/services";
 import { GroupService } from "../services/services";
@@ -7,17 +8,21 @@ import { Faculty, Group } from "../models/models";
 
 @Component({
 	selector: "schedule-start",
-	templateUrl: "./start.component.html",
-	styleUrls: [ "./start.component.css" ]
+	templateUrl: "./start.component.html"
 })
 export class StartComponent implements OnInit {
+	private router: Router;
 	private facultyService: FacultyService;
 	private groupService: GroupService;
 
 	faculties: Faculty[];
 	groups: Map<number, Group[]>;
 
-	constructor(facultyService: FacultyService, groupService: GroupService) {
+	constructor(
+		router: Router,
+		facultyService: FacultyService,
+		groupService: GroupService) {
+		this.router = router;
 		this.facultyService = facultyService;
 		this.groupService = groupService;
 		this.groups = new Map();
@@ -30,15 +35,21 @@ export class StartComponent implements OnInit {
 
 				for (let faculty of faculties) {
 					this.groupService.getGroupsByFaculty(faculty.id)
-						.subscribe(groups => this.groups.set(faculty.id, groups));
+						.subscribe(groups => {
+							this.groups.set(faculty.id, groups);
+						});
 				}
 			});
 	}
 
-	getGroups(facultyId: number, year: number): Group[] {
+	getGroups(facultyId: number, course: number): Group[] {
 		return this.groups.has(facultyId)
 			? this.groups.get(facultyId)
-				.filter(g => g[g.name.indexOf('-') + 1] === year.toString())
+				.filter(g => this.groupService.getCurrentCourse(g) === course)
 			: [];
+	}
+
+	navigateToGroup(groupId: number): void {
+		this.router.navigate([ "/schedule-group", groupId ]);
 	}
 }

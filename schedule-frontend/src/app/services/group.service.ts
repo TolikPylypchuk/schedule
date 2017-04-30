@@ -13,6 +13,31 @@ export class GroupService {
 		this.http = http;
 	}
 
+	getCurrentYear(): number {
+		const now = new Date();
+		const year = now.getFullYear();
+
+		return now.getMonth() > 6
+			? year
+			: year - 1;
+	}
+
+	getCourse(group: Group, year: number): number {
+		return year - group.year + 1;
+	}
+
+	getCurrentCourse(group: Group): number{
+		return this.getCourse(group, this.getCurrentYear());
+	}
+
+	getName(group: Group, year: number): string {
+		return group.name.replace("0", this.getCourse(group, year).toString());
+	}
+
+	getCurrentName(group: Group): string {
+		return this.getName(group, this.getCurrentYear());
+	}
+
 	getGroups(): Observable<Group[]> {
 		return this.http.get("api/groups")
 			.map(response =>
@@ -39,6 +64,22 @@ export class GroupService {
 
 	getGroupsByFaculty(facultyId: number): Observable<Group[]> {
 		return this.http.get(`api/groups/facultyId/${facultyId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null);
+	}
+
+	getGroupsByFacultyAndYear(facultyId: number, year: number): Observable<Group[]> {
+		return this.http.get(`api/groups/facultyId/${facultyId}/year/${year}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null);
+	}
+
+	getGroupsByFacultyAndYearSince(facultyId: number, year: number): Observable<Group[]> {
+		return this.http.get(`api/groups/facultyId/${facultyId}/since/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -86,4 +127,3 @@ export class GroupService {
 			.catch(handleError);
 	}
 }
-

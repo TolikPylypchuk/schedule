@@ -54,6 +54,13 @@ public class GroupController {
 		return group;
 	}
 	
+	@RequestMapping(value = "/year/{year}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Group> getByYear(
+		@PathVariable("year") int year) {
+		return this.groups.findAllByYear(year);
+		
+	}
+	
 	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
 	public @ResponseBody Iterable<Group> getByClass(
 		@PathVariable("classId") int classId) {
@@ -69,6 +76,24 @@ public class GroupController {
 	public @ResponseBody Iterable<Group> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
 		return this.groups.findAllByFaculty_Id(facultyId);
+	}
+	
+	@RequestMapping(
+		value = "/facultyId/{facultyId}/year/{year}",
+		method = RequestMethod.GET)
+	public @ResponseBody Iterable<Group> getByFacultyAndYear(
+		@PathVariable("facultyId") int facultyId,
+		@PathVariable("year") int year) {
+		return this.groups.findAllByFaculty_IdAndYear(facultyId, year);
+	}
+	
+	@RequestMapping(
+		value = "/facultyId/{facultyId}/since/{year}",
+		method = RequestMethod.GET)
+	public @ResponseBody Iterable<Group> getByFacultyAndYearSince(
+		@PathVariable("facultyId") int facultyId,
+		@PathVariable("year") int year) {
+		return this.groups.findAllByFaculty_IdAndYearGreaterThanEqual(facultyId, year);
 	}
 	
 	@RequestMapping(value = "/planId/{planId}", method = RequestMethod.GET)
