@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import {
-	GroupService, FacultyService, getCurrentCourse
+	GroupService, FacultyService, getCurrentGroupCourse, getCurrentGroupName
 } from "../services/services";
 
 import { Faculty, Group } from "../models/models";
@@ -46,11 +46,13 @@ export class StartComponent implements OnInit {
 	getGroups(facultyId: number, course: number): Group[] {
 		return this.groups.has(facultyId)
 			? this.groups.get(facultyId)
-				.filter(g => getCurrentCourse(g) === course)
+				.filter(g => getCurrentGroupCourse(g) === course)
 			: [];
 	}
 
 	navigateToGroup(groupId: number): void {
 		this.router.navigate([ "/schedule-group", groupId ]);
 	}
+
+	getCurrentGroupName = getCurrentGroupName;
 }

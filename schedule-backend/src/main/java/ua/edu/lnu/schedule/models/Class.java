@@ -95,7 +95,10 @@ public class Class implements Serializable {
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "class_group")
+	@JoinTable(
+		name = "class_group",
+		joinColumns = { @JoinColumn(name = "class") },
+		inverseJoinColumns = { @JoinColumn(name = "group") })
 	public Set<Group> getGroups() {
 		return this.groups;
 	}
@@ -115,7 +118,10 @@ public class Class implements Serializable {
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "class_classroom")
+	@JoinTable(
+		name = "class_classroom",
+		joinColumns = { @JoinColumn(name = "class") },
+		inverseJoinColumns = { @JoinColumn(name = "classroom") })
 	public Set<Classroom> getClassrooms() {
 		return this.classrooms;
 	}
@@ -125,7 +131,10 @@ public class Class implements Serializable {
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "class_lecturer")
+	@JoinTable(
+		name = "class_lecturer",
+		joinColumns = { @JoinColumn(name = "class") },
+		inverseJoinColumns = { @JoinColumn(name = "lecturer") })
 	public Set<Lecturer> getLecturers() {
 		return this.lecturers;
 	}

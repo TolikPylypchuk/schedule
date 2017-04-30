@@ -33,6 +33,7 @@ export interface Class extends EntityBase {
 	dayOfWeek: DayOfWeek;
 	year: number;
 	semester: Semester;
+	type: string;
 }
 
 export interface Classroom extends EntityBase {

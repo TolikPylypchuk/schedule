@@ -72,7 +72,10 @@ public class Lecturer implements Serializable {
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "lecturer_subject")
+	@JoinTable(
+		name = "lecturer_subject",
+		joinColumns = { @JoinColumn(name = "lecturer") },
+		inverseJoinColumns = { @JoinColumn(name = "subject") })
 	public Set<Subject> getSubjects() {
 		return subjects;
 	}

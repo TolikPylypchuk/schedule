@@ -15,7 +15,7 @@ import {
 	getClassStart, getClassEnd,
 	getDayOfWeekName, getFrequencyName,
 	getLecturerInitials, getLecturersString,
-	getClassroomsString,
+	getClassroomsString, getGroupsString,
 	handleError
 } from "./functions";
 
@@ -43,5 +43,6 @@ export {
 	getLecturerInitials,
 	getLecturersString,
 	getClassroomsString,
+	getGroupsString,
 	handleError
 }

@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.Lecturer;
 import ua.edu.lnu.schedule.models.Plan;
 import ua.edu.lnu.schedule.models.Subject;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
+import ua.edu.lnu.schedule.repositories.LecturerRepository;
 import ua.edu.lnu.schedule.repositories.PlanRepository;
 import ua.edu.lnu.schedule.repositories.SubjectRepository;
 
@@ -18,8 +20,19 @@ import ua.edu.lnu.schedule.repositories.SubjectRepository;
 @RequestMapping("/api/subjects")
 public class SubjectController {
 	private ClassRepository classes;
+	private LecturerRepository lecturers;
 	private PlanRepository plans;
 	private SubjectRepository subjects;
+	
+	@Autowired
+	public void setClasses(ClassRepository classes) {
+		this.classes = classes;
+	}
+	
+	@Autowired
+	public void setLecturers(LecturerRepository lecturers) {
+		this.lecturers = lecturers;
+	}
 	
 	@Autowired
 	public void setPlans(PlanRepository plans) {
@@ -31,10 +44,6 @@ public class SubjectController {
 		this.subjects = subjects;
 	}
 	
-	@Autowired
-	public void setClasses(ClassRepository classes) {
-		this.classes = classes;
-	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public @ResponseBody Iterable<Subject> getAll() {
@@ -78,6 +87,19 @@ public class SubjectController {
 		}
 		
 		return this.subjects.findByClassesContaining(c);
+	}
+	
+	@RequestMapping(value = "/lecturerId/{lecturerId}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Subject> getByLecturer(
+		@PathVariable("lecturerId") int lecturerId, HttpServletResponse response) {
+		Lecturer lecturer = this.lecturers.findOne(lecturerId);
+		
+		if (lecturer == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+		
+		return this.subjects.findAllByLecturersContaining(lecturer);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)

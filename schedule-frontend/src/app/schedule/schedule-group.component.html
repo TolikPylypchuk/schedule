@@ -1,28 +1,35 @@
-<h1>Розклад групи {{ getCurrentGroupName(currentGroup) }}</h1>
-s
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<th>День</th>
-			<th># пари</th>
-			<th>Час</th>
-			<th>Проводиться</th>
-			<th>Предмет</th>
-			<th>Тип</th>
-			<th>Аудиторії</th>
-			<th>Викладачі</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr *ngFor="let c of classes">
-			<td>{{ getDayOfWeekName(c.key.dayOfWeek) }}</td>
-			<td>{{ c.key.number }}</td>
-			<td>{{ getClassStart(c.key) }} - {{ getClassEnd(c.key) }}</td>
-			<td>{{ getFrequencyName(c.key.frequency) }}</td>
-			<td>{{ c.value.subject.name }}</td>
-			<td>{{ c.key.type }}</td>
-			<td>{{ getClassroomsString(c.value.classrooms) }}</td>
-			<td>{{ getLecturersString(c.value.lecturers) }}</td>
-		</tr>
-	</tbody>
-</table>
+<h1 class="text-center">{{ getCurrentGroupName(currentGroup) }}</h1>
+<h2 class="text-center">Розклад</h2>
+
+<div *ngIf="classes.size === 0; else classesExist">
+	<p class="text-center my-3">Жодної пари не поставлено.</p>
+</div>
+
+<ng-template #classesExist>
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>День</th>
+				<th># пари</th>
+				<th>Час</th>
+				<th>Проводиться</th>
+				<th>Предмет</th>
+				<th>Тип</th>
+				<th>Аудиторії</th>
+				<th>Викладачі</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let c of classes.keys();">
+				<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>
+				<td>{{ c.number }}</td>
+				<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>
+				<td>{{ getFrequencyName(c.frequency) }}</td>
+				<td>{{ classes.get(c).subject.name }}</td>
+				<td>{{ c.type }}</td>
+				<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>
+				<td>{{ getLecturersString(classes.get(c).lecturers) }}</td>
+			</tr>
+		</tbody>
+	</table>
+</ng-template>

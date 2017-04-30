@@ -28,21 +28,27 @@ export function getGroupCourse(group: Group, year: number): number {
 }
 
 export function getCurrentGroupCourse(group: Group): number {
-	return this.getGroupCourse(group, this.getCurrentYear());
+	return getGroupCourse(group, getCurrentYear());
 }
 
 export function getGroupName(group: Group, year: number): string {
 	return group
-		? group.name.replace("0", this.getGroupCourse(group, year).toString())
+		? group.name.replace("0", getGroupCourse(group, year).toString())
 		: "";
 }
 
 export function getCurrentGroupName(group: Group): string {
-	return this.getGroupName(group, this.getCurrentYear());
+	return getGroupName(group, getCurrentYear());
 }
 
 export function getClassStart(c: Class): string {
 	let result = "";
+
+	if (!c)
+	{
+		return result;
+	}
+
 	switch (c.number) {
 		case 1:
 			result = "8:30";
@@ -78,6 +84,12 @@ export function getClassStart(c: Class): string {
 
 export function getClassEnd(c: Class): string {
 	let result = "";
+
+	if (!c)
+	{
+		return result;
+	}
+
 	switch (c.number) {
 		case 1:
 			result = "9:50";
@@ -113,6 +125,7 @@ export function getClassEnd(c: Class): string {
 
 export function getFrequencyName(frequency: Frequency): string {
 	let name = "";
+
 	switch (frequency) {
 		case Frequency.DENOMINATOR:
 			name = "По знаменнику";
@@ -124,15 +137,19 @@ export function getFrequencyName(frequency: Frequency): string {
 			name = "Щотижня";
 			break;
 	}
+
 	return name;
 }
 
 export function getLecturerInitials(lecturer: Lecturer): string {
-	return `${lecturer.firstName[0]}. ${lecturer.middleName[0]}.`;
+	return lecturer
+		? `${lecturer.lastName} ${lecturer.firstName[0]}. ${lecturer.middleName[0]}.`
+		: "";
 }
 
 export function getDayOfWeekName(day: DayOfWeek): string {
 	let name = "";
+
 	switch (day) {
 		case DayOfWeek.MONDAY:
 			name = "Понеділок";
@@ -150,20 +167,34 @@ export function getDayOfWeekName(day: DayOfWeek): string {
 			name = "П'ятниця";
 			break;
 	}
+
 	return name;
 }
 
 export function getClassroomsString(classrooms: Classroom[]): string {
-	return classrooms.reduce(
-		(result: string, classroom: Classroom) => `${result}, ${classroom.number}`,
-		"").substr(2);
+	return classrooms
+		? classrooms.reduce(
+			(result: string, classroom: Classroom) => `${result}, ${classroom.number}`,
+			"").substr(2)
+		: "";
 }
 
 export function getLecturersString(lecturers: Lecturer[]): string {
-	return lecturers.reduce(
-		(result: string, lecturer: Lecturer) =>
-			`${result}, ${lecturer.lastName} ${getLecturerInitials(lecturer)}`,
-		"").substr(2);
+	return lecturers
+		? lecturers.reduce(
+			(result: string, lecturer: Lecturer) =>
+				`${result}, ${getLecturerInitials(lecturer)}`,
+			"").substr(2)
+		: "";
+}
+
+export function getGroupsString(groups: Group[]): string {
+	return groups
+		? groups.reduce(
+			(result: string, group: Group) =>
+				`${result}, ${getCurrentGroupName(group)}`,
+			"").substr(2)
+		: "";
 }
 
 export function handleError(error: Response | any): ErrorObservable {

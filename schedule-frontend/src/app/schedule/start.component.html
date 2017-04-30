@@ -23,7 +23,7 @@
 				<div class="card card-block" *ngFor="let group of getGroups(faculty.id, course)">
 					<button class="btn btn-secondary mb-3"
 					        (click)="navigateToGroup(group.id)">
-						{{ groupService.getCurrentName(group) }}
+						{{ getCurrentGroupName(group) }}
 					</button>
 				</div>
 			</div>
