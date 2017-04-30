@@ -21,7 +21,8 @@
 			<div class="collapse"
 					 id="collapse{{ faculty.name }}{{ course }}Student">
 				<div class="card card-block" *ngFor="let group of getGroups(faculty.id, course)">
-					<button class="btn btn-secondary mb-3">
+					<button class="btn btn-secondary mb-3"
+					        (click)="navigateToGroup(group.id)">
 						{{ groupService.getCurrentName(group) }}
 					</button>
 				</div>

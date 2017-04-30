@@ -1,8 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { FacultyService } from "../services/services";
-import { GroupService } from "../services/services";
+import {
+	GroupService, FacultyService, getCurrentCourse
+} from "../services/services";
 
 import { Faculty, Group } from "../models/models";
 
@@ -45,7 +46,7 @@ export class StartComponent implements OnInit {
 	getGroups(facultyId: number, course: number): Group[] {
 		return this.groups.has(facultyId)
 			? this.groups.get(facultyId)
-				.filter(g => this.groupService.getCurrentCourse(g) === course)
+				.filter(g => getCurrentCourse(g) === course)
 			: [];
 	}
 

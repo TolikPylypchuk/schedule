@@ -7,16 +7,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.Plan;
 import ua.edu.lnu.schedule.models.Subject;
+import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.PlanRepository;
 import ua.edu.lnu.schedule.repositories.SubjectRepository;
 
 @RestController
 @RequestMapping("/api/subjects")
 public class SubjectController {
-	private SubjectRepository subjects;
+	private ClassRepository classes;
 	private PlanRepository plans;
+	private SubjectRepository subjects;
+	
+	@Autowired
+	public void setPlans(PlanRepository plans) {
+		this.plans = plans;
+	}
 	
 	@Autowired
 	public void setSubjects(SubjectRepository subjects) {
@@ -24,8 +32,8 @@ public class SubjectController {
 	}
 	
 	@Autowired
-	public void setPlans(PlanRepository plans) {
-		this.plans = plans;
+	public void setClasses(ClassRepository classes) {
+		this.classes = classes;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -57,6 +65,19 @@ public class SubjectController {
 		}
 		
 		return this.subjects.findByPlansContaining(plan);
+	}
+	
+	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	public @ResponseBody Subject getByClass(
+		@PathVariable("classId") int classId, HttpServletResponse response) {
+		Class c = this.classes.findOne(classId);
+		
+		if (c == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+		
+		return this.subjects.findByClassesContaining(c);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)

@@ -37,6 +37,14 @@ export class SubjectService {
 					: null);
 	}
 
+	getSubjectByClass(classId: number): Observable<Subject> {
+		return this.http.get(`api/subjects/classId/${classId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Subject
+					: null);
+	}
+
 	addSubject(subject: Subject): Observable<Response> {
 		return this.http.post(
 			`api/subjects/`,

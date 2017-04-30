@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Group } from "../models/models";
-import {handleError} from "./services";
+import { Group, Semester } from "../models/models";
+import { handleError } from "./services";
 
 @Injectable()
 export class GroupService {
@@ -11,31 +11,6 @@ export class GroupService {
 
 	constructor(http: Http) {
 		this.http = http;
-	}
-
-	getCurrentYear(): number {
-		const now = new Date();
-		const year = now.getFullYear();
-
-		return now.getMonth() > 6
-			? year
-			: year - 1;
-	}
-
-	getCourse(group: Group, year: number): number {
-		return year - group.year + 1;
-	}
-
-	getCurrentCourse(group: Group): number{
-		return this.getCourse(group, this.getCurrentYear());
-	}
-
-	getName(group: Group, year: number): string {
-		return group.name.replace("0", this.getCourse(group, year).toString());
-	}
-
-	getCurrentName(group: Group): string {
-		return this.getName(group, this.getCurrentYear());
 	}
 
 	getGroups(): Observable<Group[]> {
