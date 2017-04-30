@@ -1,11 +1,6 @@
 <h1 class="text-center">{{ getLecturerInitials(currentLecturer) }}</h1>
 <h2 class="text-center">Розклад</h2>
 
-<div *ngIf="classes.size === 0; else classesExist">
-	<p class="text-center my-3">Жодної пари не поставлено.</p>
-</div>
-
-<ng-template #classesExist>
 	<table class="table table-bordered">
 		<thead>
 			<tr>
@@ -22,14 +17,14 @@
 		<tbody>
 			<tr *ngFor="let c of classes.keys()">
 				<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>
-				<td>{{ c.number }}</td>
+				<td>{{ c ? c.number : 0 }}</td>
 				<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>
 				<td>{{ getFrequencyName(c.frequency) }}</td>
-				<td>{{ classes.get(c).subject.name }}</td>
-				<td>{{ c.type }}</td>
+				<td>{{ classes.get(c).subject ? classes.get(c).subject.name : "" }}</td>
+				<td>{{ c ? c.type : "" }}</td>
 				<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>
 				<td>{{ getGroupsString(classes.get(c).groups) }}</td>
 			</tr>
 		</tbody>
 	</table>
-</ng-template>
+

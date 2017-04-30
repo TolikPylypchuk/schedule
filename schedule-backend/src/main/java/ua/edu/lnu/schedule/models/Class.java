@@ -85,7 +85,7 @@ public class Class implements Serializable {
 	}
 	
 	@Column(name = "semester", nullable = false)
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	public Semester getSemester() {
 		return this.semester;
 	}

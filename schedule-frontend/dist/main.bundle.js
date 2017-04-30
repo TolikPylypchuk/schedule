@@ -1,6 +1,6 @@
 webpackJsonp([1,5],{
 
-/***/ 104:
+/***/ 105:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -30,15 +30,15 @@ AppComponent = __decorate([
 
 /***/ }),
 
-/***/ 105:
+/***/ 106:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(102);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(103);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__(105);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__routes_module__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__schedule_schedule__ = __webpack_require__(109);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_services__ = __webpack_require__(5);
@@ -92,36 +92,6 @@ AppModule = __decorate([
 ], AppModule);
 
 //# sourceMappingURL=app.module.js.map
-
-/***/ }),
-
-/***/ 106:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Frequency; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DayOfWeek; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Semester; });
-var Frequency;
-(function (Frequency) {
-    Frequency[Frequency["WEEKLY"] = 0] = "WEEKLY";
-    Frequency[Frequency["NUMERATOR"] = 1] = "NUMERATOR";
-    Frequency[Frequency["DENOMINATOR"] = 2] = "DENOMINATOR";
-})(Frequency || (Frequency = {}));
-var DayOfWeek;
-(function (DayOfWeek) {
-    DayOfWeek[DayOfWeek["MONDAY"] = 1] = "MONDAY";
-    DayOfWeek[DayOfWeek["TUESDAY"] = 2] = "TUESDAY";
-    DayOfWeek[DayOfWeek["WEDNESDAY"] = 3] = "WEDNESDAY";
-    DayOfWeek[DayOfWeek["THURSDAY"] = 4] = "THURSDAY";
-    DayOfWeek[DayOfWeek["FRIDAY"] = 5] = "FRIDAY";
-})(DayOfWeek || (DayOfWeek = {}));
-var Semester;
-(function (Semester) {
-    Semester[Semester["FIRST"] = 1] = "FIRST";
-    Semester[Semester["SECOND"] = 2] = "SECOND";
-})(Semester || (Semester = {}));
-//# sourceMappingURL=models.js.map
 
 /***/ }),
 
@@ -615,9 +585,9 @@ var _a;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_http__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_models__ = __webpack_require__(106);
 /* harmony export (immutable) */ __webpack_exports__["d"] = getCurrentYear;
 /* harmony export (immutable) */ __webpack_exports__["e"] = getCurrentSemester;
+/* unused harmony export getSemesterNumber */
 /* unused harmony export getGroupCourse */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getCurrentGroupCourse;
 /* unused harmony export getGroupName */
@@ -633,7 +603,6 @@ var _a;
 /* harmony export (immutable) */ __webpack_exports__["a"] = handleError;
 
 
-
 function getCurrentYear() {
     var now = new Date();
     var year = now.getFullYear();
@@ -642,9 +611,15 @@ function getCurrentYear() {
         : year - 1;
 }
 function getCurrentSemester() {
-    return new Date().getMonth() > 6
-        ? __WEBPACK_IMPORTED_MODULE_2__models_models__["a" /* Semester */].FIRST
-        : __WEBPACK_IMPORTED_MODULE_2__models_models__["a" /* Semester */].SECOND;
+    return new Date().getMonth() > 6 ? 1 : 2;
+}
+function getSemesterNumber(semester) {
+    semester = semester.toLowerCase();
+    return semester === "first"
+        ? 1
+        : semester === "second"
+            ? 2
+            : 0;
 }
 function getGroupCourse(group, year) {
     return group
@@ -736,15 +711,15 @@ function getClassEnd(c) {
 }
 function getFrequencyName(frequency) {
     var name = "";
-    switch (frequency) {
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* Frequency */].DENOMINATOR:
+    switch (frequency.toLowerCase()) {
+        case "weekly":
+            name = "Щотижня";
+            break;
+        case "denominator":
             name = "По знаменнику";
             break;
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* Frequency */].NUMERATOR:
+        case "numerator":
             name = "По чисельнику";
-            break;
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* Frequency */].WEEKLY:
-            name = "Щотижня";
             break;
     }
     return name;
@@ -756,20 +731,20 @@ function getLecturerInitials(lecturer) {
 }
 function getDayOfWeekName(day) {
     var name = "";
-    switch (day) {
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* DayOfWeek */].MONDAY:
+    switch (day.toLowerCase()) {
+        case "monday":
             name = "Понеділок";
             break;
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* DayOfWeek */].TUESDAY:
+        case "tuesday":
             name = "Вівторок";
             break;
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* DayOfWeek */].WEDNESDAY:
+        case "wednesday":
             name = "Середа";
             break;
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* DayOfWeek */].THURSDAY:
+        case "thursday":
             name = "Четвер";
             break;
-        case __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* DayOfWeek */].FRIDAY:
+        case "friday":
             name = "П'ятниця";
             break;
     }
@@ -1325,21 +1300,21 @@ module.exports = module.exports.toString();
 /***/ 185:
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar navbar-toggleable-md navbar-light bg-faded\">\n\t<button class=\"navbar-toggler navbar-toggler-right\" type=\"button\"\n\t        data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\"\n\t        aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\"\n\t        aria-label=\"Toggle navigation\">\n\t\t<span class=\"navbar-toggler-icon\"></span>\n\t</button>\n\t<a class=\"navbar-brand\" href=\"#\">Тут буде логотип</a>\n\t<div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n\t\t<ul class=\"navbar-nav mr-auto\">\n\t\t\t<li class=\"nav-item\">\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Групи</a>\n\t\t\t</li>\n\t\t\t<li class=\"nav-item\">\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Викладачі</a>\n\t\t\t</li>\n\t\t\t<li class=\"nav-item\">\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Попередні роки</a>\n\t\t\t</li>\n\t\t</ul>\n\t\t<form class=\"form-inline my-2 my-lg-0\">\n\t\t\t<input class=\"form-control mr-sm-2\" type=\"text\" placeholder=\"Пошук\">\n\t\t\t<button class=\"btn btn-outline-success my-2 my-sm-0\" type=\"submit\">\n\t\t\t\t<i class=\"fa fa-search\" aria-hidden=\"true\"></i>\n\t\t\t</button>\n\t\t</form>\n\t\t<ul class=\"navbar-nav mx-3\">\n\t\t\t<li class=\"nav-item\">\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Вхід</a>\n\t\t\t</li>\n\t\t</ul>\n\t</div>\n</nav>\n\n<div class=\"p-3\">\n\t<router-outlet>\n\t</router-outlet>\n</div>\n"
+module.exports = "<nav class=\"navbar navbar-toggleable-md navbar-light bg-faded\">\r\n\t<button class=\"navbar-toggler navbar-toggler-right\" type=\"button\"\r\n\t        data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\"\r\n\t        aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\"\r\n\t        aria-label=\"Toggle navigation\">\r\n\t\t<span class=\"navbar-toggler-icon\"></span>\r\n\t</button>\r\n\t<a class=\"navbar-brand\" href=\"#\">Тут буде логотип</a>\r\n\t<div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\r\n\t\t<ul class=\"navbar-nav mr-auto\">\r\n\t\t\t<li class=\"nav-item\">\r\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Групи</a>\r\n\t\t\t</li>\r\n\t\t\t<li class=\"nav-item\">\r\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Викладачі</a>\r\n\t\t\t</li>\r\n\t\t\t<li class=\"nav-item\">\r\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Попередні роки</a>\r\n\t\t\t</li>\r\n\t\t</ul>\r\n\t\t<form class=\"form-inline my-2 my-lg-0\">\r\n\t\t\t<input class=\"form-control mr-sm-2\" type=\"text\" placeholder=\"Пошук\">\r\n\t\t\t<button class=\"btn btn-outline-success my-2 my-sm-0\" type=\"submit\">\r\n\t\t\t\t<i class=\"fa fa-search\" aria-hidden=\"true\"></i>\r\n\t\t\t</button>\r\n\t\t</form>\r\n\t\t<ul class=\"navbar-nav mx-3\">\r\n\t\t\t<li class=\"nav-item\">\r\n\t\t\t\t<a class=\"nav-link\" href=\"#\">Вхід</a>\r\n\t\t\t</li>\r\n\t\t</ul>\r\n\t</div>\r\n</nav>\r\n\r\n<div class=\"p-3\">\r\n\t<router-outlet>\r\n\t</router-outlet>\r\n</div>\r\n"
 
 /***/ }),
 
 /***/ 186:
 /***/ (function(module, exports) {
 
-module.exports = "<h1 class=\"text-center\">{{ getCurrentGroupName(currentGroup) }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"classes.size === 0; else classesExist\">\r\n\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n</div>\r\n\r\n<ng-template #classesExist>\r\n\t<table class=\"table table-bordered\">\r\n\t\t<thead>\r\n\t\t\t<tr>\r\n\t\t\t\t<th>День</th>\r\n\t\t\t\t<th># пари</th>\r\n\t\t\t\t<th>Час</th>\r\n\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t<th>Тип</th>\r\n\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t<th>Викладачі</th>\r\n\t\t\t</tr>\r\n\t\t</thead>\r\n\t\t<tbody>\r\n\t\t\t<tr *ngFor=\"let c of classes.keys();\">\r\n\t\t\t\t<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>\r\n\t\t\t\t<td>{{ c.number }}</td>\r\n\t\t\t\t<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>\r\n\t\t\t\t<td>{{ getFrequencyName(c.frequency) }}</td>\r\n\t\t\t\t<td>{{ classes.get(c).subject.name }}</td>\r\n\t\t\t\t<td>{{ c.type }}</td>\r\n\t\t\t\t<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>\r\n\t\t\t\t<td>{{ getLecturersString(classes.get(c).lecturers) }}</td>\r\n\t\t\t</tr>\r\n\t\t</tbody>\r\n\t</table>\r\n</ng-template>\r\n"
+module.exports = "<h1 class=\"text-center\">{{ getCurrentGroupName(currentGroup) }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"classes.size === 0; else classesExist\">\r\n\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n</div>\r\n\r\n<ng-template #classesExist>\r\n\t<table class=\"table table-bordered\">\r\n\t\t<thead>\r\n\t\t\t<tr>\r\n\t\t\t\t<th>День</th>\r\n\t\t\t\t<th># пари</th>\r\n\t\t\t\t<th>Час</th>\r\n\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t<th>Тип</th>\r\n\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t<th>Викладачі</th>\r\n\t\t\t</tr>\r\n\t\t</thead>\r\n\t\t<tbody>\r\n\t\t\t<tr *ngFor=\"let c of classes.keys();\">\r\n\t\t\t\t<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>\r\n\t\t\t\t<td>{{ c ? c.number : 0 }}</td>\r\n\t\t\t\t<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>\r\n\t\t\t\t<td>{{ getFrequencyName(c.frequency) }}</td>\r\n\t\t\t\t<td>{{ classes.get(c).subject ? classes.get(c).subject.name : \"\" }}</td>\r\n\t\t\t\t<td>{{ c ? c.type : \"\" }}</td>\r\n\t\t\t\t<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>\r\n\t\t\t\t<td>{{ getLecturersString(classes.get(c).lecturers) }}</td>\r\n\t\t\t</tr>\r\n\t\t</tbody>\r\n\t</table>\r\n</ng-template>\r\n"
 
 /***/ }),
 
 /***/ 187:
 /***/ (function(module, exports) {
 
-module.exports = "<h1 class=\"text-center\">{{ getLecturerInitials(currentLecturer) }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"classes.size === 0; else classesExist\">\r\n\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n</div>\r\n\r\n<ng-template #classesExist>\r\n\t<table class=\"table table-bordered\">\r\n\t\t<thead>\r\n\t\t\t<tr>\r\n\t\t\t\t<th>День</th>\r\n\t\t\t\t<th># пари</th>\r\n\t\t\t\t<th>Час</th>\r\n\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t<th>Тип</th>\r\n\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t<th>Групи</th>\r\n\t\t\t</tr>\r\n\t\t</thead>\r\n\t\t<tbody>\r\n\t\t\t<tr *ngFor=\"let c of classes.keys()\">\r\n\t\t\t\t<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>\r\n\t\t\t\t<td>{{ c.number }}</td>\r\n\t\t\t\t<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>\r\n\t\t\t\t<td>{{ getFrequencyName(c.frequency) }}</td>\r\n\t\t\t\t<td>{{ classes.get(c).subject.name }}</td>\r\n\t\t\t\t<td>{{ c.type }}</td>\r\n\t\t\t\t<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>\r\n\t\t\t\t<td>{{ getGroupsString(classes.get(c).groups) }}</td>\r\n\t\t\t</tr>\r\n\t\t</tbody>\r\n\t</table>\r\n</ng-template>\r\n"
+module.exports = "<h1 class=\"text-center\">{{ getLecturerInitials(currentLecturer) }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n\t<table class=\"table table-bordered\">\r\n\t\t<thead>\r\n\t\t\t<tr>\r\n\t\t\t\t<th>День</th>\r\n\t\t\t\t<th># пари</th>\r\n\t\t\t\t<th>Час</th>\r\n\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t<th>Тип</th>\r\n\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t<th>Групи</th>\r\n\t\t\t</tr>\r\n\t\t</thead>\r\n\t\t<tbody>\r\n\t\t\t<tr *ngFor=\"let c of classes.keys()\">\r\n\t\t\t\t<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>\r\n\t\t\t\t<td>{{ c ? c.number : 0 }}</td>\r\n\t\t\t\t<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>\r\n\t\t\t\t<td>{{ getFrequencyName(c.frequency) }}</td>\r\n\t\t\t\t<td>{{ classes.get(c).subject ? classes.get(c).subject.name : \"\" }}</td>\r\n\t\t\t\t<td>{{ c ? c.type : \"\" }}</td>\r\n\t\t\t\t<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>\r\n\t\t\t\t<td>{{ getGroupsString(classes.get(c).groups) }}</td>\r\n\t\t\t</tr>\r\n\t\t</tbody>\r\n\t</table>\r\n\r\n"
 
 /***/ }),
 
@@ -1353,7 +1328,7 @@ module.exports = "<h1 class=\"text-center\">Розклад занять</h1>\r\n
 /***/ 225:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(92);
+module.exports = __webpack_require__(93);
 
 
 /***/ }),
@@ -1364,7 +1339,9 @@ module.exports = __webpack_require__(92);
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_services__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_services__ = __webpack_require__(5);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ScheduleGroupComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1378,15 +1355,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var ScheduleGroupComponent = (function () {
     function ScheduleGroupComponent(route, router, classService, classroomService, groupService, lecturerService, subjectService) {
-        this.getCurrentGroupName = __WEBPACK_IMPORTED_MODULE_2__services_services__["k" /* getCurrentGroupName */];
-        this.getClassStart = __WEBPACK_IMPORTED_MODULE_2__services_services__["m" /* getClassStart */];
-        this.getClassEnd = __WEBPACK_IMPORTED_MODULE_2__services_services__["n" /* getClassEnd */];
-        this.getDayOfWeekName = __WEBPACK_IMPORTED_MODULE_2__services_services__["o" /* getDayOfWeekName */];
-        this.getFrequencyName = __WEBPACK_IMPORTED_MODULE_2__services_services__["p" /* getFrequencyName */];
-        this.getLecturersString = __WEBPACK_IMPORTED_MODULE_2__services_services__["v" /* getLecturersString */];
-        this.getClassroomsString = __WEBPACK_IMPORTED_MODULE_2__services_services__["r" /* getClassroomsString */];
+        this.getCurrentGroupName = __WEBPACK_IMPORTED_MODULE_3__services_services__["k" /* getCurrentGroupName */];
+        this.getClassStart = __WEBPACK_IMPORTED_MODULE_3__services_services__["m" /* getClassStart */];
+        this.getClassEnd = __WEBPACK_IMPORTED_MODULE_3__services_services__["n" /* getClassEnd */];
+        this.getDayOfWeekName = __WEBPACK_IMPORTED_MODULE_3__services_services__["o" /* getDayOfWeekName */];
+        this.getFrequencyName = __WEBPACK_IMPORTED_MODULE_3__services_services__["p" /* getFrequencyName */];
+        this.getLecturersString = __WEBPACK_IMPORTED_MODULE_3__services_services__["v" /* getLecturersString */];
+        this.getClassroomsString = __WEBPACK_IMPORTED_MODULE_3__services_services__["r" /* getClassroomsString */];
         this.route = route;
         this.router = router;
         this.classService = classService;
@@ -1398,33 +1376,48 @@ var ScheduleGroupComponent = (function () {
     }
     ScheduleGroupComponent.prototype.ngOnInit = function () {
         var _this = this;
-        var currentYear = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__services_services__["t" /* getCurrentYear */])();
-        var semester = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__services_services__["u" /* getCurrentSemester */])();
+        var currentYear = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__services_services__["t" /* getCurrentYear */])();
+        var semester = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__services_services__["u" /* getCurrentSemester */])();
         this.route.params
             .switchMap(function (params) { return _this.groupService.getGroup(+params["id"]); })
             .subscribe(function (group) {
             _this.currentGroup = group;
             _this.classService.getClassesByGroupAndYearAndSemester(group.id, currentYear, semester)
                 .subscribe(function (classes) {
+                var observables = [];
                 var _loop_1 = function (c) {
-                    _this.classes.set(c, {});
-                    _this.subjectService.getSubjectByClass(c.id)
-                        .subscribe(function (subject) {
-                        return _this.classes.get(c).subject = subject;
-                    });
-                    _this.classroomService.getClassroomsByClass(c.id)
-                        .subscribe(function (classrooms) {
-                        return _this.classes.get(c).classrooms = classrooms;
-                    });
-                    _this.lecturerService.getLecturersByClass(c.id)
-                        .subscribe(function (lecturers) {
-                        return _this.classes.get(c).lecturers = lecturers;
-                    });
+                    observables.push(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin([
+                        _this.subjectService.getSubjectByClass(c.id),
+                        _this.classroomService.getClassroomsByClass(c.id),
+                        _this.lecturerService.getLecturersByClass(c.id)
+                    ], function (s, cr, l) {
+                        return {
+                            c: c,
+                            subject: s,
+                            classrooms: cr,
+                            lecturers: l
+                        };
+                    }));
                 };
                 for (var _i = 0, classes_1 = classes; _i < classes_1.length; _i++) {
                     var c = classes_1[_i];
                     _loop_1(c);
                 }
+                __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin(observables, function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+                    var tempClasses = new Map();
+                    for (var _a = 0, args_1 = args; _a < args_1.length; _a++) {
+                        var arg = args_1[_a];
+                        tempClasses.set(arg.c, arg);
+                    }
+                    return tempClasses;
+                })
+                    .subscribe(function (tempClasses) {
+                    return tempClasses.forEach(function (value, key) { return _this.classes.set(key, value); });
+                });
             });
         });
     };
@@ -1435,7 +1428,7 @@ ScheduleGroupComponent = __decorate([
         selector: "schedule-group",
         template: __webpack_require__(186)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
 ], ScheduleGroupComponent);
 
 var _a, _b, _c, _d, _e, _f, _g;
@@ -1449,7 +1442,9 @@ var _a, _b, _c, _d, _e, _f, _g;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_services__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_services__ = __webpack_require__(5);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ScheduleLecturerComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1463,28 +1458,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var ScheduleLecturerComponent = (function () {
     function ScheduleLecturerComponent(route, router, classService, classroomService, groupService, lecturerService, subjectService) {
-        /*
-        getSortedClasses(): {
-            c: Class,
-            subject?: Subject,
-            classrooms?: Classroom[],
-            groups?: Group[] }[] {
-            let result: any[] = [];
-            for (let c of this.classes.keys()) {
-    
-            }
-        }
-        */
-        this.getCurrentGroupName = __WEBPACK_IMPORTED_MODULE_2__services_services__["k" /* getCurrentGroupName */];
-        this.getClassStart = __WEBPACK_IMPORTED_MODULE_2__services_services__["m" /* getClassStart */];
-        this.getClassEnd = __WEBPACK_IMPORTED_MODULE_2__services_services__["n" /* getClassEnd */];
-        this.getDayOfWeekName = __WEBPACK_IMPORTED_MODULE_2__services_services__["o" /* getDayOfWeekName */];
-        this.getFrequencyName = __WEBPACK_IMPORTED_MODULE_2__services_services__["p" /* getFrequencyName */];
-        this.getGroupsString = __WEBPACK_IMPORTED_MODULE_2__services_services__["q" /* getGroupsString */];
-        this.getClassroomsString = __WEBPACK_IMPORTED_MODULE_2__services_services__["r" /* getClassroomsString */];
-        this.getLecturerInitials = __WEBPACK_IMPORTED_MODULE_2__services_services__["s" /* getLecturerInitials */];
+        this.getCurrentGroupName = __WEBPACK_IMPORTED_MODULE_3__services_services__["k" /* getCurrentGroupName */];
+        this.getClassStart = __WEBPACK_IMPORTED_MODULE_3__services_services__["m" /* getClassStart */];
+        this.getClassEnd = __WEBPACK_IMPORTED_MODULE_3__services_services__["n" /* getClassEnd */];
+        this.getDayOfWeekName = __WEBPACK_IMPORTED_MODULE_3__services_services__["o" /* getDayOfWeekName */];
+        this.getFrequencyName = __WEBPACK_IMPORTED_MODULE_3__services_services__["p" /* getFrequencyName */];
+        this.getGroupsString = __WEBPACK_IMPORTED_MODULE_3__services_services__["q" /* getGroupsString */];
+        this.getClassroomsString = __WEBPACK_IMPORTED_MODULE_3__services_services__["r" /* getClassroomsString */];
+        this.getLecturerInitials = __WEBPACK_IMPORTED_MODULE_3__services_services__["s" /* getLecturerInitials */];
         this.route = route;
         this.router = router;
         this.classService = classService;
@@ -1496,33 +1480,48 @@ var ScheduleLecturerComponent = (function () {
     }
     ScheduleLecturerComponent.prototype.ngOnInit = function () {
         var _this = this;
-        var currentYear = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__services_services__["t" /* getCurrentYear */])();
-        var semester = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__services_services__["u" /* getCurrentSemester */])();
+        var currentYear = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__services_services__["t" /* getCurrentYear */])();
+        var semester = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__services_services__["u" /* getCurrentSemester */])();
         this.route.params
             .switchMap(function (params) { return _this.lecturerService.getLecturer(+params["id"]); })
             .subscribe(function (lecturer) {
             _this.currentLecturer = lecturer;
             _this.classService.getClassesByLecturerAndYearAndSemester(lecturer.id, currentYear, semester)
                 .subscribe(function (classes) {
+                var observables = [];
                 var _loop_1 = function (c) {
-                    _this.classes.set(c, {});
-                    _this.subjectService.getSubjectByClass(c.id)
-                        .subscribe(function (subject) {
-                        return _this.classes.get(c).subject = subject;
-                    });
-                    _this.classroomService.getClassroomsByClass(c.id)
-                        .subscribe(function (classrooms) {
-                        return _this.classes.get(c).classrooms = classrooms;
-                    });
-                    _this.groupService.getGroupsByClass(c.id)
-                        .subscribe(function (groups) {
-                        return _this.classes.get(c).groups = groups;
-                    });
+                    observables.push(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin([
+                        _this.subjectService.getSubjectByClass(c.id),
+                        _this.classroomService.getClassroomsByClass(c.id),
+                        _this.groupService.getGroupsByClass(c.id)
+                    ], function (s, cr, g) {
+                        return {
+                            c: c,
+                            subject: s,
+                            classrooms: cr,
+                            groups: g
+                        };
+                    }));
                 };
                 for (var _i = 0, classes_1 = classes; _i < classes_1.length; _i++) {
                     var c = classes_1[_i];
                     _loop_1(c);
                 }
+                __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin(observables, function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+                    var tempClasses = new Map();
+                    for (var _a = 0, args_1 = args; _a < args_1.length; _a++) {
+                        var arg = args_1[_a];
+                        tempClasses.set(arg.c, arg);
+                    }
+                    return tempClasses;
+                })
+                    .subscribe(function (tempClasses) {
+                    return tempClasses.forEach(function (value, key) { return _this.classes.set(key, value); });
+                });
             });
         });
     };
@@ -1533,7 +1532,7 @@ ScheduleLecturerComponent = __decorate([
         selector: "schedule-lecturer",
         template: __webpack_require__(187)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
 ], ScheduleLecturerComponent);
 
 var _a, _b, _c, _d, _e, _f, _g;
@@ -1706,7 +1705,7 @@ ScheduleRoutesModule = __decorate([
 
 /***/ }),
 
-/***/ 91:
+/***/ 92:
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -1715,26 +1714,28 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 91;
+webpackEmptyContext.id = 92;
 
 
 /***/ }),
 
-/***/ 92:
+/***/ 93:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_operator_catch__ = __webpack_require__(193);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_add_operator_catch__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__ = __webpack_require__(194);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_switchMap__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_switchMap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_switchMap__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_platform_browser_dynamic__ = __webpack_require__(103);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_app_module__ = __webpack_require__(105);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__environments_environment__ = __webpack_require__(120);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_forkJoin__ = __webpack_require__(193);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_forkJoin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_forkJoin__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_catch__ = __webpack_require__(194);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_catch__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__(195);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_switchMap__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_switchMap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_switchMap__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_dynamic__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_app_module__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__environments_environment__ = __webpack_require__(120);
 
 
 
@@ -1742,10 +1743,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-if (__WEBPACK_IMPORTED_MODULE_6__environments_environment__["a" /* environment */].production) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__angular_core__["a" /* enableProdMode */])();
+
+if (__WEBPACK_IMPORTED_MODULE_7__environments_environment__["a" /* environment */].production) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__angular_core__["a" /* enableProdMode */])();
 }
-__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_5__app_app_module__["a" /* AppModule */]);
+__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_6__app_app_module__["a" /* AppModule */]);
 //# sourceMappingURL=main.js.map
 
 /***/ })

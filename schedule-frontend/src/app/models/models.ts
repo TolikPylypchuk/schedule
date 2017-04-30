@@ -1,22 +1,3 @@
-export enum Frequency {
-	WEEKLY,
-	NUMERATOR,
-	DENOMINATOR
-}
-
-export enum DayOfWeek {
-	MONDAY = 1,
-	TUESDAY = 2,
-	WEDNESDAY = 3,
-	THURSDAY = 4,
-	FRIDAY = 5
-}
-
-export enum Semester {
-	FIRST = 1,
-	SECOND = 2
-}
-
 export interface EntityBase {
 	id: number;
 }
@@ -29,10 +10,10 @@ export interface Building extends EntityBase {
 
 export interface Class extends EntityBase {
 	number: number;
-	frequency: Frequency;
-	dayOfWeek: DayOfWeek;
+	frequency: string;
+	dayOfWeek: string;
 	year: number;
-	semester: Semester;
+	semester: string;
 	type: string;
 }
 
@@ -64,7 +45,7 @@ export interface Plan extends EntityBase {
 	numPractice: number;
 	numLabs: number;
 	year: number;
-	semester: Semester;
+	semester: string;
 }
 
 export interface Subject extends EntityBase {
@@ -78,5 +59,5 @@ export interface Wish extends EntityBase {
 	isSuitable: boolean;
 	comment: string;
 	year: number;
-	semester: Semester;
+	semester: string;
 }

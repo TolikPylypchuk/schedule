@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Group, Semester } from "../models/models";
+import { Group } from "../models/models";
 import { handleError } from "./services";
 
 @Injectable()

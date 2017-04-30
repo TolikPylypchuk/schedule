@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Wish, Semester } from "../models/models";
+import { Wish } from "../models/models";
 import {handleError} from "./services";
 
 @Injectable()
@@ -38,7 +38,7 @@ export class WishService {
 	}
 
 	getWishesByLecturerAndYearAndSemester(
-		lecturerId: number, year: number, semester: Semester): Observable<Wish[]> {
+		lecturerId: number, year: number, semester: number): Observable<Wish[]> {
 		return this.http.get(
 			`api/wishes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
 			.map(response =>

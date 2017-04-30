@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Plan, Semester } from "../models/models";
+import { Plan } from "../models/models";
 import {handleError} from "./services";
 
 @Injectable()
@@ -38,7 +38,7 @@ export class PlanService {
 	}
 
 	getPlansByGroupAndYearAndSemester(
-		groupId: number, year: number, semester: Semester): Observable<Plan[]> {
+		groupId: number, year: number, semester: number): Observable<Plan[]> {
 		return this.http.get(`api/plans/groupId/${groupId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
@@ -55,8 +55,9 @@ export class PlanService {
 	}
 
 	getPlansBySubjectAndYearAndSemester(
-		subjectId: number, year: number, semester: Semester): Observable<Plan[]> {
-		return this.http.get(`api/plans/subjectId/${subjectId}/year/${year}/semester/${semester}`)
+		subjectId: number, year: number, semester: number): Observable<Plan[]> {
+		return this.http.get(
+			`api/plans/subjectId/${subjectId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]

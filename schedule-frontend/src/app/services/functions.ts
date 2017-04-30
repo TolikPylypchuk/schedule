@@ -3,7 +3,7 @@ import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/Observable/ErrorObservable";
 
 import {
-	Class, Classroom, DayOfWeek, Frequency, Group, Lecturer, Semester
+	Class, Classroom, Group, Lecturer
 } from "../models/models";
 
 export function getCurrentYear(): number {
@@ -15,10 +15,17 @@ export function getCurrentYear(): number {
 		: year - 1;
 }
 
-export function getCurrentSemester(): Semester {
-	return new Date().getMonth() > 6
-		? Semester.FIRST
-		: Semester.SECOND;
+export function getCurrentSemester(): number {
+	return new Date().getMonth() > 6 ? 1 : 2;
+}
+
+export function getSemesterNumber(semester: string): number {
+	semester = semester.toLowerCase();
+	return semester === "first"
+		? 1
+		: semester === "second"
+			? 2
+			: 0;
 }
 
 export function getGroupCourse(group: Group, year: number): number {
@@ -123,18 +130,18 @@ export function getClassEnd(c: Class): string {
 	return result;
 }
 
-export function getFrequencyName(frequency: Frequency): string {
+export function getFrequencyName(frequency: string): string {
 	let name = "";
 
-	switch (frequency) {
-		case Frequency.DENOMINATOR:
+	switch (frequency.toLowerCase()) {
+		case "weekly":
+			name = "Щотижня";
+			break;
+		case "denominator":
 			name = "По знаменнику";
 			break;
-		case Frequency.NUMERATOR:
+		case "numerator":
 			name = "По чисельнику";
-			break;
-		case Frequency.WEEKLY:
-			name = "Щотижня";
 			break;
 	}
 
@@ -147,23 +154,23 @@ export function getLecturerInitials(lecturer: Lecturer): string {
 		: "";
 }
 
-export function getDayOfWeekName(day: DayOfWeek): string {
+export function getDayOfWeekName(day: string): string {
 	let name = "";
 
-	switch (day) {
-		case DayOfWeek.MONDAY:
+	switch (day.toLowerCase()) {
+		case "monday":
 			name = "Понеділок";
 			break;
-		case DayOfWeek.TUESDAY:
+		case "tuesday":
 			name = "Вівторок";
 			break;
-		case DayOfWeek.WEDNESDAY:
+		case "wednesday":
 			name = "Середа";
 			break;
-		case DayOfWeek.THURSDAY:
+		case "thursday":
 			name = "Четвер";
 			break;
-		case DayOfWeek.FRIDAY:
+		case "friday":
 			name = "П'ятниця";
 			break;
 	}

@@ -22,11 +22,11 @@
 		<tbody>
 			<tr *ngFor="let c of classes.keys();">
 				<td>{{ getDayOfWeekName(c.dayOfWeek) }}</td>
-				<td>{{ c.number }}</td>
+				<td>{{ c ? c.number : 0 }}</td>
 				<td>{{ getClassStart(c) }} - {{ getClassEnd(c) }}</td>
 				<td>{{ getFrequencyName(c.frequency) }}</td>
-				<td>{{ classes.get(c).subject.name }}</td>
-				<td>{{ c.type }}</td>
+				<td>{{ classes.get(c).subject ? classes.get(c).subject.name : "" }}</td>
+				<td>{{ c ? c.type : "" }}</td>
 				<td>{{ getClassroomsString(classes.get(c).classrooms) }}</td>
 				<td>{{ getLecturersString(classes.get(c).lecturers) }}</td>
 			</tr>

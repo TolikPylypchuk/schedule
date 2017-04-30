@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { Class, Semester } from "../models/models";
+import { Class } from "../models/models";
 import { handleError } from "./services";
 
 @Injectable()
@@ -38,8 +38,9 @@ export class ClassService {
 	}
 
 	getClassesByGroupAndYearAndSemester(
-		groupId: number, year: number, semester: Semester): Observable<Class[]> {
-		return this.http.get(`api/classes/groupId/${groupId}/year/${year}/semester/${semester}`)
+		groupId: number, year: number, semester: number): Observable<Class[]> {
+		return this.http.get(
+			`api/classes/groupId/${groupId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -55,7 +56,7 @@ export class ClassService {
 	}
 
 	getClassesByClassroomAndYearAndSemester(
-		classroomId: number, year: number, semester: Semester): Observable<Class[]> {
+		classroomId: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
 			`api/classes/classroomId/${classroomId}/year/${year}/semester/${semester}`)
 			.map(response =>
@@ -73,7 +74,7 @@ export class ClassService {
 	}
 
 	getClassesByLecturerAndYearAndSemester(
-		lecturerId: number, year: number, semester: Semester): Observable<Class[]> {
+		lecturerId: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
 			`api/classes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
 			.map(response =>
@@ -91,7 +92,7 @@ export class ClassService {
 	}
 
 	getClassesByDayOfWeekAndYearAndSemester(
-		day: number, year: number, semester: Semester): Observable<Class[]> {
+		day: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
 			`api/classes/day/${day}/year/${year}/semester/${semester}`)
 			.map(response =>

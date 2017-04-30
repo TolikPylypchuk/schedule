@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router, Params } from "@angular/router";
+import { Observable } from "rxjs/Observable";
 
 import {
 	ClassService, ClassroomService, GroupService,
@@ -13,6 +14,13 @@ import {
 } from "../services/services";
 
 import { Class, Classroom, Group, Lecturer, Subject } from "../models/models";
+
+interface ClassInfo {
+	c?: Class;
+	subject?: Subject;
+	classrooms?: Classroom[];
+	groups?: Group[]
+}
 
 @Component({
 	selector: "schedule-lecturer",
@@ -29,11 +37,7 @@ export class ScheduleLecturerComponent implements OnInit {
 	private subjectService: SubjectService;
 
 	private currentLecturer: Lecturer;
-	private classes: Map<Class, {
-		subject?: Subject,
-		classrooms?: Classroom[],
-		groups?: Group[]
-	}>;
+	private classes: Map<Class, ClassInfo>;
 
 	constructor(
 		route: ActivatedRoute,
@@ -67,36 +71,42 @@ export class ScheduleLecturerComponent implements OnInit {
 				this.classService.getClassesByLecturerAndYearAndSemester(
 					lecturer.id, currentYear, semester)
 					.subscribe(classes => {
+						let observables: Observable<any>[] = [];
+
 						for (let c of classes) {
-							this.classes.set(c, {});
-
-							this.subjectService.getSubjectByClass(c.id)
-								.subscribe(subject =>
-									this.classes.get(c).subject = subject);
-
-							this.classroomService.getClassroomsByClass(c.id)
-								.subscribe(classrooms =>
-									this.classes.get(c).classrooms = classrooms);
-
-							this.groupService.getGroupsByClass(c.id)
-								.subscribe(groups =>
-									this.classes.get(c).groups = groups);
+							observables.push(Observable.forkJoin([
+									this.subjectService.getSubjectByClass(c.id),
+									this.classroomService.getClassroomsByClass(c.id),
+									this.groupService.getGroupsByClass(c.id)
+								],
+								(s: Subject, cr: Classroom[], g: Group[]): ClassInfo => {
+									return {
+										c: c,
+										subject: s,
+										classrooms: cr,
+										groups: g
+									};
+								}));
 						}
+
+						Observable.forkJoin(
+							observables,
+							(...args: ClassInfo[]): Map<Class, ClassInfo> => {
+								let tempClasses = new Map();
+
+								for (let arg of args) {
+									tempClasses.set(arg.c, arg);
+								}
+
+								return tempClasses;
+							})
+							.subscribe((tempClasses: Map<Class, ClassInfo>) =>
+								tempClasses.forEach(
+									(value, key) => this.classes.set(key, value)));
 					});
 			});
 	}
-	/*
-	getSortedClasses(): {
-		c: Class,
-		subject?: Subject,
-		classrooms?: Classroom[],
-		groups?: Group[] }[] {
-		let result: any[] = [];
-		for (let c of this.classes.keys()) {
 
-		}
-	}
-	*/
 	getCurrentGroupName = getCurrentGroupName;
 	getClassStart = getClassStart;
 	getClassEnd = getClassEnd;
