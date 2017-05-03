@@ -164,7 +164,7 @@ export function getFrequencyName(frequency: string): string {
 
 export function getLecturerInitials(lecturer: Lecturer): string {
 	return lecturer
-		? `${lecturer.lastName} ${lecturer.firstName[0]}. ${lecturer.middleName[0]}.`
+		? `${lecturer.lastName} ${lecturer.firstName[0]}.\xA0${lecturer.middleName[0]}.`
 		: "";
 }
 

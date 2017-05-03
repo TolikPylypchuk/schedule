@@ -119,9 +119,15 @@ export class LecturerComponent implements OnInit {
 												: day1 < day2 ? -1 : 0;
 
 											if (result === 0) {
-												result = c1.number < c1.number
+												result = c1.number > c2.number
 													? 1
-													: c1.number > c1.number ? -1 : 0;
+													: c1.number < c2.number ? -1 : 0;
+
+												if (result === 0) {
+													result = c1.frequency === getFrequencyName("NUMERATOR")
+														? -1
+														: 1;
+												}
 											}
 
 											return result;

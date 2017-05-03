@@ -1092,7 +1092,7 @@ module.exports = "<nav class=\"navbar navbar-toggleable-md navbar-light bg-faded
 /***/ 190:
 /***/ (function(module, exports) {
 
-module.exports = "<h1 class=\"text-center\">{{ currentGroup }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"!isLoaded; else loaded\">\r\n\t<p class=\"text-center my-3\">Завантаження...</p>\r\n</div>\r\n\r\n<ng-template #loaded>\r\n\t<div *ngIf=\"classes.length === 0; else classesExist\">\r\n\t\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n\t</div>\r\n\r\n\t<ng-template #classesExist>\r\n\t\t<table class=\"table table-bordered\">\r\n\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>День</th>\r\n\t\t\t\t\t<th># пари</th>\r\n\t\t\t\t\t<th>Час</th>\r\n\t\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t\t<th>Тип</th>\r\n\t\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t\t<th>Викладачі</th>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr *ngFor=\"let info of classes;\">\r\n\t\t\t\t\t<td>{{ info.day }}</td>\r\n\t\t\t\t\t<td>{{ info.number }}</td>\r\n\t\t\t\t\t<td>{{ info.start }} - {{ info.end }}</td>\r\n\t\t\t\t\t<td>{{ info.frequency }}</td>\r\n\t\t\t\t\t<td>{{ info.subject }}</td>\r\n\t\t\t\t\t<td>{{ info.type }}</td>\r\n\t\t\t\t\t<td>{{ info.classrooms }}</td>\r\n\t\t\t\t\t<td>{{ info.lecturers }}</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</ng-template>\r\n</ng-template>\r\n"
+module.exports = "<h1 class=\"text-center\">{{ currentGroup }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"!isLoaded; else loaded\">\r\n\t<p class=\"text-center my-3\">Завантаження...</p>\r\n</div>\r\n\r\n<ng-template #loaded>\r\n\t<div *ngIf=\"classes.length === 0; else classesExist\">\r\n\t\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n\t</div>\r\n\r\n\t<ng-template #classesExist>\r\n\t\t<table class=\"table table-bordered\">\r\n\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>День</th>\r\n\t\t\t\t\t<th>#&nbsp;пари</th>\r\n\t\t\t\t\t<th>Час</th>\r\n\t\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t\t<th>Тип</th>\r\n\t\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t\t<th>Викладачі</th>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr *ngFor=\"let info of classes;\">\r\n\t\t\t\t\t<td>{{ info.day }}</td>\r\n\t\t\t\t\t<td>{{ info.number }}</td>\r\n\t\t\t\t\t<td>{{ info.start }} - {{ info.end }}</td>\r\n\t\t\t\t\t<td>{{ info.frequency }}</td>\r\n\t\t\t\t\t<td>{{ info.subject }}</td>\r\n\t\t\t\t\t<td>{{ info.type }}</td>\r\n\t\t\t\t\t<td>{{ info.classrooms }}</td>\r\n\t\t\t\t\t<td>{{ info.lecturers }}</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</ng-template>\r\n</ng-template>\r\n"
 
 /***/ }),
 
@@ -1106,7 +1106,7 @@ module.exports = "<h1 class=\"text-center\">Розклад занять</h1>\r\n
 /***/ 192:
 /***/ (function(module, exports) {
 
-module.exports = "<h1 class=\"text-center\">{{ currentLecturer }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"!isLoaded; else loaded\">\r\n\t<p class=\"text-center my-3\">Завантаження...</p>\r\n</div>\r\n\r\n<ng-template #loaded>\r\n\t<div *ngIf=\"classes.length === 0; else classesExist\">\r\n\t\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n\t</div>\r\n\r\n\t<ng-template #classesExist>\r\n\t\t<table class=\"table table-bordered\">\r\n\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>День</th>\r\n\t\t\t\t\t<th># пари</th>\r\n\t\t\t\t\t<th>Час</th>\r\n\t\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t\t<th>Тип</th>\r\n\t\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t\t<th>Групи</th>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr *ngFor=\"let info of classes;\">\r\n\t\t\t\t\t<td>{{ info.day }}</td>\r\n\t\t\t\t\t<td>{{ info.number }}</td>\r\n\t\t\t\t\t<td>{{ info.start }} - {{ info.end }}</td>\r\n\t\t\t\t\t<td>{{ info.frequency }}</td>\r\n\t\t\t\t\t<td>{{ info.subject }}</td>\r\n\t\t\t\t\t<td>{{ info.type }}</td>\r\n\t\t\t\t\t<td>{{ info.classrooms }}</td>\r\n\t\t\t\t\t<td>{{ info.groups }}</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</ng-template>\r\n</ng-template>\r\n\r\n"
+module.exports = "<h1 class=\"text-center\">{{ currentLecturer }}</h1>\r\n<h2 class=\"text-center\">Розклад</h2>\r\n\r\n<div *ngIf=\"!isLoaded; else loaded\">\r\n\t<p class=\"text-center my-3\">Завантаження...</p>\r\n</div>\r\n\r\n<ng-template #loaded>\r\n\t<div *ngIf=\"classes.length === 0; else classesExist\">\r\n\t\t<p class=\"text-center my-3\">Жодної пари не поставлено.</p>\r\n\t</div>\r\n\r\n\t<ng-template #classesExist>\r\n\t\t<table class=\"table table-bordered\">\r\n\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>День</th>\r\n\t\t\t\t\t<th>#&nbsp;пари</th>\r\n\t\t\t\t\t<th>Час</th>\r\n\t\t\t\t\t<th>Проводиться</th>\r\n\t\t\t\t\t<th>Предмет</th>\r\n\t\t\t\t\t<th>Тип</th>\r\n\t\t\t\t\t<th>Аудиторії</th>\r\n\t\t\t\t\t<th>Групи</th>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr *ngFor=\"let info of classes;\">\r\n\t\t\t\t\t<td>{{ info.day }}</td>\r\n\t\t\t\t\t<td>{{ info.number }}</td>\r\n\t\t\t\t\t<td>{{ info.start }} - {{ info.end }}</td>\r\n\t\t\t\t\t<td>{{ info.frequency }}</td>\r\n\t\t\t\t\t<td>{{ info.subject }}</td>\r\n\t\t\t\t\t<td>{{ info.type }}</td>\r\n\t\t\t\t\t<td>{{ info.classrooms }}</td>\r\n\t\t\t\t\t<td>{{ info.groups }}</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</ng-template>\r\n</ng-template>\r\n\r\n"
 
 /***/ }),
 
@@ -1284,7 +1284,7 @@ function getFrequencyName(frequency) {
 }
 function getLecturerInitials(lecturer) {
     return lecturer
-        ? lecturer.lastName + " " + lecturer.firstName[0] + ". " + lecturer.middleName[0] + "."
+        ? lecturer.lastName + " " + lecturer.firstName[0] + ".\u00A0" + lecturer.middleName[0] + "."
         : "";
 }
 function getDayOfWeekName(day) {
@@ -1447,9 +1447,14 @@ var GroupComponent = (function () {
                                 ? 1
                                 : day1 < day2 ? -1 : 0;
                             if (result === 0) {
-                                result = c1.number < c1.number
+                                result = c1.number > c2.number
                                     ? 1
-                                    : c1.number > c1.number ? -1 : 0;
+                                    : c1.number < c2.number ? -1 : 0;
+                                if (result === 0) {
+                                    result = c1.frequency === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getFrequencyName */])("NUMERATOR")
+                                        ? -1
+                                        : 1;
+                                }
                             }
                             return result;
                         });
@@ -1695,9 +1700,14 @@ var LecturerComponent = (function () {
                                 ? 1
                                 : day1 < day2 ? -1 : 0;
                             if (result === 0) {
-                                result = c1.number < c1.number
+                                result = c1.number > c2.number
                                     ? 1
-                                    : c1.number > c1.number ? -1 : 0;
+                                    : c1.number < c2.number ? -1 : 0;
+                                if (result === 0) {
+                                    result = c1.frequency === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getFrequencyName */])("NUMERATOR")
+                                        ? -1
+                                        : 1;
+                                }
                             }
                             return result;
                         });
