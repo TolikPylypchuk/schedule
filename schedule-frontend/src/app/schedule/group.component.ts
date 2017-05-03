@@ -4,28 +4,37 @@ import { Observable } from "rxjs/Observable";
 
 import {
 	ClassService, ClassroomService, GroupService,
-	LecturerService, SubjectService,
+	LecturerService, SubjectService
+} from "../services/services";
+
+import {
 	getCurrentYear, getCurrentSemester,
 	getCurrentGroupName,
 	getClassStart, getClassEnd,
-	getDayOfWeekName, getFrequencyName,
+	getDayOfWeekName, getDayOfWeekNumber,
+	getFrequencyName, getClassType,
 	getLecturersString, getClassroomsString
-} from "../services/services";
+} from "../models/functions";
 
 import { Class, Classroom, Group, Lecturer, Subject } from "../models/models";
 
 interface ClassInfo {
-	c?: Class;
-	subject?: Subject;
-	classrooms?: Classroom[];
-	lecturers?: Lecturer[]
+	day: string;
+	number: number;
+	start: string;
+	end: string;
+	frequency: string;
+	subject: string;
+	type: string;
+	classrooms: string;
+	lecturers: string
 }
 
 @Component({
 	selector: "schedule-group",
-	templateUrl: "./schedule-group.component.html"
+	templateUrl: "./group.component.html"
 })
-export class ScheduleGroupComponent implements OnInit {
+export class GroupComponent implements OnInit {
 	private route: ActivatedRoute;
 	private router: Router;
 
@@ -35,8 +44,10 @@ export class ScheduleGroupComponent implements OnInit {
 	private lecturerService: LecturerService;
 	private subjectService: SubjectService;
 
-	private currentGroup: Group;
-	private classes: Map<Class, ClassInfo>;
+	private currentGroup: string;
+	private classes: ClassInfo[] = [];
+
+	isLoaded = false;
 
 	constructor(
 		route: ActivatedRoute,
@@ -54,8 +65,6 @@ export class ScheduleGroupComponent implements OnInit {
 		this.groupService = groupService;
 		this.lecturerService = lecturerService;
 		this.subjectService = subjectService;
-
-		this.classes = new Map();
 	}
 
 	ngOnInit(): void {
@@ -65,11 +74,11 @@ export class ScheduleGroupComponent implements OnInit {
 		this.route.params
 			.switchMap((params: Params) => this.groupService.getGroup(+params["id"]))
 			.subscribe((group: Group) => {
-				this.currentGroup = group;
+				this.currentGroup = getCurrentGroupName(group);
 
 				this.classService.getClassesByGroupAndYearAndSemester(
 					group.id, currentYear, semester)
-					.subscribe(classes => {
+					.subscribe((classes: Class[]) => {
 						let observables: Observable<any>[] = [];
 
 						for (let c of classes) {
@@ -80,37 +89,45 @@ export class ScheduleGroupComponent implements OnInit {
 								],
 								(s: Subject, cr: Classroom[], l: Lecturer[]): ClassInfo => {
 									return {
-										c: c,
-										subject: s,
-										classrooms: cr,
-										lecturers: l
+										day: getDayOfWeekName(c.dayOfWeek),
+										number: c.number,
+										start: getClassStart(c),
+										end: getClassEnd(c),
+										frequency: getFrequencyName(c.frequency),
+										subject: s.name,
+										type: getClassType(c.type),
+										classrooms: getClassroomsString(cr),
+										lecturers: getLecturersString(l)
 									};
 								}));
 						}
 
 						Observable.forkJoin(
 							observables,
-							(...args: ClassInfo[]): Map<Class, ClassInfo> => {
-								let tempClasses = new Map();
+							(...args: ClassInfo[]): ClassInfo[] => args)
+							.subscribe((tempClasses: ClassInfo[]) => {
+								tempClasses.sort(
+									(c1: ClassInfo, c2: ClassInfo) => {
+										const day1 = getDayOfWeekNumber(c1.day);
+										const day2 = getDayOfWeekNumber(c2.day);
 
-								for (let arg of args) {
-									tempClasses.set(arg.c, arg);
-								}
+										let result = day1 > day2
+											? 1
+											: day1 < day2 ? -1 : 0;
 
-								return tempClasses;
-							})
-							.subscribe((tempClasses: Map<Class, ClassInfo>) =>
-								tempClasses.forEach(
-									(value, key) => this.classes.set(key, value)));
+										if (result === 0) {
+											result = c1.number < c1.number
+												? 1
+												: c1.number > c1.number ? -1 : 0;
+										}
+
+										return result;
+									});
+
+								this.classes = tempClasses;
+								this.isLoaded = true;
+							});
 					});
 			});
 	}
-
-	getCurrentGroupName = getCurrentGroupName;
-	getClassStart = getClassStart;
-	getClassEnd = getClassEnd;
-	getDayOfWeekName = getDayOfWeekName;
-	getFrequencyName = getFrequencyName;
-	getLecturersString = getLecturersString;
-	getClassroomsString = getClassroomsString;
 }

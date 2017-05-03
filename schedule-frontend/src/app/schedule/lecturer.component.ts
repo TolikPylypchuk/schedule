@@ -4,29 +4,37 @@ import { Observable } from "rxjs/Observable";
 
 import {
 	ClassService, ClassroomService, GroupService,
-	LecturerService, SubjectService,
-	getCurrentYear, getCurrentSemester,
-	getCurrentGroupName,
-	getClassStart, getClassEnd,
-	getDayOfWeekName, getFrequencyName,
-	getGroupsString, getClassroomsString,
-	getLecturerInitials
+	LecturerService, SubjectService
 } from "../services/services";
+
+import {
+	getCurrentYear, getCurrentSemester,
+	getLecturerInitials,
+	getClassStart, getClassEnd,
+	getDayOfWeekName, getDayOfWeekNumber,
+	getFrequencyName, getClassType,
+	getGroupsString, getClassroomsString
+} from "../models/functions";
 
 import { Class, Classroom, Group, Lecturer, Subject } from "../models/models";
 
 interface ClassInfo {
-	c?: Class;
-	subject?: Subject;
-	classrooms?: Classroom[];
-	groups?: Group[]
+	day: string;
+	number: number;
+	start: string;
+	end: string;
+	frequency: string;
+	subject: string;
+	type: string;
+	classrooms: string;
+	groups: string
 }
 
 @Component({
 	selector: "schedule-lecturer",
-	templateUrl: "./schedule-lecturer.component.html"
+	templateUrl: "./lecturer.component.html"
 })
-export class ScheduleLecturerComponent implements OnInit {
+export class LecturerComponent implements OnInit {
 	private route: ActivatedRoute;
 	private router: Router;
 
@@ -36,8 +44,10 @@ export class ScheduleLecturerComponent implements OnInit {
 	private lecturerService: LecturerService;
 	private subjectService: SubjectService;
 
-	private currentLecturer: Lecturer;
-	private classes: Map<Class, ClassInfo>;
+	private currentLecturer: string;
+	private classes: ClassInfo[] = [];
+
+	isLoaded = false;
 
 	constructor(
 		route: ActivatedRoute,
@@ -55,8 +65,6 @@ export class ScheduleLecturerComponent implements OnInit {
 		this.groupService = groupService;
 		this.lecturerService = lecturerService;
 		this.subjectService = subjectService;
-
-		this.classes = new Map();
 	}
 
 	ngOnInit(): void {
@@ -66,11 +74,11 @@ export class ScheduleLecturerComponent implements OnInit {
 		this.route.params
 			.switchMap((params: Params) => this.lecturerService.getLecturer(+params["id"]))
 			.subscribe((lecturer: Lecturer) => {
-				this.currentLecturer = lecturer;
+				this.currentLecturer = getLecturerInitials(lecturer);
 
 				this.classService.getClassesByLecturerAndYearAndSemester(
 					lecturer.id, currentYear, semester)
-					.subscribe(classes => {
+					.subscribe((classes: Class[]) => {
 						let observables: Observable<any>[] = [];
 
 						for (let c of classes) {
@@ -81,38 +89,45 @@ export class ScheduleLecturerComponent implements OnInit {
 								],
 								(s: Subject, cr: Classroom[], g: Group[]): ClassInfo => {
 									return {
-										c: c,
-										subject: s,
-										classrooms: cr,
-										groups: g
+										day: getDayOfWeekName(c.dayOfWeek),
+										number: c.number,
+										start: getClassStart(c),
+										end: getClassEnd(c),
+										frequency: getFrequencyName(c.frequency),
+										subject: s.name,
+										type: getClassType(c.type),
+										classrooms: getClassroomsString(cr),
+										groups: getGroupsString(g)
 									};
 								}));
 						}
 
 						Observable.forkJoin(
 							observables,
-							(...args: ClassInfo[]): Map<Class, ClassInfo> => {
-								let tempClasses = new Map();
+							(...args: ClassInfo[]): ClassInfo[] => args)
+							.subscribe((tempClasses: ClassInfo[]) => {
+								tempClasses.sort(
+									(c1: ClassInfo, c2: ClassInfo) => {
+										const day1 = getDayOfWeekNumber(c1.day);
+										const day2 = getDayOfWeekNumber(c2.day);
 
-								for (let arg of args) {
-									tempClasses.set(arg.c, arg);
-								}
+										let result = day1 > day2
+											? 1
+											: day1 < day2 ? -1 : 0;
 
-								return tempClasses;
-							})
-							.subscribe((tempClasses: Map<Class, ClassInfo>) =>
-								tempClasses.forEach(
-									(value, key) => this.classes.set(key, value)));
+										if (result === 0) {
+											result = c1.number < c1.number
+												? 1
+												: c1.number > c1.number ? -1 : 0;
+										}
+
+										return result;
+									});
+
+								this.classes = tempClasses;
+								this.isLoaded = true;
+							});
 					});
 			});
 	}
-
-	getCurrentGroupName = getCurrentGroupName;
-	getClassStart = getClassStart;
-	getClassEnd = getClassEnd;
-	getDayOfWeekName = getDayOfWeekName;
-	getFrequencyName = getFrequencyName;
-	getGroupsString = getGroupsString;
-	getClassroomsString = getClassroomsString;
-	getLecturerInitials = getLecturerInitials;
 }

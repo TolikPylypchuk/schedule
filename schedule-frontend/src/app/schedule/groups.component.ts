@@ -2,16 +2,20 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import {
-	GroupService, FacultyService, getCurrentGroupCourse, getCurrentGroupName
+	GroupService, FacultyService
 } from "../services/services";
+
+import {
+	getCurrentGroupCourse, getCurrentGroupName
+} from "../models/functions";
 
 import { Faculty, Group } from "../models/models";
 
 @Component({
-	selector: "schedule-start",
-	templateUrl: "./start.component.html"
+	selector: "schedule-groups",
+	templateUrl: "./groups.component.html"
 })
-export class StartComponent implements OnInit {
+export class GroupsComponent implements OnInit {
 	private router: Router;
 	private facultyService: FacultyService;
 	private groupService: GroupService;
@@ -31,12 +35,13 @@ export class StartComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.facultyService.getFaculties()
-			.subscribe(faculties => {
+			.subscribe((faculties: Faculty[]) => {
+				faculties.sort((f1, f2) => f1.name.localeCompare(f2.name));
 				this.faculties = faculties;
 
 				for (let faculty of faculties) {
 					this.groupService.getGroupsByFaculty(faculty.id)
-						.subscribe(groups => {
+						.subscribe((groups: Group[]) => {
 							this.groups.set(faculty.id, groups);
 						});
 				}
@@ -47,11 +52,13 @@ export class StartComponent implements OnInit {
 		return this.groups.has(facultyId)
 			? this.groups.get(facultyId)
 				.filter(g => getCurrentGroupCourse(g) === course)
+				.sort((g1, g2) =>
+					getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2)))
 			: [];
 	}
 
 	navigateToGroup(groupId: number): void {
-		this.router.navigate([ "/schedule-group", groupId ]);
+		this.router.navigate([ "/schedule/group", groupId ]);
 	}
 
 	getCurrentGroupName = getCurrentGroupName;

@@ -1,10 +1,6 @@
-import { Response } from "@angular/http";
-import { Observable } from "rxjs/Observable";
-import { ErrorObservable } from "rxjs/Observable/ErrorObservable";
-
 import {
 	Class, Classroom, Group, Lecturer
-} from "../models/models";
+} from "./models";
 
 export function getCurrentYear(): number {
 	const now = new Date();
@@ -130,6 +126,24 @@ export function getClassEnd(c: Class): string {
 	return result;
 }
 
+export function getClassType(type: string) {
+	let name = "";
+
+	switch (type.toLowerCase()) {
+		case "lecture":
+			name = "Лекція";
+			break;
+		case "practice":
+			name = "Практична";
+			break;
+		case "lab":
+			name = "Лабораторна";
+			break;
+	}
+
+	return name;
+}
+
 export function getFrequencyName(frequency: string): string {
 	let name = "";
 
@@ -178,6 +192,35 @@ export function getDayOfWeekName(day: string): string {
 	return name;
 }
 
+export function getDayOfWeekNumber(day: string): number {
+	let num = 0;
+
+	switch (day.toLowerCase()) {
+		case "monday":
+		case "понеділок":
+			num = 1;
+			break;
+		case "tuesday":
+		case "вівторок":
+			num = 2;
+			break;
+		case "wednesday":
+		case "середа":
+			num = 3;
+			break;
+		case "thursday":
+		case "четвер":
+			num = 4;
+			break;
+		case "friday":
+		case "п'ятниця":
+			num = 5;
+			break;
+	}
+
+	return num;
+}
+
 export function getClassroomsString(classrooms: Classroom[]): string {
 	return classrooms
 		? classrooms.reduce(
@@ -202,20 +245,4 @@ export function getGroupsString(groups: Group[]): string {
 				`${result}, ${getCurrentGroupName(group)}`,
 			"").substr(2)
 		: "";
-}
-
-export function handleError(error: Response | any): ErrorObservable {
-	let message: string;
-
-	if (error instanceof Response) {
-		const body = error.json() || "";
-		const err = body.error || JSON.stringify(body);
-		message = `${error.status} - ${error.statusText || ""} ${err}`;
-	} else {
-		message = error.message ? error.message : error.toString();
-	}
-
-	console.error(message);
-
-	return Observable.throw(message);
 }

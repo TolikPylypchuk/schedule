@@ -17,12 +17,19 @@ public class Class implements Serializable {
 		DENOMINATOR
 	}
 	
+	public enum Type {
+		LECTURE,
+		PRACTICE,
+		LAB
+	}
+	
 	private Integer id;
 	private int number;
 	private DayOfWeek dayOfWeek;
 	private Frequency frequency;
 	private int year;
 	private Semester semester;
+	private Type type;
 	
 	@JsonIgnore
 	private Set<Group> groups;
@@ -56,7 +63,7 @@ public class Class implements Serializable {
 	}
 	
 	@Column(name = "day_of_week", nullable = false)
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	public DayOfWeek getDayOfWeek() {
 		return this.dayOfWeek;
 	}
@@ -66,7 +73,7 @@ public class Class implements Serializable {
 	}
 	
 	@Column(name = "frequency", nullable = false)
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	public Frequency getFrequency() {
 		return this.frequency;
 	}
@@ -92,6 +99,16 @@ public class Class implements Serializable {
 	
 	public void setSemester(Semester semester) {
 		this.semester = semester;
+	}
+	
+	@Column(name = "type")
+	@Enumerated(EnumType.STRING)
+	public Type getType() {
+		return this.type;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)

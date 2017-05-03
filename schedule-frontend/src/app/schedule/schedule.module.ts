@@ -2,22 +2,22 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { HttpModule } from "@angular/http";
 
-import { ScheduleRoutesModule } from "./schedule-routes.module";
+import { RoutesModule } from "./routes.module";
 
-import { StartComponent } from "./start.component";
-import { ScheduleGroupComponent } from "./schedule-group.component";
-import { ScheduleLecturerComponent } from "./schedule-lecturer.component";
+import { GroupsComponent } from "./groups.component";
+import { GroupComponent } from "./group.component";
+import { LecturerComponent } from "./lecturer.component";
 
 @NgModule({
 	declarations: [
-		StartComponent,
-		ScheduleGroupComponent,
-		ScheduleLecturerComponent
+		GroupsComponent,
+		GroupComponent,
+		LecturerComponent
 	],
 	imports: [
 		BrowserModule,
 		HttpModule,
-		ScheduleRoutesModule
+		RoutesModule
 	]
 })
 export class ScheduleModule { }
