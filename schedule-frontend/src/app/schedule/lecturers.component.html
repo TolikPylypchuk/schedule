@@ -1,0 +1,19 @@
+<h1 class="text-center">Розклад занять</h1>
+
+<div class="card card-block m-3 p-2" *ngFor="let faculty of faculties">
+	<button class="btn btn-outline-primary" type="button"
+	        data-toggle="collapse"
+	        [attr.data-target]="'#collapse' + faculty.id"
+	        aria-expanded="false"
+	        [attr.aria-controls]="'collapse' + faculty.id">
+		{{ faculty.name }}
+	</button>
+	<div class="collapse" id="collapse{{ faculty.id }}">
+		<div class="card card-block m-1 p-1" *ngFor="let lecturer of lecturers.get(faculty.id)">
+			<button class="btn btn-outline-primary"
+			        (click)="navigateToLecturer(lecturer.id)">
+				{{ lecturer.lastName }} {{ lecturer.firstName }} {{ lecturer.middleName }}
+			</button>
+		</div>
+	</div>
+</div>

@@ -29,6 +29,14 @@ export class LecturerService {
 					: null);
 	}
 
+	getLecturersByFaculty(facultyId: number): Observable<Lecturer[]> {
+		return this.http.get(`api/lecturers/facultyId/${facultyId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Lecturer[]
+					: null);
+	}
+
 	getLecturersBySubject(subjectId: number): Observable<Lecturer[]> {
 		return this.http.get(`api/lecturers/subjectId/${subjectId}`)
 			.map(response =>

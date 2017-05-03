@@ -62,6 +62,12 @@ public class LecturerController {
 		return lecturer;
 	}
 	
+	@RequestMapping(value = "/facultyId/{facultyId}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<Lecturer> getByFaculty(
+		@PathVariable("facultyId") int facultyId) {
+		return this.lecturers.findAllByFaculty_Id(facultyId);
+	}
+	
 	@RequestMapping(value = "/subjectId/{subjectId}", method = RequestMethod.GET)
 	public @ResponseBody Iterable<Lecturer> getBySubject(
 		@PathVariable("subjectId") int subjectId) {

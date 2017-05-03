@@ -34,7 +34,7 @@ public class Group implements Serializable {
 		this.id = id;
 	}
 	
-	@Column(name = "name", unique = true, nullable = false, length = 10)
+	@Column(name = "name", nullable = false, length = 10)
 	public String getName() {
 		return this.name;
 	}

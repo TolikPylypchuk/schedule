@@ -101,7 +101,7 @@ public class Class implements Serializable {
 		this.semester = semester;
 	}
 	
-	@Column(name = "type")
+	@Column(name = "type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	public Type getType() {
 		return this.type;

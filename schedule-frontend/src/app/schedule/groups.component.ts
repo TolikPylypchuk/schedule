@@ -42,6 +42,8 @@ export class GroupsComponent implements OnInit {
 				for (let faculty of faculties) {
 					this.groupService.getGroupsByFaculty(faculty.id)
 						.subscribe((groups: Group[]) => {
+							groups.sort((g1, g2) =>
+								getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2)));
 							this.groups.set(faculty.id, groups);
 						});
 				}
@@ -52,8 +54,6 @@ export class GroupsComponent implements OnInit {
 		return this.groups.has(facultyId)
 			? this.groups.get(facultyId)
 				.filter(g => getCurrentGroupCourse(g) === course)
-				.sort((g1, g2) =>
-					getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2)))
 			: [];
 	}
 

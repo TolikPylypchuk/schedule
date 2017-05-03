@@ -1,7 +1,7 @@
 <h1 class="text-center">Розклад занять</h1>
 
-<div class="card card-block" *ngFor="let faculty of faculties">
-	<button class="btn btn-secondary mb-3" type="button"
+<div class="card card-block m-3 p-2" *ngFor="let faculty of faculties">
+	<button class="btn btn-outline-primary" type="button"
 	        data-toggle="collapse"
 	        [attr.data-target]="'#collapse' + faculty.id"
 	        aria-expanded="false"
@@ -10,8 +10,8 @@
 	</button>
 
 	<div class="collapse" id="collapse{{ faculty.id }}">
-		<div class="card card-block" *ngFor="let course of [ 1, 2, 3, 4, 5, 6 ]">
-			<button class="btn btn-secondary mb-3" type="button"
+		<div class="card card-block m-2 p-1" *ngFor="let course of [ 1, 2, 3, 4, 5, 6 ]">
+			<button class="btn btn-outline-primary" type="button"
 			        data-toggle="collapse" aria-expanded="false"
 			        [attr.data-target]="'#collapse' + faculty.id + course"
 			        [attr.aria-controls]="'collapse' + faculty.id + course">
@@ -19,8 +19,8 @@
 			</button>
 
 			<div class="collapse" id="collapse{{ faculty.id }}{{ course }}">
-				<div class="card card-block" *ngFor="let group of getGroups(faculty.id, course)">
-					<button class="btn btn-secondary mb-3"
+				<div class="card m-1 p-1" *ngFor="let group of getGroups(faculty.id, course)">
+					<button class="btn btn-outline-primary"
 					        (click)="navigateToGroup(group.id)">
 						{{ getCurrentGroupName(group) }}
 					</button>

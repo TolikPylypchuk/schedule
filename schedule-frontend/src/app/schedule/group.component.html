@@ -6,7 +6,7 @@
 </div>
 
 <ng-template #loaded>
-	<div *ngIf="classes.size === 0; else classesExist">
+	<div *ngIf="classes.length === 0; else classesExist">
 		<p class="text-center my-3">Жодної пари не поставлено.</p>
 	</div>
 

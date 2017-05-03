@@ -17,6 +17,9 @@ public class Lecturer implements Serializable {
 	private String position;
 	
 	@JsonIgnore
+	private Faculty faculty;
+	
+	@JsonIgnore
 	private Set<Subject> subjects;
 	
 	@JsonIgnore
@@ -69,6 +72,16 @@ public class Lecturer implements Serializable {
 	
 	public void setPosition(String position) {
 		this.position = position;
+	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "faculty", nullable = false)
+	public Faculty getFaculty() {
+		return this.faculty;
+	}
+	
+	public void setFaculty(Faculty faculty) {
+		this.faculty = faculty;
 	}
 	
 	@ManyToMany(fetch = FetchType.LAZY)

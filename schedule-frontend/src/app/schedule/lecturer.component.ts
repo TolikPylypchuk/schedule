@@ -81,52 +81,56 @@ export class LecturerComponent implements OnInit {
 					.subscribe((classes: Class[]) => {
 						let observables: Observable<any>[] = [];
 
-						for (let c of classes) {
-							observables.push(Observable.forkJoin([
-									this.subjectService.getSubjectByClass(c.id),
-									this.classroomService.getClassroomsByClass(c.id),
-									this.groupService.getGroupsByClass(c.id)
-								],
-								(s: Subject, cr: Classroom[], g: Group[]): ClassInfo => {
-									return {
-										day: getDayOfWeekName(c.dayOfWeek),
-										number: c.number,
-										start: getClassStart(c),
-										end: getClassEnd(c),
-										frequency: getFrequencyName(c.frequency),
-										subject: s.name,
-										type: getClassType(c.type),
-										classrooms: getClassroomsString(cr),
-										groups: getGroupsString(g)
-									};
-								}));
-						}
+						if (classes.length === 0) {
+							this.isLoaded = true;
+						} else {
+							for (let c of classes) {
+								observables.push(Observable.forkJoin([
+										this.subjectService.getSubjectByClass(c.id),
+										this.classroomService.getClassroomsByClass(c.id),
+										this.groupService.getGroupsByClass(c.id)
+									],
+									(s: Subject, cr: Classroom[], g: Group[]): ClassInfo => {
+										return {
+											day: getDayOfWeekName(c.dayOfWeek),
+											number: c.number,
+											start: getClassStart(c),
+											end: getClassEnd(c),
+											frequency: getFrequencyName(c.frequency),
+											subject: s.name,
+											type: getClassType(c.type),
+											classrooms: getClassroomsString(cr),
+											groups: getGroupsString(g)
+										};
+									}));
+							}
 
-						Observable.forkJoin(
-							observables,
-							(...args: ClassInfo[]): ClassInfo[] => args)
-							.subscribe((tempClasses: ClassInfo[]) => {
-								tempClasses.sort(
-									(c1: ClassInfo, c2: ClassInfo) => {
-										const day1 = getDayOfWeekNumber(c1.day);
-										const day2 = getDayOfWeekNumber(c2.day);
+							Observable.forkJoin(
+								observables,
+								(...args: ClassInfo[]): ClassInfo[] => args)
+								.subscribe((tempClasses: ClassInfo[]) => {
+									tempClasses.sort(
+										(c1: ClassInfo, c2: ClassInfo) => {
+											const day1 = getDayOfWeekNumber(c1.day);
+											const day2 = getDayOfWeekNumber(c2.day);
 
-										let result = day1 > day2
-											? 1
-											: day1 < day2 ? -1 : 0;
-
-										if (result === 0) {
-											result = c1.number < c1.number
+											let result = day1 > day2
 												? 1
-												: c1.number > c1.number ? -1 : 0;
-										}
+												: day1 < day2 ? -1 : 0;
 
-										return result;
-									});
+											if (result === 0) {
+												result = c1.number < c1.number
+													? 1
+													: c1.number > c1.number ? -1 : 0;
+											}
 
-								this.classes = tempClasses;
-								this.isLoaded = true;
-							});
+											return result;
+										});
+
+									this.classes = tempClasses;
+									this.isLoaded = true;
+								});
+						}
 					});
 			});
 	}
