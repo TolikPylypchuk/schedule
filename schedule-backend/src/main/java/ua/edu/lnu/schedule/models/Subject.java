@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Subject implements Serializable {
 	private Integer id;
 	private String name;
-	private String type;
 
 	@JsonIgnore
 	private ClassroomType classroom_type;
@@ -44,11 +43,6 @@ public class Subject implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	@Column(name = "type", length = 20, nullable = false)
-	public String getType() { return this.type; }
-
-	public void setType(String type) { this.type = type; }
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "classroom_type", nullable = false)
