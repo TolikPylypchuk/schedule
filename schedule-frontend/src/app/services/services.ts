@@ -2,6 +2,7 @@ import { Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/Observable/ErrorObservable";
 
+import { AuthService } from "./auth.service";
 import { BuildingService } from "./building.service";
 import { ClassService } from "./class.service";
 import { ClassroomService } from "./classroom.service";
@@ -29,6 +30,7 @@ export function handleError(error: Response | any): ErrorObservable {
 }
 
 export {
+	AuthService,
 	BuildingService,
 	ClassService,
 	ClassroomService,

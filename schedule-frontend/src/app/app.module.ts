@@ -21,6 +21,7 @@ import * as services from "./services/services";
 	    RoutesModule
     ],
     providers: [
+    	services.AuthService,
 	    services.BuildingService,
         services.ClassService,
         services.ClassroomService,

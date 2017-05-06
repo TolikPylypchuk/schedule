@@ -74,15 +74,16 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_5__routes_module__["a" /* RoutesModule */]
         ],
         providers: [
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["a" /* BuildingService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["b" /* ClassService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["c" /* ClassroomService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["d" /* FacultyService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["e" /* GroupService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["f" /* LecturerService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["g" /* PlanService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["h" /* SubjectService */],
-            __WEBPACK_IMPORTED_MODULE_7__services_services__["i" /* WishService */]
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["a" /* AuthService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["b" /* BuildingService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["c" /* ClassService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["d" /* ClassroomService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["e" /* FacultyService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["f" /* GroupService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["g" /* LecturerService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["h" /* PlanService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["i" /* SubjectService */],
+            __WEBPACK_IMPORTED_MODULE_7__services_services__["j" /* WishService */]
         ],
         bootstrap: [
             __WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */]
@@ -242,7 +243,7 @@ var BuildingService = (function () {
                 ? response.json()
                 : null;
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     BuildingService.prototype.getBuilding = function (id) {
         return this.http.get("api/buildings/" + id)
@@ -251,23 +252,23 @@ var BuildingService = (function () {
                 ? response.json()
                 : null;
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     BuildingService.prototype.addBuilding = function (building) {
         return this.http.post("api/buildings/", JSON.stringify(building), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     BuildingService.prototype.updateBuilding = function (building) {
         return this.http.put("api/buildings/" + building.id, JSON.stringify(building), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     BuildingService.prototype.deleteBuilding = function (building) {
         return this.http.delete("api/buildings/" + building.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return BuildingService;
 }());
@@ -389,17 +390,17 @@ var ClassService = (function () {
         return this.http.post("api/cs/", JSON.stringify(c), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     ClassService.prototype.updateClass = function (c) {
         return this.http.put("api/cs/" + c.id, JSON.stringify(c), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     ClassService.prototype.deleteClass = function (c) {
         return this.http.delete("api/cs/" + c.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return ClassService;
 }());
@@ -489,17 +490,17 @@ var ClassroomService = (function () {
         return this.http.post("api/classrooms/", JSON.stringify(classroom), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     ClassroomService.prototype.updateClassroom = function (classroom) {
         return this.http.put("api/classrooms/" + classroom.id, JSON.stringify(classroom), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     ClassroomService.prototype.deleteClassroom = function (classroom) {
         return this.http.delete("api/classrooms/" + classroom.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return ClassroomService;
 }());
@@ -557,17 +558,17 @@ var FacultyService = (function () {
         return this.http.post("api/faculties/", JSON.stringify(faculty), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     FacultyService.prototype.updateFaculty = function (faculty) {
         return this.http.put("api/faculties/" + faculty.id, JSON.stringify(faculty), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     FacultyService.prototype.deleteFaculty = function (faculty) {
         return this.http.delete("api/faculties/" + faculty.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return FacultyService;
 }());
@@ -673,17 +674,17 @@ var GroupService = (function () {
         return this.http.post("api/groups/", JSON.stringify(group), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     GroupService.prototype.updateGroup = function (group) {
         return this.http.put("api/groups/" + group.id, JSON.stringify(group), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     GroupService.prototype.deleteGroup = function (group) {
         return this.http.delete("api/groups/" + group.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return GroupService;
 }());
@@ -773,17 +774,17 @@ var LecturerService = (function () {
         return this.http.post("api/lecturers/", JSON.stringify(lecturer), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     LecturerService.prototype.updateLecturer = function (lecturer) {
         return this.http.put("api/lecturers/" + lecturer.id, JSON.stringify(lecturer), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     LecturerService.prototype.deleteLecturer = function (lecturer) {
         return this.http.delete("api/lecturers/" + lecturer.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return LecturerService;
 }());
@@ -873,17 +874,17 @@ var PlanService = (function () {
         return this.http.post("api/plans/", JSON.stringify(plan), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     PlanService.prototype.updatePlan = function (plan) {
         return this.http.put("api/plans/" + plan.id, JSON.stringify(plan), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     PlanService.prototype.deletePlan = function (plan) {
         return this.http.delete("api/plans/" + plan.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return PlanService;
 }());
@@ -957,17 +958,17 @@ var SubjectService = (function () {
         return this.http.post("api/subjects/", JSON.stringify(subject), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     SubjectService.prototype.updateSubject = function (subject) {
         return this.http.put("api/subjects/" + subject.id, JSON.stringify(subject), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     SubjectService.prototype.deleteSubject = function (subject) {
         return this.http.delete("api/subjects/" + subject.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return SubjectService;
 }());
@@ -1041,17 +1042,17 @@ var WishService = (function () {
         return this.http.post("api/wishes/", JSON.stringify(wish), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     WishService.prototype.updateWish = function (wish) {
         return this.http.put("api/wishes/" + wish.id, JSON.stringify(wish), {
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Headers */]({ "Content-Type": "application/json" })
         })
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     WishService.prototype.deleteWish = function (wish) {
         return this.http.delete("api/wishes/" + wish.id)
-            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["j" /* handleError */]);
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
     };
     return WishService;
 }());
@@ -1122,6 +1123,58 @@ module.exports = "<h1 class=\"text-center\">Розклад занять</h1>\r\n
 
 module.exports = __webpack_require__(95);
 
+
+/***/ }),
+
+/***/ 233:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services__ = __webpack_require__(4);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthService; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var AuthService = (function () {
+    function AuthService(http) {
+        this.clientId = "233668646673605";
+        this.clientSecret = "33b17e044ee6a4fa383f46ec6e28ea1d";
+        this.http = http;
+    }
+    AuthService.prototype.login = function (username, password) {
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["e" /* URLSearchParams */]();
+        params.set("username", username);
+        params.set("password", password);
+        params.set("client_id", this.clientId);
+        params.set("client_secret", this.clientSecret);
+        params.set("grant_type", "password");
+        return this.http.get("https://graph.facebook.com/oauth/access_token", { params: params })
+            .map(function (response) { return response.json(); })
+            .catch(__WEBPACK_IMPORTED_MODULE_2__services__["k" /* handleError */]);
+    };
+    AuthService.prototype.logout = function () {
+        localStorage.removeItem('token');
+    };
+    return AuthService;
+}());
+AuthService = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["c" /* Injectable */])(),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */]) === "function" && _a || Object])
+], AuthService);
+
+var _a;
+//# sourceMappingURL=auth.service.js.map
 
 /***/ }),
 
@@ -1472,7 +1525,7 @@ GroupComponent = __decorate([
         selector: "schedule-group",
         template: __webpack_require__(190)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */]) === "function" && _g || Object])
 ], GroupComponent);
 
 var _a, _b, _c, _d, _e, _f, _g;
@@ -1547,7 +1600,7 @@ GroupsComponent = __decorate([
         selector: "schedule-groups",
         template: __webpack_require__(191)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["d" /* FacultyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["d" /* FacultyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* GroupService */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* FacultyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* FacultyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* GroupService */]) === "function" && _c || Object])
 ], GroupsComponent);
 
 var _a, _b, _c;
@@ -1562,25 +1615,28 @@ var _a, _b, _c;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_http__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__building_service__ = __webpack_require__(112);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__class_service__ = __webpack_require__(113);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__classroom_service__ = __webpack_require__(114);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__faculty_service__ = __webpack_require__(115);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__group_service__ = __webpack_require__(116);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__lecturer_service__ = __webpack_require__(117);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__plan_service__ = __webpack_require__(118);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__subject_service__ = __webpack_require__(119);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__wish_service__ = __webpack_require__(120);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_2__building_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_3__class_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_4__classroom_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_5__faculty_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __WEBPACK_IMPORTED_MODULE_6__group_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return __WEBPACK_IMPORTED_MODULE_7__lecturer_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return __WEBPACK_IMPORTED_MODULE_8__plan_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return __WEBPACK_IMPORTED_MODULE_9__subject_service__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return __WEBPACK_IMPORTED_MODULE_10__wish_service__["a"]; });
-/* harmony export (immutable) */ __webpack_exports__["j"] = handleError;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__auth_service__ = __webpack_require__(233);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__building_service__ = __webpack_require__(112);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__class_service__ = __webpack_require__(113);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__classroom_service__ = __webpack_require__(114);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__faculty_service__ = __webpack_require__(115);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__group_service__ = __webpack_require__(116);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__lecturer_service__ = __webpack_require__(117);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__plan_service__ = __webpack_require__(118);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__subject_service__ = __webpack_require__(119);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__wish_service__ = __webpack_require__(120);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_2__auth_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_3__building_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_4__class_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_5__classroom_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __WEBPACK_IMPORTED_MODULE_6__faculty_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return __WEBPACK_IMPORTED_MODULE_7__group_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return __WEBPACK_IMPORTED_MODULE_8__lecturer_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return __WEBPACK_IMPORTED_MODULE_9__plan_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return __WEBPACK_IMPORTED_MODULE_10__subject_service__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return __WEBPACK_IMPORTED_MODULE_11__wish_service__["a"]; });
+/* harmony export (immutable) */ __webpack_exports__["k"] = handleError;
+
 
 
 
@@ -1725,7 +1781,7 @@ LecturerComponent = __decorate([
         selector: "schedule-lecturer",
         template: __webpack_require__(192)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */]) === "function" && _g || Object])
 ], LecturerComponent);
 
 var _a, _b, _c, _d, _e, _f, _g;
@@ -1798,7 +1854,7 @@ LecturersComponent = __decorate([
         selector: "schedule-lecturers",
         template: __webpack_require__(193)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["d" /* FacultyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["d" /* FacultyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["f" /* LecturerService */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* FacultyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["e" /* FacultyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_services__["g" /* LecturerService */]) === "function" && _c || Object])
 ], LecturersComponent);
 
 var _a, _b, _c;
