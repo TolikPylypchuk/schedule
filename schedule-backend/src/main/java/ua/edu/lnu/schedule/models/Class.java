@@ -24,22 +24,25 @@ public class Class implements Serializable {
 	}
 	
 	private Integer id;
-	private int number;
 	private DayOfWeek dayOfWeek;
+	private int number;
 	private Frequency frequency;
+	private Type type;
 	private int year;
 	private Semester semester;
-	private Type type;
-	
+
 	@JsonIgnore
-	private Set<Group> groups;
+	private ClassroomType classroom_type;
 	
 	@JsonIgnore
 	private Subject subject;
 	
 	@JsonIgnore
 	private Set<Classroom> classrooms;
-	
+
+	@JsonIgnore
+	private Set<Group> groups;
+
 	@JsonIgnore
 	private Set<Lecturer> lecturers;
 	
@@ -52,16 +55,6 @@ public class Class implements Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
-	@Column(name = "number", nullable = false)
-	public int getNumber() {
-		return this.number;
-	}
-	
-	public void setNumber(int number) {
-		this.number = number;
-	}
-	
 	@Column(name = "day_of_week", nullable = false)
 	@Enumerated(EnumType.STRING)
 	public DayOfWeek getDayOfWeek() {
@@ -71,7 +64,16 @@ public class Class implements Serializable {
 	public void setDayOfWeek(DayOfWeek dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
 	}
-	
+
+	@Column(name = "number", nullable = false)
+	public int getNumber() {
+		return this.number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
 	@Column(name = "frequency", nullable = false)
 	@Enumerated(EnumType.STRING)
 	public Frequency getFrequency() {
@@ -81,36 +83,46 @@ public class Class implements Serializable {
 	public void setFrequency(Frequency frequency) {
 		this.frequency = frequency;
 	}
-	
-	@Column(name = "year", nullable = false)
-	public int getYear() {
-		return this.year;
-	}
-	
-	public void setYear(int year) {
-		this.year = year;
-	}
-	
-	@Column(name = "semester", nullable = false)
-	@Enumerated(EnumType.STRING)
-	public Semester getSemester() {
-		return this.semester;
-	}
-	
-	public void setSemester(Semester semester) {
-		this.semester = semester;
-	}
-	
+
 	@Column(name = "type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	public Type getType() {
 		return this.type;
 	}
-	
+
 	public void setType(Type type) {
 		this.type = type;
 	}
-	
+
+	@Column(name = "year", nullable = false)
+	public int getYear() {
+		return this.year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	@Column(name = "semester", nullable = false)
+	@Enumerated(EnumType.STRING)
+	public Semester getSemester() {
+		return this.semester;
+	}
+
+	public void setSemester(Semester semester) {
+		this.semester = semester;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "classroom_type", nullable = false)
+	public ClassroomType getClassroom_type() {
+		return this.classroom_type;
+	}
+
+	public void setClassroom_type(ClassroomType classroom_type) {
+		this.classroom_type = classroom_type;
+	}
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_group",
