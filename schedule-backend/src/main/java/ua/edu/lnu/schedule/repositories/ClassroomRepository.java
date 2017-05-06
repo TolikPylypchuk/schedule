@@ -11,5 +11,5 @@ public interface ClassroomRepository extends CrudRepository<Classroom, Integer> 
 	List<Classroom> findAllByClassesContaining(Class c);
 	List<Classroom> findAllByBuilding_Id(Integer id);
 	List<Classroom> findAllByCapacityIsLessThanEqual(int capacity);
-	List<Classroom> findAllByType(String type);
+	List<Classroom> findAllByType_Id(Integer id);
 }

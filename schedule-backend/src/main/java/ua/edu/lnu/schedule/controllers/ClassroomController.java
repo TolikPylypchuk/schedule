@@ -9,17 +9,20 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.Classroom;
+import ua.edu.lnu.schedule.models.ClassroomType;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
+import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
 
 @RestController
 @RequestMapping("/api/classrooms")
 public class ClassroomController {
 	private ClassroomRepository classrooms;
+	private ClassroomTypeRepository classroomTypes;
 	private ClassRepository classes;
 	
 	@Autowired
-	public void setClassrooms(ClassroomRepository classrooms) {
+	public void setClassrooms(ClassroomRepository classrooms)  {
 		this.classrooms = classrooms;
 	}
 	
@@ -27,7 +30,12 @@ public class ClassroomController {
 	public void setClasses(ClassRepository classes) {
 		this.classes = classes;
 	}
-	
+
+	@Autowired
+	public void setClassroomTypes(ClassroomTypeRepository classroomTypes) {
+		this.classroomTypes = classroomTypes;
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
 	public @ResponseBody Iterable<Classroom> getAll() {
 		return this.classrooms.findAll();
@@ -68,13 +76,17 @@ public class ClassroomController {
 		@PathVariable("capacity") int capacity) {
 		return this.classrooms.findAllByCapacityIsLessThanEqual(capacity);
 	}
-	
-	@RequestMapping(value = "/type/{type}", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/typeId/{typeId}", method = RequestMethod.GET)
 	public @ResponseBody Iterable<Classroom> getByType(
-		@PathVariable("type") String type) {
-		return this.classrooms.findAllByType(type);
+			@PathVariable("typeId") int typeId) {
+		ClassroomType type = this.classroomTypes.findOne(typeId);
+
+		return type.getType() == "Будь-яка"
+				? this.classrooms.findAll()
+				: this.classrooms.findAllByType_Id(typeId);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public void post(@RequestBody Classroom classroom, HttpServletResponse response) {
 		this.classrooms.save(classroom);
