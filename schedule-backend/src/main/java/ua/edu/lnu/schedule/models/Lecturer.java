@@ -16,7 +16,6 @@ public class Lecturer implements Serializable {
 	private String lastName;
 	private String position;
 	
-	@JsonIgnore
 	private Faculty faculty;
 	
 	@JsonIgnore

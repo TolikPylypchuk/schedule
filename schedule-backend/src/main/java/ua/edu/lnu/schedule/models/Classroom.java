@@ -14,10 +14,7 @@ public class Classroom implements Serializable {
 	private String number;
 	private int capacity;
 
-	@JsonIgnore
 	private ClassroomType type;
-
-	@JsonIgnore
 	private Building building;
 
 	@JsonIgnore

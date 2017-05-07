@@ -7,6 +7,6 @@ import ua.edu.lnu.schedule.models.ClassroomType;
 import ua.edu.lnu.schedule.models.Class;
 
 public interface ClassroomTypeRepository extends CrudRepository<ClassroomType, Integer> {
-    ClassroomType findByClassroomsContaining(Classroom classroom);
-    ClassroomType findByClasssContaining(Class c);
+	ClassroomType findByClassroomsContaining(Classroom classroom);
+	ClassroomType findByClassesContaining(Class c);
 }

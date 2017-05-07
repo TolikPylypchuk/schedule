@@ -39,11 +39,11 @@ public class ClassroomType implements Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classroomType")
-	public Set<Class> getClasss() {
+	public Set<Class> getClasses() {
 		return this.classes;
 	}
 
-	public void setClasss(Set<Class> classes) {
+	public void setClasses(Set<Class> classes) {
 		this.classes = classes;
 	}
 

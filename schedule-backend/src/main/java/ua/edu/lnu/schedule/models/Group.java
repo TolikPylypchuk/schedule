@@ -15,7 +15,6 @@ public class Group implements Serializable {
 	private int year;
 	private int numStudents;
 	
-	@JsonIgnore
 	private Faculty faculty;
 	
 	@JsonIgnore

@@ -93,11 +93,8 @@ public class Class implements Serializable {
 	private Type type;
 	private int year;
 	private Semester semester;
-
-	@JsonIgnore
-	private ClassroomType classroomType;
 	
-	@JsonIgnore
+	private ClassroomType classroomType;
 	private Subject subject;
 	
 	@JsonIgnore

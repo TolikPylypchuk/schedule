@@ -11,9 +11,8 @@ import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials,
 	getClassStart, getClassEnd,
-	getDayOfWeekName, getDayOfWeekNumber,
-	getFrequencyName, getClassType,
-	getGroupsString, getClassroomsString
+	getDayOfWeekNumber,
+	getGroupsAsString, getClassroomsAsString
 } from "../models/functions";
 
 import { Class, Classroom, Group, Lecturer, Subject } from "../models/models";
@@ -92,15 +91,15 @@ export class LecturerComponent implements OnInit {
 									],
 									(s: Subject, cr: Classroom[], g: Group[]): ClassInfo => {
 										return {
-											day: getDayOfWeekName(c.dayOfWeek),
+											day: c.dayOfWeek,
 											number: c.number,
 											start: getClassStart(c),
 											end: getClassEnd(c),
-											frequency: getFrequencyName(c.frequency),
+											frequency: c.frequency,
 											subject: s.name,
-											type: getClassType(c.type),
-											classrooms: getClassroomsString(cr),
-											groups: getGroupsString(g)
+											type: c.type,
+											classrooms: getClassroomsAsString(cr),
+											groups: getGroupsAsString(g)
 										};
 									}));
 							}
@@ -124,7 +123,7 @@ export class LecturerComponent implements OnInit {
 													: c1.number < c2.number ? -1 : 0;
 
 												if (result === 0) {
-													result = c1.frequency === getFrequencyName("NUMERATOR")
+													result = c1.frequency === "По чисельнику"
 														? -1
 														: 1;
 												}
