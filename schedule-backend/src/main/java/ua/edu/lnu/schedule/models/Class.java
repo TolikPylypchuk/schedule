@@ -6,21 +6,83 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @Entity
 @Table(name = "classes")
 public class Class implements Serializable {
 	public enum Frequency {
-		WEEKLY,
-		NUMERATOR,
-		DENOMINATOR
+		WEEKLY("Щотижня"),
+		NUMERATOR("По чисельнику"),
+		DENOMINATOR("По знаменнику");
+		
+		private final String value;
+		
+		Frequency(String value) {
+			this.value = value;
+		}
+		
+		@JsonValue
+		public String getValue() {
+			return this.value;
+		}
+		
+		@JsonCreator
+		public static Frequency fromText(String text) {
+			Frequency result = null;
+			
+			switch (text.toLowerCase()) {
+				case "щотижня":
+					result = Frequency.WEEKLY;
+					break;
+				case "по чисельнику":
+					result = Frequency.NUMERATOR;
+					break;
+				case "по знаменнику":
+					result = Frequency.DENOMINATOR;
+					break;
+			}
+			
+			return result;
+		}
 	}
 	
 	public enum Type {
-		LECTURE,
-		PRACTICE,
-		LAB
+		LECTURE("Лекція"),
+		PRACTICE("Практична"),
+		LAB("Лабораторна");
+		
+		private final String value;
+		
+		Type(String value) {
+			this.value = value;
+		}
+		
+		@JsonValue
+		public String getValue() {
+			return this.value;
+		}
+		
+		@JsonCreator
+		public static Type fromText(String text) {
+			Type result = null;
+			
+			switch (text.toLowerCase()) {
+				case "лекція":
+					result = Type.LECTURE;
+					break;
+				case "практична":
+					result = Type.LECTURE;
+					break;
+				case "лабораторна":
+					result = Type.LECTURE;
+					break;
+			}
+			
+			return result;
+		}
 	}
 	
 	private Integer id;

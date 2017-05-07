@@ -1,5 +1,8 @@
 package ua.edu.lnu.schedule.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Semester {
 	FIRST(1),
 	SECOND(2);
@@ -10,10 +13,12 @@ public enum Semester {
 		this.number = number;
 	}
 	
+	@JsonValue
 	public int getNumber() {
 		return number;
 	}
 	
+	@JsonCreator
 	public static Semester fromNumber(int number) {
 		return number == 1
 			? FIRST
