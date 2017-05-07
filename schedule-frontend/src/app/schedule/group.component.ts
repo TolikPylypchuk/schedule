@@ -3,8 +3,7 @@ import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
 import {
-	ClassService, ClassroomService, GroupService,
-	LecturerService, SubjectService
+	ClassService, ClassroomService, GroupService, LecturerService
 } from "../services/services";
 
 import {
@@ -15,7 +14,7 @@ import {
 	getLecturersAsString, getClassroomsAsString
 } from "../models/functions";
 
-import { Class, Classroom, Group, Lecturer, Subject } from "../models/models";
+import { Class, Classroom, Group, Lecturer } from "../models/models";
 
 interface ClassInfo {
 	day: string;
@@ -41,7 +40,6 @@ export class GroupComponent implements OnInit {
 	private classroomService: ClassroomService;
 	private groupService: GroupService;
 	private lecturerService: LecturerService;
-	private subjectService: SubjectService;
 
 	private currentGroup: string;
 	private classes: ClassInfo[] = [];
@@ -54,8 +52,7 @@ export class GroupComponent implements OnInit {
 		classService: ClassService,
 		classroomService: ClassroomService,
 		groupService: GroupService,
-		lecturerService: LecturerService,
-		subjectService: SubjectService) {
+		lecturerService: LecturerService) {
 		this.route = route;
 		this.router = router;
 
@@ -63,7 +60,6 @@ export class GroupComponent implements OnInit {
 		this.classroomService = classroomService;
 		this.groupService = groupService;
 		this.lecturerService = lecturerService;
-		this.subjectService = subjectService;
 	}
 
 	ngOnInit(): void {
@@ -85,18 +81,17 @@ export class GroupComponent implements OnInit {
 						} else {
 							for (let c of classes) {
 								observables.push(Observable.forkJoin([
-										this.subjectService.getSubjectByClass(c.id),
 										this.classroomService.getClassroomsByClass(c.id),
 										this.lecturerService.getLecturersByClass(c.id)
 									],
-									(s: Subject, cr: Classroom[], l: Lecturer[]): ClassInfo => {
+									(cr: Classroom[], l: Lecturer[]): ClassInfo => {
 										return {
 											day: c.dayOfWeek,
 											number: c.number,
 											start: getClassStart(c),
 											end: getClassEnd(c),
 											frequency: c.frequency,
-											subject: s.name,
+											subject: c.subject.name,
 											type: c.type,
 											classrooms: getClassroomsAsString(cr),
 											lecturers: getLecturersAsString(l)

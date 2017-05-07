@@ -1328,7 +1328,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var GroupComponent = (function () {
-    function GroupComponent(route, router, classService, classroomService, groupService, lecturerService, subjectService) {
+    function GroupComponent(route, router, classService, classroomService, groupService, lecturerService) {
         this.classes = [];
         this.isLoaded = false;
         this.route = route;
@@ -1337,7 +1337,6 @@ var GroupComponent = (function () {
         this.classroomService = classroomService;
         this.groupService = groupService;
         this.lecturerService = lecturerService;
-        this.subjectService = subjectService;
     }
     GroupComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -1356,17 +1355,16 @@ var GroupComponent = (function () {
                 else {
                     var _loop_1 = function (c) {
                         observables.push(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin([
-                            _this.subjectService.getSubjectByClass(c.id),
                             _this.classroomService.getClassroomsByClass(c.id),
                             _this.lecturerService.getLecturersByClass(c.id)
-                        ], function (s, cr, l) {
+                        ], function (cr, l) {
                             return {
                                 day: c.dayOfWeek,
                                 number: c.number,
                                 start: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["d" /* getClassStart */])(c),
                                 end: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["e" /* getClassEnd */])(c),
                                 frequency: c.frequency,
-                                subject: s.name,
+                                subject: c.subject.name,
                                 type: c.type,
                                 classrooms: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["f" /* getClassroomsAsString */])(cr),
                                 lecturers: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["j" /* getLecturersAsString */])(l)
@@ -1417,10 +1415,10 @@ GroupComponent = __decorate([
         selector: "schedule-group",
         template: __webpack_require__(190)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object])
 ], GroupComponent);
 
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f;
 //# sourceMappingURL=group.component.js.map
 
 /***/ }),
@@ -1581,7 +1579,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var LecturerComponent = (function () {
-    function LecturerComponent(route, router, classService, classroomService, groupService, lecturerService, subjectService) {
+    function LecturerComponent(route, router, classService, classroomService, groupService, lecturerService) {
         this.classes = [];
         this.isLoaded = false;
         this.route = route;
@@ -1590,7 +1588,6 @@ var LecturerComponent = (function () {
         this.classroomService = classroomService;
         this.groupService = groupService;
         this.lecturerService = lecturerService;
-        this.subjectService = subjectService;
     }
     LecturerComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -1609,17 +1606,16 @@ var LecturerComponent = (function () {
                 else {
                     var _loop_1 = function (c) {
                         observables.push(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin([
-                            _this.subjectService.getSubjectByClass(c.id),
                             _this.classroomService.getClassroomsByClass(c.id),
                             _this.groupService.getGroupsByClass(c.id)
-                        ], function (s, cr, g) {
+                        ], function (cr, g) {
                             return {
                                 day: c.dayOfWeek,
                                 number: c.number,
                                 start: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["d" /* getClassStart */])(c),
                                 end: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["e" /* getClassEnd */])(c),
                                 frequency: c.frequency,
-                                subject: s.name,
+                                subject: c.subject.name,
                                 type: c.type,
                                 classrooms: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["f" /* getClassroomsAsString */])(cr),
                                 groups: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getGroupsAsString */])(g)
@@ -1670,10 +1666,10 @@ LecturerComponent = __decorate([
         selector: "schedule-lecturer",
         template: __webpack_require__(192)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["h" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["b" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["e" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* LecturerService */]) === "function" && _f || Object])
 ], LecturerComponent);
 
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f;
 //# sourceMappingURL=lecturer.component.js.map
 
 /***/ }),
