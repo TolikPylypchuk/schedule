@@ -3,20 +3,18 @@ import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
 import {
-	ClassService, ClassroomService, GroupService,
-	LecturerService, SubjectService
+	ClassService, ClassroomService, GroupService, LecturerService
 } from "../services/services";
 
 import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials,
 	getClassStart, getClassEnd,
-	getDayOfWeekName, getDayOfWeekNumber,
-	getFrequencyName, getClassType,
-	getGroupsString, getClassroomsString
+	getDayOfWeekNumber,
+	getGroupsAsString, getClassroomsAsString
 } from "../models/functions";
 
-import { Class, Classroom, Group, Lecturer, Subject } from "../models/models";
+import { Class, Classroom, Group, Lecturer } from "../models/models";
 
 interface ClassInfo {
 	day: string;
@@ -42,7 +40,6 @@ export class LecturerComponent implements OnInit {
 	private classroomService: ClassroomService;
 	private groupService: GroupService;
 	private lecturerService: LecturerService;
-	private subjectService: SubjectService;
 
 	private currentLecturer: string;
 	private classes: ClassInfo[] = [];
@@ -55,8 +52,7 @@ export class LecturerComponent implements OnInit {
 		classService: ClassService,
 		classroomService: ClassroomService,
 		groupService: GroupService,
-		lecturerService: LecturerService,
-		subjectService: SubjectService) {
+		lecturerService: LecturerService) {
 		this.route = route;
 		this.router = router;
 
@@ -64,7 +60,6 @@ export class LecturerComponent implements OnInit {
 		this.classroomService = classroomService;
 		this.groupService = groupService;
 		this.lecturerService = lecturerService;
-		this.subjectService = subjectService;
 	}
 
 	ngOnInit(): void {
@@ -86,21 +81,20 @@ export class LecturerComponent implements OnInit {
 						} else {
 							for (let c of classes) {
 								observables.push(Observable.forkJoin([
-										this.subjectService.getSubjectByClass(c.id),
 										this.classroomService.getClassroomsByClass(c.id),
 										this.groupService.getGroupsByClass(c.id)
 									],
-									(s: Subject, cr: Classroom[], g: Group[]): ClassInfo => {
+									(cr: Classroom[], g: Group[]): ClassInfo => {
 										return {
-											day: getDayOfWeekName(c.dayOfWeek),
+											day: c.dayOfWeek,
 											number: c.number,
 											start: getClassStart(c),
 											end: getClassEnd(c),
-											frequency: getFrequencyName(c.frequency),
-											subject: s.name,
-											type: getClassType(c.type),
-											classrooms: getClassroomsString(cr),
-											groups: getGroupsString(g)
+											frequency: c.frequency,
+											subject: c.subject.name,
+											type: c.type,
+											classrooms: getClassroomsAsString(cr),
+											groups: getGroupsAsString(g)
 										};
 									}));
 							}
@@ -124,7 +118,7 @@ export class LecturerComponent implements OnInit {
 													: c1.number < c2.number ? -1 : 0;
 
 												if (result === 0) {
-													result = c1.frequency === getFrequencyName("NUMERATOR")
+													result = c1.frequency === "По чисельнику"
 														? -1
 														: 1;
 												}

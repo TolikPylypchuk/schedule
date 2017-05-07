@@ -12,10 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Subject implements Serializable {
 	private Integer id;
 	private String name;
-	private String type;
-
-	@JsonIgnore
-	private ClassroomType classroom_type;
 
 	@JsonIgnore
 	private Set<Plan> plans;
@@ -43,21 +39,6 @@ public class Subject implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Column(name = "type", length = 20, nullable = false)
-	public String getType() { return this.type; }
-
-	public void setType(String type) { this.type = type; }
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "classroom_type", nullable = false)
-	public ClassroomType getClassroom_type() {
-		return this.classroom_type;
-	}
-
-	public void setClassroom_type(ClassroomType classroom_type) {
-		this.classroom_type = classroom_type;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")

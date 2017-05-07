@@ -1184,21 +1184,17 @@ module.exports = __webpack_require__(95);
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getCurrentYear;
 /* harmony export (immutable) */ __webpack_exports__["b"] = getCurrentSemester;
-/* unused harmony export getSemesterNumber */
 /* unused harmony export getGroupCourse */
-/* harmony export (immutable) */ __webpack_exports__["n"] = getCurrentGroupCourse;
+/* harmony export (immutable) */ __webpack_exports__["k"] = getCurrentGroupCourse;
 /* unused harmony export getGroupName */
-/* harmony export (immutable) */ __webpack_exports__["l"] = getCurrentGroupName;
-/* harmony export (immutable) */ __webpack_exports__["e"] = getClassStart;
-/* harmony export (immutable) */ __webpack_exports__["f"] = getClassEnd;
-/* harmony export (immutable) */ __webpack_exports__["h"] = getClassType;
-/* harmony export (immutable) */ __webpack_exports__["g"] = getFrequencyName;
+/* harmony export (immutable) */ __webpack_exports__["i"] = getCurrentGroupName;
+/* harmony export (immutable) */ __webpack_exports__["d"] = getClassStart;
+/* harmony export (immutable) */ __webpack_exports__["e"] = getClassEnd;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getLecturerInitials;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getDayOfWeekName;
-/* harmony export (immutable) */ __webpack_exports__["k"] = getDayOfWeekNumber;
-/* harmony export (immutable) */ __webpack_exports__["i"] = getClassroomsString;
-/* harmony export (immutable) */ __webpack_exports__["m"] = getLecturersString;
-/* harmony export (immutable) */ __webpack_exports__["j"] = getGroupsString;
+/* harmony export (immutable) */ __webpack_exports__["h"] = getDayOfWeekNumber;
+/* harmony export (immutable) */ __webpack_exports__["f"] = getClassroomsAsString;
+/* harmony export (immutable) */ __webpack_exports__["j"] = getLecturersAsString;
+/* harmony export (immutable) */ __webpack_exports__["g"] = getGroupsAsString;
 function getCurrentYear() {
     var now = new Date();
     var year = now.getFullYear();
@@ -1208,14 +1204,6 @@ function getCurrentYear() {
 }
 function getCurrentSemester() {
     return new Date().getMonth() > 6 ? 1 : 2;
-}
-function getSemesterNumber(semester) {
-    semester = semester.toLowerCase();
-    return semester === "first"
-        ? 1
-        : semester === "second"
-            ? 2
-            : 0;
 }
 function getGroupCourse(group, year) {
     return group
@@ -1305,61 +1293,10 @@ function getClassEnd(c) {
     }
     return result;
 }
-function getClassType(type) {
-    var name = "";
-    switch (type.toLowerCase()) {
-        case "lecture":
-            name = "Лекція";
-            break;
-        case "practice":
-            name = "Практична";
-            break;
-        case "lab":
-            name = "Лабораторна";
-            break;
-    }
-    return name;
-}
-function getFrequencyName(frequency) {
-    var name = "";
-    switch (frequency.toLowerCase()) {
-        case "weekly":
-            name = "Щотижня";
-            break;
-        case "denominator":
-            name = "По знаменнику";
-            break;
-        case "numerator":
-            name = "По чисельнику";
-            break;
-    }
-    return name;
-}
 function getLecturerInitials(lecturer) {
     return lecturer
         ? lecturer.lastName + " " + lecturer.firstName[0] + ".\u00A0" + lecturer.middleName[0] + "."
         : "";
-}
-function getDayOfWeekName(day) {
-    var name = "";
-    switch (day.toLowerCase()) {
-        case "monday":
-            name = "Понеділок";
-            break;
-        case "tuesday":
-            name = "Вівторок";
-            break;
-        case "wednesday":
-            name = "Середа";
-            break;
-        case "thursday":
-            name = "Четвер";
-            break;
-        case "friday":
-            name = "П'ятниця";
-            break;
-    }
-    return name;
 }
 function getDayOfWeekNumber(day) {
     var num = 0;
@@ -1384,22 +1321,30 @@ function getDayOfWeekNumber(day) {
         case "п'ятниця":
             num = 5;
             break;
+        case "saturday":
+        case "субота":
+            num = 6;
+            break;
+        case "sunday":
+        case "неділя":
+            num = 7;
+            break;
     }
     return num;
 }
-function getClassroomsString(classrooms) {
+function getClassroomsAsString(classrooms) {
     return classrooms
         ? classrooms.reduce(function (result, classroom) { return result + ", " + classroom.number; }, "").substr(2)
         : "";
 }
-function getLecturersString(lecturers) {
+function getLecturersAsString(lecturers) {
     return lecturers
         ? lecturers.reduce(function (result, lecturer) {
             return result + ", " + getLecturerInitials(lecturer);
         }, "").substr(2)
         : "";
 }
-function getGroupsString(groups) {
+function getGroupsAsString(groups) {
     return groups
         ? groups.reduce(function (result, group) {
             return result + ", " + getCurrentGroupName(group);
@@ -1436,7 +1381,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var GroupComponent = (function () {
-    function GroupComponent(route, router, classService, classroomService, groupService, lecturerService, subjectService) {
+    function GroupComponent(route, router, classService, classroomService, groupService, lecturerService) {
         this.classes = [];
         this.isLoaded = false;
         this.route = route;
@@ -1445,7 +1390,6 @@ var GroupComponent = (function () {
         this.classroomService = classroomService;
         this.groupService = groupService;
         this.lecturerService = lecturerService;
-        this.subjectService = subjectService;
     }
     GroupComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -1454,7 +1398,7 @@ var GroupComponent = (function () {
         this.route.params
             .switchMap(function (params) { return _this.groupService.getGroup(+params["id"]); })
             .subscribe(function (group) {
-            _this.currentGroup = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["l" /* getCurrentGroupName */])(group);
+            _this.currentGroup = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["i" /* getCurrentGroupName */])(group);
             _this.classService.getClassesByGroupAndYearAndSemester(group.id, currentYear, semester)
                 .subscribe(function (classes) {
                 var observables = [];
@@ -1464,20 +1408,19 @@ var GroupComponent = (function () {
                 else {
                     var _loop_1 = function (c) {
                         observables.push(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin([
-                            _this.subjectService.getSubjectByClass(c.id),
                             _this.classroomService.getClassroomsByClass(c.id),
                             _this.lecturerService.getLecturersByClass(c.id)
-                        ], function (s, cr, l) {
+                        ], function (cr, l) {
                             return {
-                                day: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["d" /* getDayOfWeekName */])(c.dayOfWeek),
+                                day: c.dayOfWeek,
                                 number: c.number,
-                                start: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["e" /* getClassStart */])(c),
-                                end: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["f" /* getClassEnd */])(c),
-                                frequency: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getFrequencyName */])(c.frequency),
-                                subject: s.name,
-                                type: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["h" /* getClassType */])(c.type),
-                                classrooms: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["i" /* getClassroomsString */])(cr),
-                                lecturers: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["m" /* getLecturersString */])(l)
+                                start: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["d" /* getClassStart */])(c),
+                                end: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["e" /* getClassEnd */])(c),
+                                frequency: c.frequency,
+                                subject: c.subject.name,
+                                type: c.type,
+                                classrooms: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["f" /* getClassroomsAsString */])(cr),
+                                lecturers: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["j" /* getLecturersAsString */])(l)
                             };
                         }));
                     };
@@ -1494,8 +1437,8 @@ var GroupComponent = (function () {
                     })
                         .subscribe(function (tempClasses) {
                         tempClasses.sort(function (c1, c2) {
-                            var day1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["k" /* getDayOfWeekNumber */])(c1.day);
-                            var day2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["k" /* getDayOfWeekNumber */])(c2.day);
+                            var day1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["h" /* getDayOfWeekNumber */])(c1.day);
+                            var day2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["h" /* getDayOfWeekNumber */])(c2.day);
                             var result = day1 > day2
                                 ? 1
                                 : day1 < day2 ? -1 : 0;
@@ -1504,7 +1447,7 @@ var GroupComponent = (function () {
                                     ? 1
                                     : c1.number < c2.number ? -1 : 0;
                                 if (result === 0) {
-                                    result = c1.frequency === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getFrequencyName */])("NUMERATOR")
+                                    result = c1.frequency === "По чисельнику"
                                         ? -1
                                         : 1;
                                 }
@@ -1525,10 +1468,10 @@ GroupComponent = __decorate([
         selector: "schedule-group",
         template: __webpack_require__(191)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */]) === "function" && _f || Object])
 ], GroupComponent);
 
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f;
 //# sourceMappingURL=group.component.js.map
 
 /***/ }),
@@ -1557,7 +1500,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 var GroupsComponent = (function () {
     function GroupsComponent(router, facultyService, groupService) {
-        this.getCurrentGroupName = __WEBPACK_IMPORTED_MODULE_3__models_functions__["l" /* getCurrentGroupName */];
+        this.getCurrentGroupName = __WEBPACK_IMPORTED_MODULE_3__models_functions__["i" /* getCurrentGroupName */];
         this.router = router;
         this.facultyService = facultyService;
         this.groupService = groupService;
@@ -1573,7 +1516,7 @@ var GroupsComponent = (function () {
                 _this.groupService.getGroupsByFaculty(faculty.id)
                     .subscribe(function (groups) {
                     groups.sort(function (g1, g2) {
-                        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__models_functions__["l" /* getCurrentGroupName */])(g1).localeCompare(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__models_functions__["l" /* getCurrentGroupName */])(g2));
+                        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__models_functions__["i" /* getCurrentGroupName */])(g1).localeCompare(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__models_functions__["i" /* getCurrentGroupName */])(g2));
                     });
                     _this.groups.set(faculty.id, groups);
                 });
@@ -1587,7 +1530,7 @@ var GroupsComponent = (function () {
     GroupsComponent.prototype.getGroups = function (facultyId, course) {
         return this.groups.has(facultyId)
             ? this.groups.get(facultyId)
-                .filter(function (g) { return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__models_functions__["n" /* getCurrentGroupCourse */])(g) === course; })
+                .filter(function (g) { return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__models_functions__["k" /* getCurrentGroupCourse */])(g) === course; })
             : [];
     };
     GroupsComponent.prototype.navigateToGroup = function (groupId) {
@@ -1692,7 +1635,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var LecturerComponent = (function () {
-    function LecturerComponent(route, router, classService, classroomService, groupService, lecturerService, subjectService) {
+    function LecturerComponent(route, router, classService, classroomService, groupService, lecturerService) {
         this.classes = [];
         this.isLoaded = false;
         this.route = route;
@@ -1701,7 +1644,6 @@ var LecturerComponent = (function () {
         this.classroomService = classroomService;
         this.groupService = groupService;
         this.lecturerService = lecturerService;
-        this.subjectService = subjectService;
     }
     LecturerComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -1720,20 +1662,19 @@ var LecturerComponent = (function () {
                 else {
                     var _loop_1 = function (c) {
                         observables.push(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].forkJoin([
-                            _this.subjectService.getSubjectByClass(c.id),
                             _this.classroomService.getClassroomsByClass(c.id),
                             _this.groupService.getGroupsByClass(c.id)
-                        ], function (s, cr, g) {
+                        ], function (cr, g) {
                             return {
-                                day: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["d" /* getDayOfWeekName */])(c.dayOfWeek),
+                                day: c.dayOfWeek,
                                 number: c.number,
-                                start: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["e" /* getClassStart */])(c),
-                                end: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["f" /* getClassEnd */])(c),
-                                frequency: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getFrequencyName */])(c.frequency),
-                                subject: s.name,
-                                type: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["h" /* getClassType */])(c.type),
-                                classrooms: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["i" /* getClassroomsString */])(cr),
-                                groups: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["j" /* getGroupsString */])(g)
+                                start: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["d" /* getClassStart */])(c),
+                                end: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["e" /* getClassEnd */])(c),
+                                frequency: c.frequency,
+                                subject: c.subject.name,
+                                type: c.type,
+                                classrooms: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["f" /* getClassroomsAsString */])(cr),
+                                groups: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getGroupsAsString */])(g)
                             };
                         }));
                     };
@@ -1750,8 +1691,8 @@ var LecturerComponent = (function () {
                     })
                         .subscribe(function (tempClasses) {
                         tempClasses.sort(function (c1, c2) {
-                            var day1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["k" /* getDayOfWeekNumber */])(c1.day);
-                            var day2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["k" /* getDayOfWeekNumber */])(c2.day);
+                            var day1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["h" /* getDayOfWeekNumber */])(c1.day);
+                            var day2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["h" /* getDayOfWeekNumber */])(c2.day);
                             var result = day1 > day2
                                 ? 1
                                 : day1 < day2 ? -1 : 0;
@@ -1760,7 +1701,7 @@ var LecturerComponent = (function () {
                                     ? 1
                                     : c1.number < c2.number ? -1 : 0;
                                 if (result === 0) {
-                                    result = c1.frequency === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__models_functions__["g" /* getFrequencyName */])("NUMERATOR")
+                                    result = c1.frequency === "По чисельнику"
                                         ? -1
                                         : 1;
                                 }
@@ -1781,10 +1722,10 @@ LecturerComponent = __decorate([
         selector: "schedule-lecturer",
         template: __webpack_require__(193)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["i" /* SubjectService */]) === "function" && _g || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["c" /* ClassService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["d" /* ClassroomService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["f" /* GroupService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_services__["g" /* LecturerService */]) === "function" && _f || Object])
 ], LecturerComponent);
 
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f;
 //# sourceMappingURL=lecturer.component.js.map
 
 /***/ }),

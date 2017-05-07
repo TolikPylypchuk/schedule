@@ -15,15 +15,6 @@ export function getCurrentSemester(): number {
 	return new Date().getMonth() > 6 ? 1 : 2;
 }
 
-export function getSemesterNumber(semester: string): number {
-	semester = semester.toLowerCase();
-	return semester === "first"
-		? 1
-		: semester === "second"
-			? 2
-			: 0;
-}
-
 export function getGroupCourse(group: Group, year: number): number {
 	return group
 		? year - group.year + 1
@@ -126,70 +117,10 @@ export function getClassEnd(c: Class): string {
 	return result;
 }
 
-export function getClassType(type: string) {
-	let name = "";
-
-	switch (type.toLowerCase()) {
-		case "lecture":
-			name = "Лекція";
-			break;
-		case "practice":
-			name = "Практична";
-			break;
-		case "lab":
-			name = "Лабораторна";
-			break;
-	}
-
-	return name;
-}
-
-export function getFrequencyName(frequency: string): string {
-	let name = "";
-
-	switch (frequency.toLowerCase()) {
-		case "weekly":
-			name = "Щотижня";
-			break;
-		case "denominator":
-			name = "По знаменнику";
-			break;
-		case "numerator":
-			name = "По чисельнику";
-			break;
-	}
-
-	return name;
-}
-
 export function getLecturerInitials(lecturer: Lecturer): string {
 	return lecturer
 		? `${lecturer.lastName} ${lecturer.firstName[0]}.\xA0${lecturer.middleName[0]}.`
 		: "";
-}
-
-export function getDayOfWeekName(day: string): string {
-	let name = "";
-
-	switch (day.toLowerCase()) {
-		case "monday":
-			name = "Понеділок";
-			break;
-		case "tuesday":
-			name = "Вівторок";
-			break;
-		case "wednesday":
-			name = "Середа";
-			break;
-		case "thursday":
-			name = "Четвер";
-			break;
-		case "friday":
-			name = "П'ятниця";
-			break;
-	}
-
-	return name;
 }
 
 export function getDayOfWeekNumber(day: string): number {
@@ -216,12 +147,20 @@ export function getDayOfWeekNumber(day: string): number {
 		case "п'ятниця":
 			num = 5;
 			break;
+		case "saturday":
+		case "субота":
+			num = 6;
+			break;
+		case "sunday":
+		case "неділя":
+			num = 7;
+			break;
 	}
 
 	return num;
 }
 
-export function getClassroomsString(classrooms: Classroom[]): string {
+export function getClassroomsAsString(classrooms: Classroom[]): string {
 	return classrooms
 		? classrooms.reduce(
 			(result: string, classroom: Classroom) => `${result}, ${classroom.number}`,
@@ -229,7 +168,7 @@ export function getClassroomsString(classrooms: Classroom[]): string {
 		: "";
 }
 
-export function getLecturersString(lecturers: Lecturer[]): string {
+export function getLecturersAsString(lecturers: Lecturer[]): string {
 	return lecturers
 		? lecturers.reduce(
 			(result: string, lecturer: Lecturer) =>
@@ -238,7 +177,7 @@ export function getLecturersString(lecturers: Lecturer[]): string {
 		: "";
 }
 
-export function getGroupsString(groups: Group[]): string {
+export function getGroupsAsString(groups: Group[]): string {
 	return groups
 		? groups.reduce(
 			(result: string, group: Group) =>

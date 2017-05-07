@@ -6,8 +6,6 @@ import java.time.DayOfWeek;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "wishes")
 public class Wish implements Serializable {
@@ -20,7 +18,6 @@ public class Wish implements Serializable {
 	private int year;
 	private Semester semester;
 	
-	@JsonIgnore
 	private Lecturer lecturer;
 	
 	@Id

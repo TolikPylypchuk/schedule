@@ -14,10 +14,7 @@ public class Classroom implements Serializable {
 	private String number;
 	private int capacity;
 
-	@JsonIgnore
 	private ClassroomType type;
-
-	@JsonIgnore
 	private Building building;
 
 	@JsonIgnore
@@ -53,9 +50,13 @@ public class Classroom implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "type", nullable = false)
-	public ClassroomType getType() { return this.type; }
+	public ClassroomType getType() {
+		return this.type;
+	}
 
-	public void setType(ClassroomType type) { this.type = type; }
+	public void setType(ClassroomType type) {
+		this.type = type;
+	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "building", nullable = false)

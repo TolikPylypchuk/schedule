@@ -15,12 +15,15 @@ export interface Class extends EntityBase {
 	year: number;
 	semester: string;
 	type: string;
+	classroomType: ClassroomType;
+	subject: Subject;
 }
 
 export interface Classroom extends EntityBase {
 	number: string;
-	type: string;
 	capacity: number;
+	type: ClassroomType;
+	building: Building;
 }
 
 export interface ClassroomType extends EntityBase {
@@ -35,6 +38,7 @@ export interface Group extends EntityBase {
 	name: string;
 	numStudents: number;
 	year: number;
+	faculty: Faculty;
 }
 
 export interface Lecturer extends EntityBase {
@@ -42,6 +46,7 @@ export interface Lecturer extends EntityBase {
 	middleName: string;
 	lastName: string;
 	position: string;
+	faculty: Faculty;
 }
 
 export interface Plan extends EntityBase {
@@ -50,11 +55,12 @@ export interface Plan extends EntityBase {
 	numLabs: number;
 	year: number;
 	semester: string;
+	subject: Subject;
+	group: Group;
 }
 
 export interface Subject extends EntityBase {
 	name: string;
-	classroomType: string;
 }
 
 export interface Wish extends EntityBase {
@@ -64,4 +70,5 @@ export interface Wish extends EntityBase {
 	comment: string;
 	year: number;
 	semester: string;
+	lecturer: Lecturer;
 }
