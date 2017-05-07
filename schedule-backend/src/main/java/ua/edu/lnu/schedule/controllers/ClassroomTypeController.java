@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.ClassroomType;
 import ua.edu.lnu.schedule.models.Classroom;
-import ua.edu.lnu.schedule.models.Subject;
+import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
-import ua.edu.lnu.schedule.repositories.SubjectRepository;
 
 @RestController
 @RequestMapping("/api/classroomTypes")
 public class ClassroomTypeController {
     private ClassroomTypeRepository classroomTypes;
     private ClassroomRepository classrooms;
-    private SubjectRepository subjects;
+    private ClassRepository classes;
 
     @Autowired
     public void setClassroomTypes(ClassroomTypeRepository classroomTypes) {
@@ -30,8 +30,8 @@ public class ClassroomTypeController {
     }
 
     @Autowired
-    public void setSubjects(SubjectRepository subjects) {
-        this.subjects = subjects;
+    public void setClasss(ClassRepository classes) {
+        this.classes = classes;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -65,17 +65,17 @@ public class ClassroomTypeController {
         return this.classroomTypes.findByClassroomsContaining(c);
     }
 
-    @RequestMapping(value = "/subjectId/{subjectId}", method = RequestMethod.GET)
-    public @ResponseBody ClassroomType getBySubject(
-            @PathVariable("subjectId") int subjectId, HttpServletResponse response) {
-        Subject subject = this.subjects.findOne(subjectId);
+    @RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+    public @ResponseBody ClassroomType getByClass(
+            @PathVariable("classId") int classId, HttpServletResponse response) {
+        Class c = this.classes.findOne(classId);
 
-        if(subject == null){
+        if(c == null){
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
 
-        return this.classroomTypes.findBySubjectsContaining(subject);
+        return this.classroomTypes.findByClasssContaining(c);
     }
 
     @RequestMapping(method = RequestMethod.POST)

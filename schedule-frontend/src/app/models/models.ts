@@ -54,7 +54,6 @@ export interface Plan extends EntityBase {
 
 export interface Subject extends EntityBase {
 	name: string;
-	classroomType: string;
 }
 
 export interface Wish extends EntityBase {

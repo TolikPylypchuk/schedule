@@ -14,7 +14,7 @@ public class ClassroomType implements Serializable {
     private String type;
 
     @JsonIgnore
-    private Set<Subject> subjects;
+    private Set<Class> classes;
 
     @JsonIgnore
     private Set<Classroom> classrooms;
@@ -39,11 +39,11 @@ public class ClassroomType implements Serializable {
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "classroom_type")
-    public Set<Subject> getSubjects() {
-        return this.subjects;
+    public Set<Class> getClasss() {
+        return this.classes;
     }
 
-    public void setSubjects(Set<Subject> subjects) { this.subjects = subjects; }
+    public void setClasss(Set<Class> classes) { this.classes = classes; }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "type")
     public Set<Classroom> getClassrooms() {
