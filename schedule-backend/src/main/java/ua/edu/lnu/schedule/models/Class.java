@@ -2,6 +2,7 @@ package ua.edu.lnu.schedule.models;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -33,7 +34,7 @@ public class Class implements Serializable {
 		public static Frequency fromText(String text) {
 			Frequency result = null;
 			
-			switch (text.toLowerCase()) {
+			switch (text.toLowerCase(Locale.forLanguageTag("uk-UA"))) {
 				case "щотижня":
 					result = Frequency.WEEKLY;
 					break;
@@ -69,7 +70,7 @@ public class Class implements Serializable {
 		public static Type fromText(String text) {
 			Type result = null;
 			
-			switch (text.toLowerCase()) {
+			switch (text.toLowerCase(Locale.forLanguageTag("uk-UA"))) {
 				case "лекція":
 					result = Type.LECTURE;
 					break;
@@ -94,7 +95,7 @@ public class Class implements Serializable {
 	private Semester semester;
 
 	@JsonIgnore
-	private ClassroomType classroom_type;
+	private ClassroomType classroomType;
 	
 	@JsonIgnore
 	private Subject subject;
@@ -177,12 +178,12 @@ public class Class implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "classroom_type", nullable = false)
-	public ClassroomType getClassroom_type() {
-		return this.classroom_type;
+	public ClassroomType getClassroomType() {
+		return this.classroomType;
 	}
 
-	public void setClassroom_type(ClassroomType classroom_type) {
-		this.classroom_type = classroom_type;
+	public void setClassroomType(ClassroomType classroomType) {
+		this.classroomType = classroomType;
 	}
 
 	@ManyToMany(fetch = FetchType.LAZY)

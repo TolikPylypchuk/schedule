@@ -22,6 +22,8 @@ public enum Semester {
 	public static Semester fromNumber(int number) {
 		return number == 1
 			? FIRST
-			: number == 2 ? SECOND : null;
+			: number == 2
+				? SECOND
+				: null;
 	}
 }
