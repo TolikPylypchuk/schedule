@@ -23,6 +23,10 @@ export interface Classroom extends EntityBase {
 	capacity: number;
 }
 
+export interface ClassroomType extends EntityBase {
+	type: string;
+}
+
 export interface Faculty extends EntityBase {
 	name: string;
 }
