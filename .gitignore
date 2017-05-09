@@ -1,5 +1,3 @@
 **/target/**
 
 .idea/**
-
-schedule-backend/src/main/resources/application.properties
