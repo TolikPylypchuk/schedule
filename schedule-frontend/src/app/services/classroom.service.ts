@@ -3,7 +3,9 @@ import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Classroom } from "../models/models";
-import {handleError} from "./services";
+import { handleError } from "./services";
+
+const prefix = "http://localhost:8080";
 
 @Injectable()
 export class ClassroomService {
@@ -14,7 +16,7 @@ export class ClassroomService {
 	}
 
 	getClassrooms(): Observable<Classroom[]> {
-		return this.http.get("api/classrooms")
+		return this.http.get(`${prefix}/api/classrooms`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
@@ -22,7 +24,7 @@ export class ClassroomService {
 	}
 
 	getClassroom(id: number): Observable<Classroom> {
-		return this.http.get(`api/classrooms/${id}`)
+		return this.http.get(`${prefix}/api/classrooms/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom
@@ -30,7 +32,7 @@ export class ClassroomService {
 	}
 
 	getClassroomsByClass(classId: number): Observable<Classroom[]> {
-		return this.http.get(`api/classrooms/classId/${classId}`)
+		return this.http.get(`${prefix}/api/classrooms/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
@@ -38,7 +40,7 @@ export class ClassroomService {
 	}
 
 	getClassroomsByBuilding(buildingId: number): Observable<Classroom[]> {
-		return this.http.get(`api/classrooms/buildingId/${buildingId}`)
+		return this.http.get(`${prefix}/api/classrooms/buildingId/${buildingId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
@@ -46,7 +48,7 @@ export class ClassroomService {
 	}
 
 	getClassroomsByCapacity(capacity: number): Observable<Classroom[]> {
-		return this.http.get(`api/classrooms/capacity/${capacity}`)
+		return this.http.get(`${prefix}/api/classrooms/capacity/${capacity}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
@@ -54,7 +56,7 @@ export class ClassroomService {
 	}
 
 	getClassroomsByType(type: number): Observable<Classroom[]> {
-		return this.http.get(`api/classrooms/type/${type}`)
+		return this.http.get(`${prefix}/api/classrooms/type/${type}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
@@ -63,7 +65,7 @@ export class ClassroomService {
 
 	addClassroom(classroom: Classroom): Observable<Response> {
 		return this.http.post(
-			`api/classrooms/`,
+			`${prefix}/api/classrooms/`,
 			JSON.stringify(classroom),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -73,7 +75,7 @@ export class ClassroomService {
 
 	updateClassroom(classroom: Classroom): Observable<Response> {
 		return this.http.put(
-			`api/classrooms/${classroom.id}`,
+			`${prefix}/api/classrooms/${classroom.id}`,
 			JSON.stringify(classroom),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -82,7 +84,7 @@ export class ClassroomService {
 	}
 
 	deleteClassroom(classroom: Classroom): Observable<Response> {
-		return this.http.delete(`api/classrooms/${classroom.id}`)
+		return this.http.delete(`${prefix}/api/classrooms/${classroom.id}`)
 			.catch(handleError);
 	}
 }

@@ -3,7 +3,9 @@ import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Wish } from "../models/models";
-import {handleError} from "./services";
+import { handleError } from "./services";
+
+const prefix = "http://localhost:8080";
 
 @Injectable()
 export class WishService {
@@ -14,7 +16,7 @@ export class WishService {
 	}
 
 	getWishes(): Observable<Wish[]> {
-		return this.http.get("api/wishes")
+		return this.http.get(`${prefix}/api/wishes`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
@@ -22,7 +24,7 @@ export class WishService {
 	}
 
 	getWish(id: number): Observable<Wish> {
-		return this.http.get(`api/wishes/${id}`)
+		return this.http.get(`${prefix}/api/wishes/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish
@@ -30,7 +32,7 @@ export class WishService {
 	}
 
 	getWishesByLecturer(lecturerId: number): Observable<Wish[]> {
-		return this.http.get(`api/wishes/lecturerId/${lecturerId}`)
+		return this.http.get(`${prefix}/api/wishes/lecturerId/${lecturerId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
@@ -40,7 +42,7 @@ export class WishService {
 	getWishesByLecturerAndYearAndSemester(
 		lecturerId: number, year: number, semester: number): Observable<Wish[]> {
 		return this.http.get(
-			`api/wishes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
+			`${prefix}/api/wishes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
@@ -49,7 +51,7 @@ export class WishService {
 
 	addWish(wish: Wish): Observable<Response> {
 		return this.http.post(
-			`api/wishes/`,
+			`${prefix}/api/wishes/`,
 			JSON.stringify(wish),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -59,7 +61,7 @@ export class WishService {
 
 	updateWish(wish: Wish): Observable<Response> {
 		return this.http.put(
-			`api/wishes/${wish.id}`,
+			`${prefix}/api/wishes/${wish.id}`,
 			JSON.stringify(wish),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -68,7 +70,7 @@ export class WishService {
 	}
 
 	deleteWish(wish: Wish): Observable<Response> {
-		return this.http.delete(`api/wishes/${wish.id}`)
+		return this.http.delete(`${prefix}/api/wishes/${wish.id}`)
 			.catch(handleError);
 	}
 }

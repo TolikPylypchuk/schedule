@@ -5,6 +5,8 @@ import { Observable } from "rxjs/Observable";
 import { Building } from "../models/models";
 import { handleError } from "./services";
 
+const prefix = "http://localhost:8080";
+
 @Injectable()
 export class BuildingService {
 	private http: Http;
@@ -14,7 +16,7 @@ export class BuildingService {
 	}
 
 	getBuildings(): Observable<Building[]> {
-		return this.http.get("api/buildings")
+		return this.http.get(`${prefix}/api/buildings`)
 						.map(response =>
 							response.status === 200
 								? response.json() as Building[]
@@ -23,7 +25,7 @@ export class BuildingService {
 	}
 
 	getBuilding(id: number): Observable<Building> {
-		return this.http.get(`api/buildings/${id}`)
+		return this.http.get(`${prefix}/api/buildings/${id}`)
 						.map(response =>
 							response.status === 200
 								? response.json() as Building
@@ -33,7 +35,7 @@ export class BuildingService {
 
 	addBuilding(building: Building): Observable<Response> {
 		return this.http.post(
-			`api/buildings/`,
+			`${prefix}/api/buildings/`,
 			JSON.stringify(building),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -43,7 +45,7 @@ export class BuildingService {
 
 	updateBuilding(building: Building): Observable<Response> {
 		return this.http.put(
-			`api/buildings/${building.id}`,
+			`${prefix}/api/buildings/${building.id}`,
 			JSON.stringify(building),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -52,8 +54,7 @@ export class BuildingService {
 	}
 
 	deleteBuilding(building: Building): Observable<Response> {
-		return this.http.delete(`api/buildings/${building.id}`)
+		return this.http.delete(`${prefix}/api/buildings/${building.id}`)
 						.catch(handleError);
 	}
 }
-

@@ -3,7 +3,9 @@ import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { ClassroomType } from "../models/models";
-import {handleError} from "./services";
+import { handleError } from "./services";
+
+const prefix = "http://localhost:8080";
 
 @Injectable()
 export class ClassroomTypeService {
@@ -14,7 +16,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomTypes(): Observable<ClassroomType[]> {
-		return this.http.get("api/classroomTypes")
+		return this.http.get(`${prefix}/api/classroomTypes`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType[]
@@ -22,7 +24,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomType(id: number): Observable<ClassroomType> {
-		return this.http.get(`api/classroomTypes/${id}`)
+		return this.http.get(`${prefix}/api/classroomTypes/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
@@ -30,7 +32,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomTypeByClassroom(classroomId: number): Observable<ClassroomType> {
-		return this.http.get(`api/classroomTypes/classroomId/${classroomId}`)
+		return this.http.get(`${prefix}/api/classroomTypes/classroomId/${classroomId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
@@ -38,7 +40,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomTypesBySubject(subjectId: number): Observable<ClassroomType> {
-		return this.http.get(`api/classroomTypes/subjectId/${subjectId}`)
+		return this.http.get(`${prefix}/api/classroomTypes/subjectId/${subjectId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
@@ -47,7 +49,7 @@ export class ClassroomTypeService {
 
 	addClassroomType(classroomType: ClassroomType): Observable<Response> {
 		return this.http.post(
-			`api/classroomTypes/`,
+			`${prefix}/api/classroomTypes/`,
 			JSON.stringify(classroomType),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -57,7 +59,7 @@ export class ClassroomTypeService {
 
 	updateClassroomType(classroomType: ClassroomType): Observable<Response> {
 		return this.http.put(
-			`api/classroomTypes/${classroomType.id}`,
+			`${prefix}/api/classroomTypes/${classroomType.id}`,
 			JSON.stringify(classroomType),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -66,7 +68,7 @@ export class ClassroomTypeService {
 	}
 
 	deleteClassroomType(classroomType: ClassroomType): Observable<Response> {
-		return this.http.delete(`api/classroomTypes/${classroomType.id}`)
+		return this.http.delete(`${prefix}/api/classroomTypes/${classroomType.id}`)
 			.catch(handleError);
 	}
 }

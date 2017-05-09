@@ -3,7 +3,9 @@ import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Plan } from "../models/models";
-import {handleError} from "./services";
+import { handleError } from "./services";
+
+const prefix = "http://localhost:8080";
 
 @Injectable()
 export class PlanService {
@@ -14,7 +16,7 @@ export class PlanService {
 	}
 
 	getPlans(): Observable<Plan[]> {
-		return this.http.get("api/plans")
+		return this.http.get(`${prefix}/api/plans`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
@@ -22,7 +24,7 @@ export class PlanService {
 	}
 
 	getPlan(id: number): Observable<Plan> {
-		return this.http.get(`api/plans/${id}`)
+		return this.http.get(`${prefix}/api/plans/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan
@@ -30,7 +32,7 @@ export class PlanService {
 	}
 
 	getPlansByGroup(groupId: number): Observable<Plan[]> {
-		return this.http.get(`api/plans/groupId/${groupId}`)
+		return this.http.get(`${prefix}/api/plans/groupId/${groupId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
@@ -39,7 +41,7 @@ export class PlanService {
 
 	getPlansByGroupAndYearAndSemester(
 		groupId: number, year: number, semester: number): Observable<Plan[]> {
-		return this.http.get(`api/plans/groupId/${groupId}/year/${year}/semester/${semester}`)
+		return this.http.get(`${prefix}/api/plans/groupId/${groupId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
@@ -47,7 +49,7 @@ export class PlanService {
 	}
 
 	getPlansBySubject(subjectId: number): Observable<Plan[]> {
-		return this.http.get(`api/plans/subjectId/${subjectId}`)
+		return this.http.get(`${prefix}/api/plans/subjectId/${subjectId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
@@ -57,7 +59,7 @@ export class PlanService {
 	getPlansBySubjectAndYearAndSemester(
 		subjectId: number, year: number, semester: number): Observable<Plan[]> {
 		return this.http.get(
-			`api/plans/subjectId/${subjectId}/year/${year}/semester/${semester}`)
+			`${prefix}/api/plans/subjectId/${subjectId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
@@ -66,7 +68,7 @@ export class PlanService {
 
 	addPlan(plan: Plan): Observable<Response> {
 		return this.http.post(
-			`api/plans/`,
+			`${prefix}/api/plans/`,
 			JSON.stringify(plan),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -76,7 +78,7 @@ export class PlanService {
 
 	updatePlan(plan: Plan): Observable<Response> {
 		return this.http.put(
-			`api/plans/${plan.id}`,
+			`${prefix}/api/plans/${plan.id}`,
 			JSON.stringify(plan),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -85,7 +87,7 @@ export class PlanService {
 	}
 
 	deletePlan(plan: Plan): Observable<Response> {
-		return this.http.delete(`api/plans/${plan.id}`)
+		return this.http.delete(`${prefix}/api/plans/${plan.id}`)
 			.catch(handleError);
 	}
 }
