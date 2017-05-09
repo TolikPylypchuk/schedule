@@ -3,6 +3,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { HttpModule } from "@angular/http";
 
 import { RoutesModule } from "./routes.module";
+import { AuthModule } from "../auth/auth";
 
 import { AdminComponent } from "./admin.component";
 import { ScheduleComponent } from "./schedule.component";
@@ -15,6 +16,7 @@ import { ScheduleComponent } from "./schedule.component";
 	imports: [
 		BrowserModule,
 		HttpModule,
+		AuthModule,
 		RoutesModule
 	]
 })

@@ -4,9 +4,11 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 
 import { AppComponent } from "./app.component";
-import { RoutesModule } from "./routes.module";
+
+import { AuthModule } from "./auth/auth";
 import { ScheduleModule } from "./schedule/schedule";
 import { AdminModule } from "./admin/admin";
+import { RoutesModule } from "./routes.module";
 
 import * as services from "./services/services";
 
@@ -18,12 +20,12 @@ import * as services from "./services/services";
         BrowserModule,
         FormsModule,
         HttpModule,
+	    AuthModule,
 	    ScheduleModule,
 	    AdminModule,
 	    RoutesModule
     ],
     providers: [
-    	services.AuthService,
 	    services.BuildingService,
         services.ClassService,
 	    services.ClassroomService,

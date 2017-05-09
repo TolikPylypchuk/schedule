@@ -25,7 +25,6 @@
 	</properties>
 	
 	<modules>
-		<module>schedule-frontend</module>
 		<module>schedule-backend</module>
 	</modules>
 </project>

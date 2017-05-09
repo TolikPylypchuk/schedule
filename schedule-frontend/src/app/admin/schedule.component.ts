@@ -4,6 +4,7 @@ import { Observable } from "rxjs/Observable";
 import * as models from '../models/models';
 
 import * as services from "../services/services";
+import { AuthService } from "../auth/auth.service";
 
 import {
 	getCurrentYear, getCurrentSemester, getLecturerInitials,
@@ -30,7 +31,7 @@ export enum ClassFrequency {
 	templateUrl: "./schedule.component.html"
 })
 export class ScheduleComponent implements OnInit {
-	private authService: services.AuthService;
+	private authService: AuthService;
 	private buildingService: services.BuildingService;
 	private classService: services.ClassService;
 	private classroomService: services.ClassroomService;
@@ -46,7 +47,7 @@ export class ScheduleComponent implements OnInit {
 	lecturersClasses: Map<number, ClassInfo[]> = new Map();
 
 	constructor(
-		authService: services.AuthService,
+		authService: AuthService,
 		buildingService: services.BuildingService,
 		classService: services.ClassService,
 		classroomService: services.ClassroomService,
