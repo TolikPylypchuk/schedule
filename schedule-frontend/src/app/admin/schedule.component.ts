@@ -132,6 +132,18 @@ export class ScheduleComponent implements OnInit {
 		return frequency;
 	}
 
+	getClassInfo(
+		lecturer: models.Lecturer,
+		day: number,
+		num: number,
+		frequency: string): ClassInfo {
+		let infoArray = this.lecturersClasses.get(lecturer.id);
+		return infoArray.find(
+			info => getDayOfWeekNumber(info.c.dayOfWeek) === day &&
+					info.c.number === num &&
+					info.c.frequency.toLowerCase() === frequency);
+	}
+
 	getArrayOfNumbers(num: number): number[] {
 		return Array.apply(null, {length: num}).map(Number.call, Number);
 	}
