@@ -10,7 +10,7 @@ import ua.edu.lnu.schedule.models.Semester;
 import ua.edu.lnu.schedule.repositories.PlanRepository;
 
 @RestController
-@RequestMapping("/api/plans")
+@RequestMapping("/plans")
 public class PlanController {
 	private PlanRepository plans;
 	

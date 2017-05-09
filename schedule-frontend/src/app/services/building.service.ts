@@ -16,7 +16,7 @@ export class BuildingService {
 	}
 
 	getBuildings(): Observable<Building[]> {
-		return this.http.get(`${prefix}/api/buildings`)
+		return this.http.get(`${prefix}/buildings`)
 						.map(response =>
 							response.status === 200
 								? response.json() as Building[]
@@ -25,7 +25,7 @@ export class BuildingService {
 	}
 
 	getBuilding(id: number): Observable<Building> {
-		return this.http.get(`${prefix}/api/buildings/${id}`)
+		return this.http.get(`${prefix}/buildings/${id}`)
 						.map(response =>
 							response.status === 200
 								? response.json() as Building
@@ -35,7 +35,7 @@ export class BuildingService {
 
 	addBuilding(building: Building): Observable<Response> {
 		return this.http.post(
-			`${prefix}/api/buildings/`,
+			`${prefix}/buildings/`,
 			JSON.stringify(building),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -45,7 +45,7 @@ export class BuildingService {
 
 	updateBuilding(building: Building): Observable<Response> {
 		return this.http.put(
-			`${prefix}/api/buildings/${building.id}`,
+			`${prefix}/buildings/${building.id}`,
 			JSON.stringify(building),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -54,7 +54,7 @@ export class BuildingService {
 	}
 
 	deleteBuilding(building: Building): Observable<Response> {
-		return this.http.delete(`${prefix}/api/buildings/${building.id}`)
+		return this.http.delete(`${prefix}/buildings/${building.id}`)
 						.catch(handleError);
 	}
 }

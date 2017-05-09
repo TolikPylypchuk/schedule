@@ -10,7 +10,7 @@ import ua.edu.lnu.schedule.models.Wish;
 import ua.edu.lnu.schedule.repositories.WishRepository;
 
 @RestController
-@RequestMapping("/api/wishes")
+@RequestMapping("/wishes")
 public class WishController {
 	private WishRepository wishes;
 	

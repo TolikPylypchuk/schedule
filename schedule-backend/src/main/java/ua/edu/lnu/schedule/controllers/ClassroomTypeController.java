@@ -13,7 +13,7 @@ import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
 
 @RestController
-@RequestMapping("/api/classroomTypes")
+@RequestMapping("/classroomTypes")
 public class ClassroomTypeController {
 	private ClassroomTypeRepository classroomTypes;
 	private ClassroomRepository classrooms;

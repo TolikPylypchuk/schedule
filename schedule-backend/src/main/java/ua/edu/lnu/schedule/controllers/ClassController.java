@@ -16,7 +16,7 @@ import ua.edu.lnu.schedule.repositories.GroupRepository;
 import ua.edu.lnu.schedule.repositories.LecturerRepository;
 
 @RestController
-@RequestMapping("/api/classes")
+@RequestMapping("/classes")
 public class ClassController {
 	private ClassRepository classes;
 	private GroupRepository groups;

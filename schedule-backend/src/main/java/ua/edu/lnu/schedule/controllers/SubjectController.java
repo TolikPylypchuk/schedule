@@ -1,7 +1,5 @@
 package ua.edu.lnu.schedule.controllers;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import ua.edu.lnu.schedule.repositories.PlanRepository;
 import ua.edu.lnu.schedule.repositories.SubjectRepository;
 
 @RestController
-@RequestMapping("/api/subjects")
+@RequestMapping("/subjects")
 public class SubjectController {
 	private ClassRepository classes;
 	private LecturerRepository lecturers;

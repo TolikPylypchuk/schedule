@@ -16,7 +16,7 @@ export class FacultyService {
 	}
 
 	getFaculties(): Observable<Faculty[]> {
-		return this.http.get(`${prefix}/api/faculties`)
+		return this.http.get(`${prefix}/faculties`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Faculty[]
@@ -24,7 +24,7 @@ export class FacultyService {
 	}
 
 	getFaculty(id: number): Observable<Faculty> {
-		return this.http.get(`${prefix}/api/faculties/${id}`)
+		return this.http.get(`${prefix}/faculties/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Faculty
@@ -33,7 +33,7 @@ export class FacultyService {
 
 	addFaculty(faculty: Faculty): Observable<Response> {
 		return this.http.post(
-			`${prefix}/api/faculties/`,
+			`${prefix}/faculties/`,
 			JSON.stringify(faculty),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -43,7 +43,7 @@ export class FacultyService {
 
 	updateFaculty(faculty: Faculty): Observable<Response> {
 		return this.http.put(
-			`${prefix}/api/faculties/${faculty.id}`,
+			`${prefix}/faculties/${faculty.id}`,
 			JSON.stringify(faculty),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -52,7 +52,7 @@ export class FacultyService {
 	}
 
 	deleteFaculty(faculty: Faculty): Observable<Response> {
-		return this.http.delete(`${prefix}/api/faculties/${faculty.id}`)
+		return this.http.delete(`${prefix}/faculties/${faculty.id}`)
 			.catch(handleError);
 	}
 }

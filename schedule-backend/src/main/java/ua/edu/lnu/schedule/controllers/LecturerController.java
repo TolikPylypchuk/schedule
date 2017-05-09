@@ -17,7 +17,7 @@ import ua.edu.lnu.schedule.repositories.SubjectRepository;
 import ua.edu.lnu.schedule.repositories.WishRepository;
 
 @RestController
-@RequestMapping("/api/lecturers")
+@RequestMapping("/lecturers")
 public class LecturerController {
 	private LecturerRepository lecturers;
 	private SubjectRepository subjects;

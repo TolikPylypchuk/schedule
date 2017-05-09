@@ -16,7 +16,7 @@ export class GroupService {
 	}
 
 	getGroups(): Observable<Group[]> {
-		return this.http.get(`${prefix}/api/groups`)
+		return this.http.get(`${prefix}/groups`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -24,7 +24,7 @@ export class GroupService {
 	}
 
 	getGroup(id: number): Observable<Group> {
-		return this.http.get(`${prefix}/api/groups/${id}`)
+		return this.http.get(`${prefix}/groups/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group
@@ -32,7 +32,7 @@ export class GroupService {
 	}
 
 	getGroupsByYear(year: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/api/groups/year/${year}`)
+		return this.http.get(`${prefix}/groups/year/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -40,7 +40,7 @@ export class GroupService {
 	}
 
 	getGroupsByFaculty(facultyId: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/api/groups/facultyId/${facultyId}`)
+		return this.http.get(`${prefix}/groups/facultyId/${facultyId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -48,7 +48,7 @@ export class GroupService {
 	}
 
 	getGroupsByFacultyAndYear(facultyId: number, year: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/api/groups/facultyId/${facultyId}/year/${year}`)
+		return this.http.get(`${prefix}/groups/facultyId/${facultyId}/year/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -56,7 +56,7 @@ export class GroupService {
 	}
 
 	getGroupsByFacultyAndYearSince(facultyId: number, year: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/api/groups/facultyId/${facultyId}/since/${year}`)
+		return this.http.get(`${prefix}/groups/facultyId/${facultyId}/since/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -64,7 +64,7 @@ export class GroupService {
 	}
 
 	getGroupsByClass(classId: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/api/groups/classId/${classId}`)
+		return this.http.get(`${prefix}/groups/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -72,7 +72,7 @@ export class GroupService {
 	}
 
 	getGroupByPlan(planId: number): Observable<Group> {
-		return this.http.get(`${prefix}/api/group/planId/${planId}`)
+		return this.http.get(`${prefix}/group/planId/${planId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group
@@ -81,7 +81,7 @@ export class GroupService {
 
 	addGroup(group: Group): Observable<Response> {
 		return this.http.post(
-			`${prefix}/api/groups/`,
+			`${prefix}/groups/`,
 			JSON.stringify(group),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -91,7 +91,7 @@ export class GroupService {
 
 	updateGroup(group: Group): Observable<Response> {
 		return this.http.put(
-			`${prefix}/api/groups/${group.id}`,
+			`${prefix}/groups/${group.id}`,
 			JSON.stringify(group),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -100,7 +100,7 @@ export class GroupService {
 	}
 
 	deleteGroup(group: Group): Observable<Response> {
-		return this.http.delete(`${prefix}/api/groups/${group.id}`)
+		return this.http.delete(`${prefix}/groups/${group.id}`)
 			.catch(handleError);
 	}
 }

@@ -16,7 +16,7 @@ export class WishService {
 	}
 
 	getWishes(): Observable<Wish[]> {
-		return this.http.get(`${prefix}/api/wishes`)
+		return this.http.get(`${prefix}/wishes`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
@@ -24,7 +24,7 @@ export class WishService {
 	}
 
 	getWish(id: number): Observable<Wish> {
-		return this.http.get(`${prefix}/api/wishes/${id}`)
+		return this.http.get(`${prefix}/wishes/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish
@@ -32,7 +32,7 @@ export class WishService {
 	}
 
 	getWishesByLecturer(lecturerId: number): Observable<Wish[]> {
-		return this.http.get(`${prefix}/api/wishes/lecturerId/${lecturerId}`)
+		return this.http.get(`${prefix}/wishes/lecturerId/${lecturerId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
@@ -42,7 +42,7 @@ export class WishService {
 	getWishesByLecturerAndYearAndSemester(
 		lecturerId: number, year: number, semester: number): Observable<Wish[]> {
 		return this.http.get(
-			`${prefix}/api/wishes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
+			`${prefix}/wishes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
@@ -51,7 +51,7 @@ export class WishService {
 
 	addWish(wish: Wish): Observable<Response> {
 		return this.http.post(
-			`${prefix}/api/wishes/`,
+			`${prefix}/wishes/`,
 			JSON.stringify(wish),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -61,7 +61,7 @@ export class WishService {
 
 	updateWish(wish: Wish): Observable<Response> {
 		return this.http.put(
-			`${prefix}/api/wishes/${wish.id}`,
+			`${prefix}/wishes/${wish.id}`,
 			JSON.stringify(wish),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -70,7 +70,7 @@ export class WishService {
 	}
 
 	deleteWish(wish: Wish): Observable<Response> {
-		return this.http.delete(`${prefix}/api/wishes/${wish.id}`)
+		return this.http.delete(`${prefix}/wishes/${wish.id}`)
 			.catch(handleError);
 	}
 }

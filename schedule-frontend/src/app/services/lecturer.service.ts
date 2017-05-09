@@ -16,7 +16,7 @@ export class LecturerService {
 	}
 
 	getLecturers(): Observable<Lecturer[]> {
-		return this.http.get(`${prefix}/api/lecturers`)
+		return this.http.get(`${prefix}/lecturers`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer[]
@@ -24,7 +24,7 @@ export class LecturerService {
 	}
 
 	getLecturer(id: number): Observable<Lecturer> {
-		return this.http.get(`${prefix}/api/lecturers/${id}`)
+		return this.http.get(`${prefix}/lecturers/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer
@@ -32,7 +32,7 @@ export class LecturerService {
 	}
 
 	getLecturersByFaculty(facultyId: number): Observable<Lecturer[]> {
-		return this.http.get(`${prefix}/api/lecturers/facultyId/${facultyId}`)
+		return this.http.get(`${prefix}/lecturers/facultyId/${facultyId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer[]
@@ -40,7 +40,7 @@ export class LecturerService {
 	}
 
 	getLecturersBySubject(subjectId: number): Observable<Lecturer[]> {
-		return this.http.get(`${prefix}/api/lecturers/subjectId/${subjectId}`)
+		return this.http.get(`${prefix}/lecturers/subjectId/${subjectId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer[]
@@ -48,7 +48,7 @@ export class LecturerService {
 	}
 
 	getLecturersByClass(classId: number): Observable<Lecturer[]> {
-		return this.http.get(`${prefix}/api/lecturers/classId/${classId}`)
+		return this.http.get(`${prefix}/lecturers/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer[]
@@ -56,7 +56,7 @@ export class LecturerService {
 	}
 
 	getLecturerByWish(wishId: number): Observable<Lecturer> {
-		return this.http.get(`${prefix}/api/lecturer/wishId/${wishId}`)
+		return this.http.get(`${prefix}/lecturer/wishId/${wishId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Lecturer
@@ -65,7 +65,7 @@ export class LecturerService {
 
 	addLecturer(lecturer: Lecturer): Observable<Response> {
 		return this.http.post(
-			`${prefix}/api/lecturers/`,
+			`${prefix}/lecturers/`,
 			JSON.stringify(lecturer),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -75,7 +75,7 @@ export class LecturerService {
 
 	updateLecturer(lecturer: Lecturer): Observable<Response> {
 		return this.http.put(
-			`${prefix}/api/lecturers/${lecturer.id}`,
+			`${prefix}/lecturers/${lecturer.id}`,
 			JSON.stringify(lecturer),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -84,7 +84,7 @@ export class LecturerService {
 	}
 
 	deleteLecturer(lecturer: Lecturer): Observable<Response> {
-		return this.http.delete(`${prefix}/api/lecturers/${lecturer.id}`)
+		return this.http.delete(`${prefix}/lecturers/${lecturer.id}`)
 			.catch(handleError);
 	}
 }

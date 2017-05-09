@@ -9,7 +9,7 @@ import ua.edu.lnu.schedule.models.Faculty;
 import ua.edu.lnu.schedule.repositories.FacultyRepository;
 
 @RestController
-@RequestMapping("/api/faculties")
+@RequestMapping("/faculties")
 public class FacultyController {
 	private FacultyRepository faculties;
 	

@@ -16,7 +16,7 @@ export class SubjectService {
 	}
 
 	getSubjects(): Observable<Subject[]> {
-		return this.http.get(`${prefix}/api/subjects`)
+		return this.http.get(`${prefix}/subjects`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject[]
@@ -24,7 +24,7 @@ export class SubjectService {
 	}
 
 	getSubject(id: number): Observable<Subject> {
-		return this.http.get(`${prefix}/api/subjects/${id}`)
+		return this.http.get(`${prefix}/subjects/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -32,7 +32,7 @@ export class SubjectService {
 	}
 
 	getSubjectByPlan(planId: number): Observable<Subject> {
-		return this.http.get(`${prefix}/api/subjects/planId/${planId}`)
+		return this.http.get(`${prefix}/subjects/planId/${planId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -40,7 +40,7 @@ export class SubjectService {
 	}
 
 	getSubjectByClass(classId: number): Observable<Subject> {
-		return this.http.get(`${prefix}/api/subjects/classId/${classId}`)
+		return this.http.get(`${prefix}/subjects/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -49,7 +49,7 @@ export class SubjectService {
 
 	addSubject(subject: Subject): Observable<Response> {
 		return this.http.post(
-			`${prefix}/api/subjects/`,
+			`${prefix}/subjects/`,
 			JSON.stringify(subject),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -59,7 +59,7 @@ export class SubjectService {
 
 	updateSubject(subject: Subject): Observable<Response> {
 		return this.http.put(
-			`${prefix}/api/subjects/${subject.id}`,
+			`${prefix}/subjects/${subject.id}`,
 			JSON.stringify(subject),
 			{
 				headers: new Headers({ "Content-Type": "application/json" })
@@ -68,7 +68,7 @@ export class SubjectService {
 	}
 
 	deleteSubject(subject: Subject): Observable<Response> {
-		return this.http.delete(`${prefix}/api/subjects/${subject.id}`)
+		return this.http.delete(`${prefix}/subjects/${subject.id}`)
 			.catch(handleError);
 	}
 }

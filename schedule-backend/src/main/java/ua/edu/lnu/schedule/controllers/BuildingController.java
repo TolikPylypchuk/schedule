@@ -9,7 +9,7 @@ import ua.edu.lnu.schedule.models.Building;
 import ua.edu.lnu.schedule.repositories.BuildingRepository;
 
 @RestController
-@RequestMapping("/api/buildings")
+@RequestMapping("/buildings")
 public class BuildingController {
 	private BuildingRepository buildings;
 	
