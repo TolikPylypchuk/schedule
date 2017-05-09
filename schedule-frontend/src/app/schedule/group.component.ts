@@ -88,8 +88,8 @@ export class GroupComponent implements OnInit {
 										return {
 											day: c.dayOfWeek,
 											number: c.number,
-											start: getClassStart(c),
-											end: getClassEnd(c),
+											start: getClassStart(c.number),
+											end: getClassEnd(c.number),
 											frequency: c.frequency,
 											subject: c.subject.name,
 											type: c.type,

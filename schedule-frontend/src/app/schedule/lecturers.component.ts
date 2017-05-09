@@ -6,6 +6,7 @@ import {
 } from "../services/services";
 
 import { Faculty, Lecturer } from "../models/models";
+import { compareLecturersByName } from "../models/functions";
 
 @Component({
 	selector: "schedule-lecturers",
@@ -38,21 +39,7 @@ export class LecturersComponent implements OnInit {
 				for (let faculty of faculties) {
 					this.lecturerService.getLecturersByFaculty(faculty.id)
 						.subscribe((lecturers: Lecturer[]) => {
-							lecturers.sort((l1, l2) => {
-								let result = l1.lastName.localeCompare(l2.lastName);
-
-								if (result === 0)
-								{
-									result = l1.firstName.localeCompare(l2.firstName);
-
-									if (result === 0)
-									{
-										result = l1.middleName.localeCompare(l2.middleName);
-									}
-								}
-
-								return result;
-							});
+							lecturers.sort(compareLecturersByName);
 							this.lecturers.set(faculty.id, lecturers);
 						});
 				}

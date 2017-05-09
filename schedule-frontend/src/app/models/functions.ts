@@ -35,15 +35,15 @@ export function getCurrentGroupName(group: Group): string {
 	return getGroupName(group, getCurrentYear());
 }
 
-export function getClassStart(c: Class): string {
+export function getClassStart(num: number): string {
 	let result = "";
 
-	if (!c)
+	if (!num)
 	{
 		return result;
 	}
 
-	switch (c.number) {
+	switch (num) {
 		case 1:
 			result = "8:30";
 			break;
@@ -76,15 +76,15 @@ export function getClassStart(c: Class): string {
 	return result;
 }
 
-export function getClassEnd(c: Class): string {
+export function getClassEnd(num: number): string {
 	let result = "";
 
-	if (!c)
+	if (!num)
 	{
 		return result;
 	}
 
-	switch (c.number) {
+	switch (num) {
 		case 1:
 			result = "9:50";
 			break;
@@ -184,4 +184,27 @@ export function getGroupsAsString(groups: Group[]): string {
 				`${result}, ${getCurrentGroupName(group)}`,
 			"").substr(2)
 		: "";
+}
+
+export function compareLecturersByName(l1: Lecturer, l2: Lecturer) {
+	let result = l1.lastName.localeCompare(l2.lastName);
+
+	if (result === 0)
+	{
+		result = l1.firstName.localeCompare(l2.firstName);
+
+		if (result === 0)
+		{
+			result = l1.middleName.localeCompare(l2.middleName);
+		}
+	}
+
+	return result;
+}
+
+export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[] {
+	return xs.reduce((rv, x) => {
+		(rv[x[key]] = rv[x[key]] || []).push(x);
+		return rv;
+	}, { } as any);
 }

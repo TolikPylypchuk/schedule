@@ -1,0 +1,35 @@
+<h1 class="text-center">{{ currentUser.faculty.name }}</h1>
+<h2 class="text-center">Розклад</h2>
+
+<table class="table table-bordered">
+	<thead>
+	<tr>
+		<th>День</th>
+		<th colspan="9" class="text-center">Понеділок</th>
+		<th colspan="9" class="text-center">Вівторок</th>
+		<th colspan="9" class="text-center">Середа</th>
+		<th colspan="9" class="text-center">Четвер</th>
+		<th colspan="9" class="text-center">П'ятниця</th>
+	</tr>
+	<tr>
+		<th>#&nbsp;пари</th>
+		<th *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
+			{{ n % 9 + 1 }}
+		</th>
+	</tr>
+	<tr>
+		<th>Час</th>
+		<th *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
+			{{ getClassStart(n % 9 + 1) }}<br />{{ getClassEnd(n % 9 + 1) }}
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr *ngFor="let lecturerClasses of lecturersClasses">
+		<th>{{ getLecturerInitials(lecturerClasses.lecturer) }}</th>
+		<td>
+
+		</td>
+	</tr>
+	</tbody>
+</table>

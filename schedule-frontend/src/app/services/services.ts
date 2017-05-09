@@ -6,6 +6,7 @@ import { AuthService } from "./auth.service";
 import { BuildingService } from "./building.service";
 import { ClassService } from "./class.service";
 import { ClassroomService } from "./classroom.service";
+import { ClassroomTypeService } from "./classroom-type.service";
 import { FacultyService } from "./faculty.service";
 import { GroupService } from "./group.service";
 import { LecturerService } from "./lecturer.service";
@@ -34,6 +35,7 @@ export {
 	BuildingService,
 	ClassService,
 	ClassroomService,
+	ClassroomTypeService,
 	FacultyService,
 	GroupService,
 	LecturerService,

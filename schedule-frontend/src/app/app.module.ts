@@ -6,6 +6,7 @@ import { HttpModule } from "@angular/http";
 import { AppComponent } from "./app.component";
 import { RoutesModule } from "./routes.module";
 import { ScheduleModule } from "./schedule/schedule";
+import { AdminModule } from "./admin/admin";
 
 import * as services from "./services/services";
 
@@ -18,13 +19,15 @@ import * as services from "./services/services";
         FormsModule,
         HttpModule,
 	    ScheduleModule,
+	    AdminModule,
 	    RoutesModule
     ],
     providers: [
     	services.AuthService,
 	    services.BuildingService,
         services.ClassService,
-        services.ClassroomService,
+	    services.ClassroomService,
+	    services.ClassroomTypeService,
 	    services.FacultyService,
 	    services.GroupService,
 	    services.LecturerService,
