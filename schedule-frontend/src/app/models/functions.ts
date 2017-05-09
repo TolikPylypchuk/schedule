@@ -1,5 +1,5 @@
 import {
-	Class, Classroom, Group, Lecturer
+	Classroom, Group, Lecturer
 } from "./models";
 
 export function getCurrentYear(): number {

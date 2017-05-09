@@ -25,10 +25,45 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr *ngFor="let lecturerClasses of lecturersClasses">
-		<th>{{ getLecturerInitials(lecturerClasses.lecturer) }}</th>
-		<td>
-
+	<tr *ngFor="let lecturer of lecturers">
+		<th>{{ getLecturerInitials(lecturer) }}</th>
+		<td *ngFor="let n of getArrayOfNumbers(45)">
+			<div [ngSwitch]="getClassFrequency(lecturer, floor(n / 9 + 1), n % 9 + 1)">
+				<ng-container *ngSwitchCase="0">
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-plus" aria-hidden="true"></span>
+					</button>
+				</ng-container>
+				<ng-container *ngSwitchCase="1">
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-minus" aria-hidden="true"></span>
+					</button>
+				</ng-container>
+				<ng-container *ngSwitchCase="2">
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-minus" aria-hidden="true"></span>
+					</button>
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-plus" aria-hidden="true"></span>
+					</button>
+				</ng-container>
+				<ng-container *ngSwitchCase="3">
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-plus" aria-hidden="true"></span>
+					</button>
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-minus" aria-hidden="true"></span>
+					</button>
+				</ng-container>
+				<ng-container *ngSwitchCase="4">
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-minus" aria-hidden="true"></span>
+					</button>
+					<button class="btn btn-outline-primary">
+						<span class="fa fa-minus" aria-hidden="true"></span>
+					</button>
+				</ng-container>
+			</div>
 		</td>
 	</tr>
 	</tbody>

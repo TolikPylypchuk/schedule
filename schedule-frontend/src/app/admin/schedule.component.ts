@@ -7,7 +7,8 @@ import * as services from "../services/services";
 
 import {
 	getCurrentYear, getCurrentSemester, getLecturerInitials,
-	getClassStart, getClassEnd, groupBy, getDayOfWeekNumber
+	getClassStart, getClassEnd, getDayOfWeekNumber,
+	compareLecturersByName
 } from '../models/functions';
 
 interface ClassInfo {
@@ -16,15 +17,7 @@ interface ClassInfo {
 	groups: models.Group[]
 }
 
-interface LecturerClasses {
-	lecturer?: models.Lecturer,
-	classes?: {
-		day?: string,
-		classes?: ClassInfo[]
-	}[]
-}
-
-enum ClassFrequency {
+export enum ClassFrequency {
 	NONE,
 	WEEKLY,
 	NUMERATOR,
@@ -49,7 +42,8 @@ export class ScheduleComponent implements OnInit {
 	private wishService: services.WishService;
 
 	currentUser: models.Lecturer;
-	lecturersClasses: LecturerClasses[] = [];
+	lecturers: models.Lecturer[] = [];
+	lecturersClasses: Map<number, ClassInfo[]> = new Map();
 
 	constructor(
 		authService: services.AuthService,
@@ -79,43 +73,32 @@ export class ScheduleComponent implements OnInit {
 
 		this.lecturerService.getLecturersByFaculty(this.currentUser.faculty.id)
 			.subscribe((lecturers: models.Lecturer[]) => {
+				this.lecturers = lecturers.sort(compareLecturersByName);
+
 				for (let lecturer of lecturers) {
 					this.classService.getClassesByLecturerAndYearAndSemester(
 						lecturer.id,
 						getCurrentYear(),
 						getCurrentSemester())
 						.subscribe((classes: models.Class[]) => {
-							const groupedClasses = groupBy(classes, "dayOfWeek");
+							let infoArray: ClassInfo[] = [];
 
-							let lecturerClasses: LecturerClasses = {
-								lecturer: lecturer,
-								classes: []
-							};
+							this.lecturersClasses.set(lecturer.id, infoArray);
 
-							this.lecturersClasses.push(lecturerClasses);
-
-							for (let group of groupedClasses) {
-								let day = {
-									day: group.key as string,
-									classes: []
-								};
-
-								lecturerClasses.classes.push(day);
-
-								for (let c of group.items) {
-									Observable.forkJoin([
-											this.classroomService.getClassroomsByClass(c.id),
-											this.groupService.getGroupsByClass(c.id)
-										],
-										(classrooms: models.Classroom[],
-										 groups: models.Group[]) => {
-											day.classes.push({
-												c: c,
-												classrooms: classrooms,
-												groups: groups
-											});
-										});
-								}
+							for (let c of classes) {
+								Observable.forkJoin([
+										this.classroomService.getClassroomsByClass(c.id),
+										this.groupService.getGroupsByClass(c.id)
+									],
+									(classrooms: models.Classroom[],
+									 groups: models.Group[]): ClassInfo => {
+										return {
+											c: c,
+											classrooms: classrooms,
+											groups: groups
+										}
+									})
+									.subscribe((info: ClassInfo) => infoArray.push(info));
 							}
 						});
 				}
@@ -127,24 +110,22 @@ export class ScheduleComponent implements OnInit {
 		day: number,
 		num: number): ClassFrequency {
 		let frequency: ClassFrequency = ClassFrequency.NONE;
-		const lc = this.lecturersClasses.find(lc => lc.lecturer === lecturer);
+		let infoArray = this.lecturersClasses.get(lecturer.id);
 
-		if (lc) {
-			const cd = lc.classes.find(c => getDayOfWeekNumber(c.day) === day);
+		if (infoArray) {
+			infoArray = infoArray.filter(
+				info => getDayOfWeekNumber(info.c.dayOfWeek) === day &&
+						info.c.number === num);
 
-			if (cd) {
-				const cns = cd.classes.filter(c => c.c.number === num);
-
-				if (cns.length === 2) {
-					frequency = ClassFrequency.BOTH;
-				} else if (cns.length === 1) {
-					const f = cns[0].c.frequency.toLowerCase();
-					frequency = f === "щотижня"
-						? ClassFrequency.WEEKLY
-						: f === "по чисельнику"
-							? ClassFrequency.NUMERATOR
-							: ClassFrequency.DENOMINATOR;
-				}
+			if (infoArray.length === 2) {
+				frequency = ClassFrequency.BOTH;
+			} else if (infoArray.length === 1) {
+				const f = infoArray[0].c.frequency.toLowerCase();
+				frequency = f === "щотижня"
+					? ClassFrequency.WEEKLY
+					: f === "по чисельнику"
+						? ClassFrequency.NUMERATOR
+						: ClassFrequency.DENOMINATOR;
 			}
 		}
 
@@ -158,4 +139,6 @@ export class ScheduleComponent implements OnInit {
 	getLecturerInitials = getLecturerInitials;
 	getClassStart = getClassStart;
 	getClassEnd = getClassEnd;
+
+	floor = Math.floor;
 }
