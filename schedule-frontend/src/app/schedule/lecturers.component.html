@@ -9,10 +9,10 @@
 		{{ faculty.name }}
 	</button>
 	<div class="collapse" id="collapse{{ faculty.id }}">
-		<div class="card card-block m-1 p-1" *ngFor="let lecturer of lecturers.get(faculty.id)">
+		<div class="card card-block m-1 p-1" *ngFor="let user of users.get(faculty.id)">
 			<button class="btn btn-outline-primary"
-			        (click)="navigateToLecturer(lecturer.id)">
-				{{ lecturer.lastName }} {{ lecturer.firstName }} {{ lecturer.middleName }}
+			        (click)="navigateToLecturer(user.id)">
+				{{ user.lastName }} {{ user.firstName }} {{ user.middleName }}
 			</button>
 		</div>
 	</div>

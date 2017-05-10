@@ -29,7 +29,9 @@ public class BuildingController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Building building, HttpServletResponse response) {
+	public void post(
+		@RequestBody Building building,
+		HttpServletResponse response) {
 		this.buildings.save(building);
 		response.setStatus(HttpServletResponse.SC_CREATED);
 	}

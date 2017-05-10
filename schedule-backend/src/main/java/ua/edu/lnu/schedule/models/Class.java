@@ -104,7 +104,7 @@ public class Class implements Serializable {
 	private Set<Group> groups;
 
 	@JsonIgnore
-	private Set<Lecturer> lecturers;
+	private Set<User> lecturers;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -186,8 +186,12 @@ public class Class implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_group",
-		joinColumns = { @JoinColumn(name = "class") },
-		inverseJoinColumns = { @JoinColumn(name = "group") })
+		joinColumns = {
+			@JoinColumn(name = "class", referencedColumnName = "id")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "group", referencedColumnName = "id")
+		})
 	public Set<Group> getGroups() {
 		return this.groups;
 	}
@@ -209,8 +213,12 @@ public class Class implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_classroom",
-		joinColumns = { @JoinColumn(name = "class") },
-		inverseJoinColumns = { @JoinColumn(name = "classroom") })
+		joinColumns = {
+			@JoinColumn(name = "class", referencedColumnName = "id")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "classroom", referencedColumnName = "id")
+		})
 	public Set<Classroom> getClassrooms() {
 		return this.classrooms;
 	}
@@ -222,13 +230,17 @@ public class Class implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_lecturer",
-		joinColumns = { @JoinColumn(name = "class") },
-		inverseJoinColumns = { @JoinColumn(name = "lecturer") })
-	public Set<Lecturer> getLecturers() {
+		joinColumns = {
+			@JoinColumn(name = "class", referencedColumnName = "id")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "lecturer", referencedColumnName = "id")
+		})
+	public Set<User> getLecturers() {
 		return this.lecturers;
 	}
 	
-	public void setLecturers(Set<Lecturer> lecturers) {
+	public void setLecturers(Set<User> lecturers) {
 		this.lecturers = lecturers;
 	}
 }

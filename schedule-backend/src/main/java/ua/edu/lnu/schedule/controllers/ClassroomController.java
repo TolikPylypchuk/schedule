@@ -17,20 +17,20 @@ import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
 @RestController
 @RequestMapping("/classrooms")
 public class ClassroomController {
+	private ClassRepository classes;
 	private ClassroomRepository classrooms;
 	private ClassroomTypeRepository classroomTypes;
-	private ClassRepository classes;
+	
+	@Autowired
+	public void setClasses(ClassRepository classes) {
+		this.classes = classes;
+	}
 	
 	@Autowired
 	public void setClassrooms(ClassroomRepository classrooms)  {
 		this.classrooms = classrooms;
 	}
 	
-	@Autowired
-	public void setClasses(ClassRepository classes) {
-		this.classes = classes;
-	}
-
 	@Autowired
 	public void setClassroomTypes(ClassroomTypeRepository classroomTypes) {
 		this.classroomTypes = classroomTypes;
@@ -88,7 +88,9 @@ public class ClassroomController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Classroom classroom, HttpServletResponse response) {
+	public void post(
+		@RequestBody Classroom classroom,
+		HttpServletResponse response) {
 		this.classrooms.save(classroom);
 		response.setStatus(HttpServletResponse.SC_CREATED);
 	}

@@ -36,7 +36,7 @@ export class ScheduleComponent implements OnInit {
 	private classroomService: services.ClassroomService;
 	private classroomTypeService: services.ClassroomTypeService;
 	private groupService: services.GroupService;
-	private lecturerService: services.LecturerService;
+	private lecturerService: services.UserService;
 	private planService: services.PlanService;
 	private subjectService: services.SubjectService;
 	private wishService: services.WishService;
@@ -52,7 +52,7 @@ export class ScheduleComponent implements OnInit {
 		classroomService: services.ClassroomService,
 		classroomTypeService: services.ClassroomTypeService,
 		groupService: services.GroupService,
-		lecturerService: services.LecturerService,
+		lecturerService: services.UserService,
 		planService: services.PlanService,
 		subjectService: services.SubjectService,
 		wishService: services.WishService) {

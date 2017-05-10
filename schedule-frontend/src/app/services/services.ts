@@ -9,9 +9,9 @@ import { ClassroomService } from "./classroom.service";
 import { ClassroomTypeService } from "./classroom-type.service";
 import { FacultyService } from "./faculty.service";
 import { GroupService } from "./group.service";
-import { LecturerService } from "./lecturer.service";
 import { PlanService } from "./plan.service";
 import { SubjectService } from "./subject.service";
+import { UserService } from "./user.service";
 import { WishService } from "./wish.service";
 
 export function handleError(error: Response | any): ErrorObservable {
@@ -38,8 +38,8 @@ export {
 	ClassroomTypeService,
 	FacultyService,
 	GroupService,
-	LecturerService,
 	PlanService,
 	SubjectService,
+	UserService,
 	WishService
 }

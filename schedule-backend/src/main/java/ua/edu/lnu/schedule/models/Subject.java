@@ -20,7 +20,7 @@ public class Subject implements Serializable {
 	private Set<Class> classes;
 
 	@JsonIgnore
-	private Set<Lecturer> lecturers;
+	private Set<User> lecturers;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,11 +60,11 @@ public class Subject implements Serializable {
 	}
 
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "subjects")
-	public Set<Lecturer> getLecturers() {
+	public Set<User> getLecturers() {
 		return this.lecturers;
 	}
 
-	public void setLecturers(Set<Lecturer> lecturers) {
+	public void setLecturers(Set<User> lecturers) {
 		this.lecturers = lecturers;
 	}
 }

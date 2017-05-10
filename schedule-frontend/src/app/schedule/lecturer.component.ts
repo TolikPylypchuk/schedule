@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
 import {
-	ClassService, ClassroomService, GroupService, LecturerService
+	ClassService, ClassroomService, GroupService, UserService
 } from "../services/services";
 
 import {
@@ -39,7 +39,7 @@ export class LecturerComponent implements OnInit {
 	private classService: ClassService;
 	private classroomService: ClassroomService;
 	private groupService: GroupService;
-	private lecturerService: LecturerService;
+	private lecturerService: UserService;
 
 	private currentLecturer: string;
 	private classes: ClassInfo[] = [];
@@ -52,7 +52,7 @@ export class LecturerComponent implements OnInit {
 		classService: ClassService,
 		classroomService: ClassroomService,
 		groupService: GroupService,
-		lecturerService: LecturerService) {
+		lecturerService: UserService) {
 		this.route = route;
 		this.router = router;
 
