@@ -38,7 +38,8 @@ public class WishController {
 	}
 	
 	@RequestMapping(value = "/lecturerId/{lecturerId}", method = RequestMethod.GET)
-	public @ResponseBody Iterable<Wish> getByLecturer(@PathVariable("lecturerId") int lecturerId) {
+	public @ResponseBody Iterable<Wish> getByLecturer(
+		@PathVariable("lecturerId") int lecturerId) {
 		return this.wishes.findAllByLecturer_Id(lecturerId);
 	}
 	

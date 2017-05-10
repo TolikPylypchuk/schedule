@@ -17,18 +17,18 @@ import ua.edu.lnu.schedule.repositories.PlanRepository;
 @RestController
 @RequestMapping("/groups")
 public class GroupController {
-	private GroupRepository groups;
 	private ClassRepository classes;
+	private GroupRepository groups;
 	private PlanRepository plans;
-	
-	@Autowired
-	public void setGroups(GroupRepository groups) {
-		this.groups = groups;
-	}
 	
 	@Autowired
 	public void setClasses(ClassRepository classes) {
 		this.classes = classes;
+	}
+	
+	@Autowired
+	public void setGroups(GroupRepository groups) {
+		this.groups = groups;
 	}
 	
 	@Autowired
@@ -93,7 +93,8 @@ public class GroupController {
 	public @ResponseBody Iterable<Group> getByFacultyAndYearSince(
 		@PathVariable("facultyId") int facultyId,
 		@PathVariable("year") int year) {
-		return this.groups.findAllByFaculty_IdAndYearGreaterThanEqual(facultyId, year);
+		return this.groups.findAllByFaculty_IdAndYearGreaterThanEqual(
+			facultyId, year);
 	}
 	
 	@RequestMapping(value = "/planId/{planId}", method = RequestMethod.GET)

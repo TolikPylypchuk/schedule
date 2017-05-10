@@ -32,7 +32,7 @@ import * as services from "./services/services";
 	    services.ClassroomTypeService,
 	    services.FacultyService,
 	    services.GroupService,
-	    services.LecturerService,
+	    services.UserService,
 	    services.PlanService,
 	    services.SubjectService,
 	    services.WishService

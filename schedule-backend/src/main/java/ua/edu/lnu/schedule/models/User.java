@@ -1,6 +1,7 @@
 package ua.edu.lnu.schedule.models;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -8,15 +9,20 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "lecturers")
-public class Lecturer implements Serializable {
+@Table(name = "users")
+public class User implements Serializable {
 	private Integer id;
+	private String username;
+	private String password;
+	
 	private String firstName;
 	private String middleName;
 	private String lastName;
 	private String position;
+	private Date lastPasswordReset;
 	
 	private Faculty faculty;
+	private Set<Role> roles;
 	
 	@JsonIgnore
 	private Set<Subject> subjects;
@@ -35,6 +41,24 @@ public class Lecturer implements Serializable {
 	
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	@Column(name = "username", nullable = false, length = 50)
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	@Column(name = "password", nullable = false, length = 70)
+	public String getPassword() {
+		return this.password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 	@Column(name = "first_name", nullable = false, length = 20)
@@ -64,13 +88,23 @@ public class Lecturer implements Serializable {
 		this.lastName = lastName;
 	}
 	
-	@Column(name = "position", nullable = false, length = 10)
+	@Column(name = "position", length = 10)
 	public String getPosition() {
 		return this.position;
 	}
 	
 	public void setPosition(String position) {
 		this.position = position;
+	}
+	
+	@Column(name = "last_password_reset", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastPasswordReset() {
+		return this.lastPasswordReset;
+	}
+	
+	public void setLastPasswordReset(Date lastPasswordReset) {
+		this.lastPasswordReset = lastPasswordReset;
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -83,11 +117,32 @@ public class Lecturer implements Serializable {
 		this.faculty = faculty;
 	}
 	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "role_user",
+		joinColumns = {
+			@JoinColumn(name = "user", referencedColumnName = "id")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "role", referencedColumnName = "id")
+		})
+	public Set<Role> getRoles() {
+		return this.roles;
+	}
+	
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "lecturer_subject",
-		joinColumns = { @JoinColumn(name = "lecturer") },
-		inverseJoinColumns = { @JoinColumn(name = "subject") })
+		joinColumns = {
+			@JoinColumn(name = "lecturer", referencedColumnName = "id")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "subject", referencedColumnName = "id")
+		})
 	public Set<Subject> getSubjects() {
 		return subjects;
 	}

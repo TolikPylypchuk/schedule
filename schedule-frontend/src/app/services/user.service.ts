@@ -8,7 +8,7 @@ import { handleError } from "./services";
 const prefix = "http://localhost:8080";
 
 @Injectable()
-export class LecturerService {
+export class UserService {
 	private http: Http;
 
 	constructor(http: Http) {

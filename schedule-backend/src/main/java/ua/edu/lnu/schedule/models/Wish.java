@@ -18,7 +18,7 @@ public class Wish implements Serializable {
 	private int year;
 	private Semester semester;
 	
-	private Lecturer lecturer;
+	private User lecturer;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,11 +97,11 @@ public class Wish implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "lecturer", nullable = false)
-	public Lecturer getLecturer() {
+	public User getLecturer() {
 		return lecturer;
 	}
 	
-	public void setLecturer(Lecturer lecturer) {
+	public void setLecturer(User lecturer) {
 		this.lecturer = lecturer;
 	}
 }

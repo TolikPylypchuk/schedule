@@ -13,24 +13,19 @@ import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 import ua.edu.lnu.schedule.repositories.GroupRepository;
-import ua.edu.lnu.schedule.repositories.LecturerRepository;
+import ua.edu.lnu.schedule.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/classes")
 public class ClassController {
 	private ClassRepository classes;
-	private GroupRepository groups;
 	private ClassroomRepository classrooms;
-	private LecturerRepository lecturers;
+	private GroupRepository groups;
+	private UserRepository users;
 	
 	@Autowired
 	public void setClasses(ClassRepository classes) {
 		this.classes = classes;
-	}
-	
-	@Autowired
-	public void setGroups(GroupRepository groups) {
-		this.groups = groups;
 	}
 	
 	@Autowired
@@ -39,8 +34,13 @@ public class ClassController {
 	}
 	
 	@Autowired
-	public void setLecturers(LecturerRepository lecturers) {
-		this.lecturers = lecturers;
+	public void setGroups(GroupRepository groups) {
+		this.groups = groups;
+	}
+	
+	@Autowired
+	public void setUsers(UserRepository users) {
+		this.users = users;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -118,9 +118,12 @@ public class ClassController {
 	@RequestMapping(value = "/lecturerId/{lecturerId}", method = RequestMethod.GET)
 	public @ResponseBody Iterable<Class> getByLecturer(
 		@PathVariable("lecturerId") int lecturerId) {
-		Lecturer lecturer = this.lecturers.findOne(lecturerId);
+		User lecturer = this.users.findOne(lecturerId);
 		
-		return lecturer == null
+		return lecturer == null ||
+				lecturer.getRoles()
+						.stream()
+						.noneMatch(role -> role.getName() == Role.Name.LECTURER)
 			? new ArrayList<>()
 			: this.classes.findAllByLecturersContaining(lecturer);
 		
@@ -133,9 +136,12 @@ public class ClassController {
 		@PathVariable("lecturerId") int lecturerId,
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
-		Lecturer lecturer = this.lecturers.findOne(lecturerId);
+		User lecturer = this.users.findOne(lecturerId);
 		
-		return lecturer == null
+		return lecturer == null ||
+				lecturer.getRoles()
+						.stream()
+						.noneMatch(role -> role.getName() == Role.Name.LECTURER)
 			? new ArrayList<>()
 			: this.classes.findAllByLecturersContainingAndYearAndSemester(
 				lecturer, year, Semester.fromNumber(semester));
@@ -166,7 +172,6 @@ public class ClassController {
 		@PathVariable("semester") int semester) {
 		return this.classes.findAllByYearAndSemester(year, Semester.fromNumber(semester));
 	}
-	
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public void post(@RequestBody Class c, HttpServletResponse response) {

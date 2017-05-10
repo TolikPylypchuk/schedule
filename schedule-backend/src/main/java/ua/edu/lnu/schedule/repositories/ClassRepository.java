@@ -17,9 +17,9 @@ public interface ClassRepository extends CrudRepository<Class, Integer> {
 	List<Class> findAllByClassroomsContainingAndYearAndSemester(
 		Classroom classroom, int year, Semester semester);
 	
-	List<Class> findAllByLecturersContaining(Lecturer lecturer);
+	List<Class> findAllByLecturersContaining(User lecturer);
 	List<Class> findAllByLecturersContainingAndYearAndSemester(
-		Lecturer lecturer, int year, Semester semester);
+		User lecturer, int year, Semester semester);
 	
 	List<Class> findAllByDayOfWeek(DayOfWeek day);
 	List<Class> findAllByDayOfWeekAndYearAndSemester(

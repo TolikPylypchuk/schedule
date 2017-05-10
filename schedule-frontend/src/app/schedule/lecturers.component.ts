@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import {
-	LecturerService, FacultyService
+	UserService, FacultyService
 } from "../services/services";
 
 import { Faculty, Lecturer } from "../models/models";
@@ -15,7 +15,7 @@ import { compareLecturersByName } from "../models/functions";
 export class LecturersComponent implements OnInit {
 	private router: Router;
 	private facultyService: FacultyService;
-	private lecturerService: LecturerService;
+	private lecturerService: UserService;
 
 	faculties: Faculty[];
 	lecturers: Map<number, Lecturer[]>;
@@ -23,7 +23,7 @@ export class LecturersComponent implements OnInit {
 	constructor(
 		router: Router,
 		facultyService: FacultyService,
-		lecturerService: LecturerService) {
+		lecturerService: UserService) {
 		this.router = router;
 		this.facultyService = facultyService;
 		this.lecturerService = lecturerService;
