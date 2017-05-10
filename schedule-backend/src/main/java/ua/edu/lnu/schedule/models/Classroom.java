@@ -16,8 +16,6 @@ public class Classroom implements Serializable {
 
 	private ClassroomType type;
 	private Building building;
-
-	@JsonIgnore
 	private Set<Class> classes;
 
 	@Id
@@ -67,7 +65,8 @@ public class Classroom implements Serializable {
 	public void setBuilding(Building building) {
 		this.building = building;
 	}
-
+	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "classrooms")
 	public Set<Class> getClasses() {
 		return this.classes;

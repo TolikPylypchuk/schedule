@@ -96,14 +96,8 @@ public class Class implements Serializable {
 	
 	private ClassroomType classroomType;
 	private Subject subject;
-	
-	@JsonIgnore
 	private Set<Classroom> classrooms;
-
-	@JsonIgnore
 	private Set<Group> groups;
-
-	@JsonIgnore
 	private Set<User> lecturers;
 	
 	@Id
@@ -182,7 +176,8 @@ public class Class implements Serializable {
 	public void setClassroomType(ClassroomType classroomType) {
 		this.classroomType = classroomType;
 	}
-
+	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_group",
@@ -210,6 +205,7 @@ public class Class implements Serializable {
 		this.subject = subject;
 	}
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_classroom",
@@ -227,6 +223,7 @@ public class Class implements Serializable {
 		this.classrooms = classrooms;
 	}
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_lecturer",

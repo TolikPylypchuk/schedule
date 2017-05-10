@@ -90,9 +90,9 @@ public class SubjectController {
 		User lecturer = this.lecturers.findOne(lecturerId);
 		
 		if (lecturer == null ||
-			lecturer.getRoles()
+			lecturer.getAuthorities()
 					.stream()
-					.noneMatch(role -> role.getName() == Role.Name.LECTURER)) {
+					.noneMatch(authority -> authority.getName() == Authority.Name.ROLE_LECTURER)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}

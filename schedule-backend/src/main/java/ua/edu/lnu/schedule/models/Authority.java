@@ -7,17 +7,18 @@ import java.util.Set;
 
 import javax.persistence.*;
 
-public class Role implements Serializable {
+@Entity
+@Table(name = "authorities")
+public class Authority implements Serializable {
 	public enum Name {
-		LECTURER,
-		EDITOR,
-		ADMIN
+		ROLE_LECTURER,
+		ROLE_EDITOR,
+		ROLE_ADMIN
 	}
 	
 	private Integer id;
 	private Name name;
 	
-	@JsonIgnore
 	private Set<User> users;
 	
 	@Id
@@ -40,7 +41,8 @@ public class Role implements Serializable {
 		this.name = name;
 	}
 	
-	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+	@JsonIgnore
+	@ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
 	public Set<User> getUsers() {
 		return this.users;
 	}

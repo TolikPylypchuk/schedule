@@ -13,13 +13,8 @@ public class Subject implements Serializable {
 	private Integer id;
 	private String name;
 
-	@JsonIgnore
 	private Set<Plan> plans;
-
-	@JsonIgnore
 	private Set<Class> classes;
-
-	@JsonIgnore
 	private Set<User> lecturers;
 
 	@Id
@@ -40,7 +35,8 @@ public class Subject implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
 	public Set<Plan> getPlans() {
 		return this.plans;
@@ -49,7 +45,8 @@ public class Subject implements Serializable {
 	public void setPlans(Set<Plan> plans) {
 		this.plans = plans;
 	}
-
+	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
 	public Set<Class> getClasses() {
 		return this.classes;
@@ -58,7 +55,8 @@ public class Subject implements Serializable {
 	public void setClasses(Set<Class> classes) {
 		this.classes = classes;
 	}
-
+	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "subjects")
 	public Set<User> getLecturers() {
 		return this.lecturers;

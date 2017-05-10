@@ -13,7 +13,6 @@ public class Faculty implements Serializable {
 	private Integer id;
 	private String name;
 	
-	@JsonIgnore
 	private Set<Group> groups;
 	
 	@Id
@@ -35,6 +34,7 @@ public class Faculty implements Serializable {
 		this.name = name;
 	}
 	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
 	public Set<Group> getGroups() {
 		return this.groups;

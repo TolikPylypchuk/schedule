@@ -13,10 +13,7 @@ public class ClassroomType implements Serializable {
 	private Integer id;
 	private String type;
 
-	@JsonIgnore
 	private Set<Class> classes;
-
-	@JsonIgnore
 	private Set<Classroom> classrooms;
 
 	@Id
@@ -37,7 +34,8 @@ public class ClassroomType implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
-
+	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classroomType")
 	public Set<Class> getClasses() {
 		return this.classes;
@@ -46,7 +44,8 @@ public class ClassroomType implements Serializable {
 	public void setClasses(Set<Class> classes) {
 		this.classes = classes;
 	}
-
+	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "type")
 	public Set<Classroom> getClassrooms() {
 		return this.classrooms;

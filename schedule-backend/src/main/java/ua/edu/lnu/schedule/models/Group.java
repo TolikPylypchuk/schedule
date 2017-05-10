@@ -17,10 +17,7 @@ public class Group implements Serializable {
 	
 	private Faculty faculty;
 	
-	@JsonIgnore
 	private Set<Class> classes;
-	
-	@JsonIgnore
 	private Set<Plan> plans;
 	
 	@Id
@@ -70,6 +67,7 @@ public class Group implements Serializable {
 		this.faculty = faculty;
 	}
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "groups")
 	public Set<Class> getClasses() {
 		return this.classes;
@@ -79,6 +77,7 @@ public class Group implements Serializable {
 		this.classes = classes;
 	}
 	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
 	public Set<Plan> getPlans() {
 		return this.plans;

@@ -14,7 +14,6 @@ public class User implements Serializable {
 	private Integer id;
 	private String username;
 	private String password;
-	
 	private String firstName;
 	private String middleName;
 	private String lastName;
@@ -22,15 +21,9 @@ public class User implements Serializable {
 	private Date lastPasswordReset;
 	
 	private Faculty faculty;
-	private Set<Role> roles;
-	
-	@JsonIgnore
+	private Set<Authority> authorities;
 	private Set<Subject> subjects;
-	
-	@JsonIgnore
 	private Set<Class> classes;
-	
-	@JsonIgnore
 	private Set<Wish> wishes;
 	
 	@Id
@@ -52,6 +45,7 @@ public class User implements Serializable {
 		this.username = username;
 	}
 	
+	@JsonIgnore
 	@Column(name = "password", nullable = false, length = 70)
 	public String getPassword() {
 		return this.password;
@@ -97,6 +91,7 @@ public class User implements Serializable {
 		this.position = position;
 	}
 	
+	@JsonIgnore
 	@Column(name = "last_password_reset", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getLastPasswordReset() {
@@ -117,23 +112,25 @@ public class User implements Serializable {
 		this.faculty = faculty;
 	}
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
-		name = "role_user",
+		name = "authority_user",
 		joinColumns = {
 			@JoinColumn(name = "user", referencedColumnName = "id")
 		},
 		inverseJoinColumns = {
-			@JoinColumn(name = "role", referencedColumnName = "id")
+			@JoinColumn(name = "authority", referencedColumnName = "id")
 		})
-	public Set<Role> getRoles() {
-		return this.roles;
+	public Set<Authority> getAuthorities() {
+		return this.authorities;
 	}
 	
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
+	public void setAuthorities(Set<Authority> authorities) {
+		this.authorities = authorities;
 	}
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "lecturer_subject",
@@ -151,6 +148,7 @@ public class User implements Serializable {
 		this.subjects = subjects;
 	}
 	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lecturers")
 	public Set<Class> getClasses() {
 		return classes;
@@ -160,6 +158,7 @@ public class User implements Serializable {
 		this.classes = classes;
 	}
 	
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lecturer")
 	public Set<Wish> getWishes() {
 		return wishes;

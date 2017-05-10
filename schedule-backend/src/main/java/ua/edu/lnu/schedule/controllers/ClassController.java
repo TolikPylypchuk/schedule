@@ -121,9 +121,9 @@ public class ClassController {
 		User lecturer = this.users.findOne(lecturerId);
 		
 		return lecturer == null ||
-				lecturer.getRoles()
+				lecturer.getAuthorities()
 						.stream()
-						.noneMatch(role -> role.getName() == Role.Name.LECTURER)
+						.noneMatch(authority -> authority.getName() == Authority.Name.ROLE_LECTURER)
 			? new ArrayList<>()
 			: this.classes.findAllByLecturersContaining(lecturer);
 		
@@ -139,9 +139,9 @@ public class ClassController {
 		User lecturer = this.users.findOne(lecturerId);
 		
 		return lecturer == null ||
-				lecturer.getRoles()
+				lecturer.getAuthorities()
 						.stream()
-						.noneMatch(role -> role.getName() == Role.Name.LECTURER)
+						.noneMatch(authority -> authority.getName() == Authority.Name.ROLE_LECTURER)
 			? new ArrayList<>()
 			: this.classes.findAllByLecturersContainingAndYearAndSemester(
 				lecturer, year, Semester.fromNumber(semester));
