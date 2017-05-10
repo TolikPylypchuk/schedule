@@ -1,5 +1,6 @@
 package ua.edu.lnu.schedule.security.jwt;
 
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,9 +29,9 @@ public final class JwtUserFactory {
 	
 	private static Set<GrantedAuthority> mapToGrantedAuthorities(
 		Set<Authority> authorities) {
-		return authorities.stream()
-			.map(authority ->
-				new SimpleGrantedAuthority(authority.getName().name()))
+		return authorities
+			.stream()
+			.map(authority -> new SimpleGrantedAuthority(authority.getName().name()))
 			.collect(Collectors.toSet());
 	}
 }

@@ -36,6 +36,7 @@ public class User implements Serializable {
 		this.id = id;
 	}
 	
+	@JsonIgnore
 	@Column(name = "username", nullable = false, length = 50)
 	public String getUsername() {
 		return this.username;
@@ -112,7 +113,6 @@ public class User implements Serializable {
 		this.faculty = faculty;
 	}
 	
-	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name = "authority_user",

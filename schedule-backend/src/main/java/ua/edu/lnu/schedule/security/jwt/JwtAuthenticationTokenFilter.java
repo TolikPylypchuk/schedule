@@ -23,14 +23,24 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	
 	private final Log logger = LogFactory.getLog(this.getClass());
 	
-	@Autowired
+	private String tokenHeader;
 	private UserDetailsService userDetailsService;
-	
-	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 	
 	@Value("${jwt.header}")
-	private String tokenHeader;
+	public void setTokenHeader(String tokenHeader) {
+		this.tokenHeader = tokenHeader;
+	}
+	
+	@Autowired
+	public void setUserDetailsService(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+	
+	@Autowired
+	public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
+		this.jwtTokenUtil = jwtTokenUtil;
+	}
 	
 	@Override
 	protected void doFilterInternal(
@@ -44,14 +54,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 			authToken = authToken.substring(7);
 		}
 		
-		String username = jwtTokenUtil.getUsernameFromToken(authToken);
+		String username = this.jwtTokenUtil.getUsernameFromToken(authToken);
 		
-		logger.info("Checking authentication for user " + username);
+		this.logger.info("Checking authentication for user " + username + ".");
 		
-		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+		if (username != null &&
+			SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails userDetails =
+				this.userDetailsService.loadUserByUsername(username);
 			
-			if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+			if (this.jwtTokenUtil.validateToken(authToken, userDetails)) {
 				UsernamePasswordAuthenticationToken authentication =
 					new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
@@ -59,8 +71,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 				authentication.setDetails(
 					new WebAuthenticationDetailsSource().buildDetails(request));
 				
-				logger.info("Authenticated user " + username +
-							", setting security context");
+				this.logger.info("Authenticated user " + username +
+								 ", setting security context.");
+				
 				SecurityContextHolder.getContext()
 					.setAuthentication(authentication);
 			}

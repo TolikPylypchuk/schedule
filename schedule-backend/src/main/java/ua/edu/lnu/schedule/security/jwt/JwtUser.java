@@ -87,6 +87,7 @@ public class JwtUser implements UserDetails {
 		return this.authorities;
 	}
 	
+	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
 		return true;

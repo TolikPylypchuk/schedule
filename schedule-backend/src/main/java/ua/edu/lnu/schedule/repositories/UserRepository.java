@@ -10,6 +10,7 @@ import ua.edu.lnu.schedule.models.Subject;
 import ua.edu.lnu.schedule.models.Wish;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
+	User findByUsername(String username);
 	List<User> findAllByFaculty_Id(Integer id);
 	List<User> findAllBySubjectsContaining(Subject subject);
 	List<User> findAllByClassesContaining(Class c);

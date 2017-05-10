@@ -1,5 +1,6 @@
 package ua.edu.lnu.schedule.controllers;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
@@ -7,10 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
-import ua.edu.lnu.schedule.models.User;
-import ua.edu.lnu.schedule.models.Subject;
-import ua.edu.lnu.schedule.models.Wish;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.UserRepository;
 import ua.edu.lnu.schedule.repositories.SubjectRepository;
@@ -50,8 +49,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public @ResponseBody
-	User getById(
+	public @ResponseBody User getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		User user = this.users.findOne(id);
 		
@@ -61,6 +59,11 @@ public class UserController {
 		}
 		
 		return user;
+	}
+	
+	@RequestMapping(value = "/current", method = RequestMethod.GET)
+	public @ResponseBody User getCurrentUser(Principal p) {
+		return this.users.findByUsername(p.getName());
 	}
 	
 	@RequestMapping(value = "/facultyId/{facultyId}", method = RequestMethod.GET)
@@ -90,8 +93,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/wishId/{wishId}", method = RequestMethod.GET)
-	public @ResponseBody
-	User getByWish(
+	public @ResponseBody User getByWish(
 		@PathVariable("wishId") int wishId, HttpServletResponse response) {
 		Wish wish = this.wishes.findOne(wishId);
 		
