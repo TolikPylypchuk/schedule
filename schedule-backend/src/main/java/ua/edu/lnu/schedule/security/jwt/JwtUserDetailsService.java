@@ -12,17 +12,17 @@ import ua.edu.lnu.schedule.repositories.UserRepository;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 	
-	private UserRepository userRepository;
+	private UserRepository users;
 	
 	@Autowired
-	public void setUserRepository(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public void setUsers(UserRepository users) {
+		this.users = users;
 	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username)
 		throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
+		User user = this.users.findByUsername(username);
 		
 		if (user == null) {
 			throw new UsernameNotFoundException(

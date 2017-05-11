@@ -186,6 +186,7 @@ public class ClassController {
 		HttpServletResponse response) {
 		if (!this.classes.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		c.setId(id);
@@ -198,6 +199,7 @@ public class ClassController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.classes.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.classes.delete(id);

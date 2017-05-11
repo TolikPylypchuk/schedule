@@ -1,6 +1,7 @@
 package ua.edu.lnu.schedule.controllers;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -82,9 +83,10 @@ public class ClassroomController {
 			@PathVariable("typeId") int typeId) {
 		ClassroomType type = this.classroomTypes.findOne(typeId);
 
-		return type.getType() == "Будь-яка"
-				? this.classrooms.findAll()
-				: this.classrooms.findAllByType_Id(typeId);
+		return type.getType().toLowerCase(Locale.forLanguageTag("uk-UA"))
+			.equals("будь-яка")
+			? this.classrooms.findAll()
+			: this.classrooms.findAllByType_Id(typeId);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -102,6 +104,7 @@ public class ClassroomController {
 		HttpServletResponse response) {
 		if (!this.classrooms.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		classroom.setId(id);
@@ -114,6 +117,7 @@ public class ClassroomController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.classrooms.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.classrooms.delete(id);

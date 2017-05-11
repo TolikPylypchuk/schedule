@@ -1,5 +1,7 @@
 package ua.edu.lnu.schedule.controllers;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,9 +94,10 @@ public class SubjectController {
 		if (lecturer == null ||
 			lecturer.getAuthorities()
 					.stream()
-					.noneMatch(authority -> authority.getName() == Authority.Name.ROLE_LECTURER)) {
+					.noneMatch(authority ->
+						authority.getName() == Authority.Name.ROLE_LECTURER)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return new ArrayList<>();
 		}
 		
 		return this.subjects.findAllByLecturersContaining(lecturer);
@@ -113,6 +116,7 @@ public class SubjectController {
 		HttpServletResponse response) {
 		if (!this.subjects.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		subject.setId(id);
@@ -125,6 +129,7 @@ public class SubjectController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.subjects.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.subjects.delete(id);

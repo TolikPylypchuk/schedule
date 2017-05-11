@@ -67,6 +67,7 @@ public class WishController {
 		HttpServletResponse response) {
 		if (!this.wishes.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		group.setId(id);
@@ -79,6 +80,7 @@ public class WishController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.wishes.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.wishes.delete(id);

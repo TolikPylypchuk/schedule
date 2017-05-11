@@ -51,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Bean
-	public JwtAuthenticationTokenFilter authenticationTokenFilterBean()
+	public JwtAuthenticationTokenFilter authenticationTokenFilter()
 		throws Exception {
 		return new JwtAuthenticationTokenFilter();
 	}
@@ -69,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers("/auth/**")
 					.permitAll()
-				.antMatchers("/users/current")
+				.antMatchers("/users/current/**")
 					.authenticated()
 				
 				.antMatchers(HttpMethod.GET, "/**")
@@ -85,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.hasAuthority("ROLE_ADMIN")
 				
 				.antMatchers(HttpMethod.POST, "/classes/**")
-					.hasAuthority("ROLE_EDITOR")
+					.hasAnyAuthority("ROLE_EDITOR")
 				.antMatchers(HttpMethod.PUT, "/classes/**")
 					.hasAuthority("ROLE_EDITOR")
 				.antMatchers(HttpMethod.DELETE, "/classes/**")
@@ -143,7 +143,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/users/**")
 					.hasAuthority("ROLE_ADMIN")
 				.antMatchers(HttpMethod.PUT, "/users/**")
-					.authenticated()
+					.hasAuthority("ROLE_ADMIN")
 				.antMatchers(HttpMethod.DELETE, "/users/**")
 					.hasAuthority("ROLE_ADMIN")
 				
@@ -151,7 +151,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.authenticated();
 		
 		httpSecurity.addFilterBefore(
-			this.authenticationTokenFilterBean(),
+			this.authenticationTokenFilter(),
 			UsernamePasswordAuthenticationFilter.class);
 		
 		httpSecurity.headers().cacheControl();

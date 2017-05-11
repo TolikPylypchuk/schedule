@@ -93,6 +93,7 @@ public class ClassroomTypeController {
         HttpServletResponse response) {
 		if (!this.classrooms.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 
 		classroomType.setId(id);
@@ -105,6 +106,7 @@ public class ClassroomTypeController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.classroomTypes.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 
 		this.classroomTypes.delete(id);

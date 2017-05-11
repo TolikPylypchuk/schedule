@@ -41,6 +41,7 @@ public class FacultyController {
 		HttpServletResponse response) {
 		if (!this.faculties.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		faculty.setId(id);
@@ -53,6 +54,7 @@ public class FacultyController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.faculties.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.faculties.delete(id);

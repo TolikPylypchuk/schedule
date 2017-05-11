@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
@@ -42,6 +43,7 @@ public class User implements Serializable {
 		return this.username;
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -52,6 +54,7 @@ public class User implements Serializable {
 		return this.password;
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -117,7 +120,7 @@ public class User implements Serializable {
 	@JoinTable(
 		name = "authority_user",
 		joinColumns = {
-			@JoinColumn(name = "user", referencedColumnName = "id")
+			@JoinColumn(name = "`user`", referencedColumnName = "id")
 		},
 		inverseJoinColumns = {
 			@JoinColumn(name = "authority", referencedColumnName = "id")
@@ -133,9 +136,9 @@ public class User implements Serializable {
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "lecturer_subject",
+		name = "subject_user",
 		joinColumns = {
-			@JoinColumn(name = "lecturer", referencedColumnName = "id")
+			@JoinColumn(name = "`user`", referencedColumnName = "id")
 		},
 		inverseJoinColumns = {
 			@JoinColumn(name = "subject", referencedColumnName = "id")

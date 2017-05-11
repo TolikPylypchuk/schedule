@@ -7,9 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,9 +17,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-	
-	private final Log logger = LogFactory.getLog(this.getClass());
-	
 	private String tokenHeader;
 	private UserDetailsService userDetailsService;
 	private JwtTokenUtil jwtTokenUtil;
@@ -56,8 +50,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 		
 		String username = this.jwtTokenUtil.getUsernameFromToken(authToken);
 		
-		this.logger.info("Checking authentication for user " + username + ".");
-		
 		if (username != null &&
 			SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails =
@@ -70,9 +62,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 				
 				authentication.setDetails(
 					new WebAuthenticationDetailsSource().buildDetails(request));
-				
-				this.logger.info("Authenticated user " + username +
-								 ", setting security context.");
 				
 				SecurityContextHolder.getContext()
 					.setAuthentication(authentication);

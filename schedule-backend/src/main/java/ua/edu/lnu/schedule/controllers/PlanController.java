@@ -84,6 +84,7 @@ public class PlanController {
 		HttpServletResponse response) {
 		if (!this.plans.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		plan.setId(id);
@@ -96,6 +97,7 @@ public class PlanController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.plans.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.plans.delete(id);

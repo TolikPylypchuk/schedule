@@ -43,6 +43,7 @@ public class BuildingController {
 		HttpServletResponse response) {
 		if (!this.buildings.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		building.setId(id);
@@ -55,6 +56,7 @@ public class BuildingController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.buildings.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.buildings.delete(id);

@@ -27,8 +27,8 @@ import ua.edu.lnu.schedule.security.jwt.JwtUser;
 public class AuthenticationController {
 	
 	private String tokenHeader;
-	private AuthenticationManager authenticationManager;
 	private JwtTokenUtil jwtTokenUtil;
+	private AuthenticationManager authenticationManager;
 	private UserDetailsService userDetailsService;
 	
 	@Value("${jwt.header}")
@@ -37,14 +37,14 @@ public class AuthenticationController {
 	}
 	
 	@Autowired
-	public void setAuthenticationManager(
-		AuthenticationManager authenticationManager) {
-		this.authenticationManager = authenticationManager;
+	public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
+		this.jwtTokenUtil = jwtTokenUtil;
 	}
 	
 	@Autowired
-	public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
-		this.jwtTokenUtil = jwtTokenUtil;
+	public void setAuthenticationManager(
+		AuthenticationManager authenticationManager) {
+		this.authenticationManager = authenticationManager;
 	}
 	
 	@Autowired

@@ -123,6 +123,7 @@ public class GroupController {
 		HttpServletResponse response) {
 		if (!this.groups.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		group.setId(id);
@@ -135,6 +136,7 @@ public class GroupController {
 	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
 		if (!this.groups.exists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
 		this.groups.delete(id);

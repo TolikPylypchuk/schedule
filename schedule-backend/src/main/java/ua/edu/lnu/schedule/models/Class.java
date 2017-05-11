@@ -226,12 +226,12 @@ public class Class implements Serializable {
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "class_lecturer",
+		name = "class_user",
 		joinColumns = {
 			@JoinColumn(name = "class", referencedColumnName = "id")
 		},
 		inverseJoinColumns = {
-			@JoinColumn(name = "lecturer", referencedColumnName = "id")
+			@JoinColumn(name = "`user`", referencedColumnName = "id")
 		})
 	public Set<User> getLecturers() {
 		return this.lecturers;
