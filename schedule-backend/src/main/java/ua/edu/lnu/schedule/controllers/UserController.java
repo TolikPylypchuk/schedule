@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
@@ -115,13 +117,36 @@ public class UserController {
 	public void put(
 		@PathVariable("id") int id,
 		@RequestBody User user,
-		HttpServletResponse response) {
-		if (!this.users.exists(id)) {
+		HttpServletResponse response,
+		Authentication authentication) {
+		User userToChange = this.users.findOne(id);
+		
+		if (userToChange == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		
-		user.setId(id);
-		this.users.save(user);
+		if (authentication.getAuthorities().stream()
+				.noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN")) &&
+			!userToChange.getUsername().equals(
+				((UserDetails)authentication.getPrincipal()).getUsername())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return;
+		}
+		
+		if (user.getFirstName() != null) {
+			userToChange.setFirstName(user.getFirstName());
+		}
+		
+		if (user.getMiddleName() != null) {
+			userToChange.setMiddleName(user.getMiddleName());
+		}
+		
+		if (user.getLastName() != null) {
+			userToChange.setLastName(user.getLastName());
+		}
+		
+		this.users.save(userToChange);
 		
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}

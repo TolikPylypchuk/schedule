@@ -71,17 +71,88 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.permitAll()
 				.antMatchers("/users/current")
 					.authenticated()
+				
 				.antMatchers(HttpMethod.GET, "/**")
 					.permitAll()
 				.antMatchers(HttpMethod.OPTIONS, "/**")
 					.permitAll()
+				
+				.antMatchers(HttpMethod.POST, "/buildings/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.PUT, "/buildings/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.DELETE, "/buildings/**")
+					.hasAuthority("ROLE_ADMIN")
+				
+				.antMatchers(HttpMethod.POST, "/classes/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.PUT, "/classes/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.DELETE, "/classes/**")
+					.hasAuthority("ROLE_EDITOR")
+				
+				.antMatchers(HttpMethod.POST, "/classrooms/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.PUT, "/classrooms/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.DELETE, "/classrooms/**")
+					.hasAuthority("ROLE_ADMIN")
+				
+				.antMatchers(HttpMethod.POST, "/classroomTypes/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.PUT, "/classroomTypes/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.DELETE, "/classroomTypes/**")
+					.hasAuthority("ROLE_ADMIN")
+				
+				.antMatchers(HttpMethod.POST, "/faculties/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.PUT, "/faculties/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.DELETE, "/faculties/**")
+					.hasAuthority("ROLE_ADMIN")
+				
+				.antMatchers(HttpMethod.POST, "/groups/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.PUT, "/groups/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.DELETE, "/groups/**")
+					.hasAuthority("ROLE_EDITOR")
+				
+				.antMatchers(HttpMethod.POST, "/plans/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.PUT, "/plans/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.DELETE, "/plans/**")
+					.hasAuthority("ROLE_EDITOR")
+				
+				.antMatchers(HttpMethod.POST, "/subjects/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.PUT, "/subjects/**")
+					.hasAuthority("ROLE_EDITOR")
+				.antMatchers(HttpMethod.DELETE, "/subjects/**")
+					.hasAuthority("ROLE_EDITOR")
+				
+				.antMatchers(HttpMethod.POST, "/wishes/**")
+					.hasAuthority("ROLE_LECTURER")
+				.antMatchers(HttpMethod.PUT, "/wishes/**")
+					.hasAuthority("ROLE_LECTURER")
+				.antMatchers(HttpMethod.DELETE, "/wishes/**")
+					.hasAuthority("ROLE_LECTURER")
+				
+				.antMatchers(HttpMethod.POST, "/users/**")
+					.hasAuthority("ROLE_ADMIN")
+				.antMatchers(HttpMethod.PUT, "/users/**")
+					.authenticated()
+				.antMatchers(HttpMethod.DELETE, "/users/**")
+					.hasAuthority("ROLE_ADMIN")
+				
 				.anyRequest()
 					.authenticated();
 		
-		httpSecurity
-			.addFilterBefore(
-				this.authenticationTokenFilterBean(),
-				UsernamePasswordAuthenticationFilter.class);
+		httpSecurity.addFilterBefore(
+			this.authenticationTokenFilterBean(),
+			UsernamePasswordAuthenticationFilter.class);
 		
 		httpSecurity.headers().cacheControl();
 	}
