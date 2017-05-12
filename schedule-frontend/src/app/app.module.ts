@@ -13,32 +13,32 @@ import { RoutesModule } from "./routes.module";
 import * as services from "./services/services";
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        HttpModule,
-	    AuthModule,
-	    ScheduleModule,
-	    AdminModule,
-	    RoutesModule
-    ],
-    providers: [
-	    services.BuildingService,
-        services.ClassService,
-	    services.ClassroomService,
-	    services.ClassroomTypeService,
-	    services.FacultyService,
-	    services.GroupService,
-	    services.UserService,
-	    services.PlanService,
-	    services.SubjectService,
-	    services.WishService
-    ],
-    bootstrap: [
-        AppComponent
-    ]
+	declarations: [
+		AppComponent
+	],
+	imports: [
+		BrowserModule,
+		FormsModule,
+		HttpModule,
+		AuthModule,
+		ScheduleModule,
+		AdminModule,
+		RoutesModule
+	],
+	providers: [
+		services.BuildingService,
+		services.ClassService,
+		services.ClassroomService,
+		services.ClassroomTypeService,
+		services.FacultyService,
+		services.GroupService,
+		services.UserService,
+		services.PlanService,
+		services.SubjectService,
+		services.WishService
+	],
+	bootstrap: [
+		AppComponent
+	]
 })
 export class AppModule { }

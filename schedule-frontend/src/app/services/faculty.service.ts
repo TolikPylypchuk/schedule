@@ -1,23 +1,26 @@
 import { Injectable } from "@angular/core";
-import { Http, Response, Headers } from "@angular/http";
+import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+
+import { AuthService } from "../auth/auth.service";
 
 import { Faculty } from "../models/models";
 import { handleError } from "./services";
 
 @Injectable()
 export class FacultyService {
-	private api = "http://localhost:8080";
-	private headers = new Headers({ "Content-Type": "application/json" });
+	private facultiesUrl = "http://localhost:8080/faculties";
+	private headers;
 
 	private http: Http;
 
-	constructor(http: Http) {
+	constructor(http: Http, authService: AuthService) {
 		this.http = http;
+		this.headers = authService.getHeaders();
 	}
 
 	getFaculties(): Observable<Faculty[]> {
-		return this.http.get(`${this.api}/faculties`)
+		return this.http.get(this.facultiesUrl)
 			.map(response =>
 				response.status === 200
 					? response.json() as Faculty[]
@@ -25,7 +28,7 @@ export class FacultyService {
 	}
 
 	getFaculty(id: number): Observable<Faculty> {
-		return this.http.get(`${this.api}/faculties/${id}`)
+		return this.http.get(`${this.facultiesUrl}/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Faculty
@@ -34,7 +37,7 @@ export class FacultyService {
 
 	addFaculty(faculty: Faculty): Observable<Response> {
 		return this.http.post(
-			`${this.api}/faculties/`,
+			this.facultiesUrl,
 			JSON.stringify(faculty),
 			{ headers: this.headers })
 			.catch(handleError);
@@ -42,14 +45,16 @@ export class FacultyService {
 
 	updateFaculty(faculty: Faculty): Observable<Response> {
 		return this.http.put(
-			`${this.api}/faculties/${faculty.id}`,
+			`${this.facultiesUrl}/${faculty.id}`,
 			JSON.stringify(faculty),
 			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteFaculty(faculty: Faculty): Observable<Response> {
-		return this.http.delete(`${this.api}/faculties/${faculty.id}`)
+		return this.http.delete(
+			`${this.facultiesUrl}/${faculty.id}`,
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 
-import * as models from '../models/models';
+import * as models from "../models/models";
 
 import * as services from "../services/services";
 import { AuthService } from "../auth/auth.service";
@@ -10,7 +10,7 @@ import {
 	getCurrentYear, getCurrentSemester, getLecturerInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareLecturersByName
-} from '../models/functions';
+} from "../models/functions";
 
 interface ClassInfo {
 	c: models.Class,
@@ -70,39 +70,12 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.currentUser = this.authService.getCurrentUser();
+		this.authService.getCurrentUser()
+			.subscribe((user: models.User) => {
+				this.currentUser = user;
 
-		this.lecturerService.getLecturersByFaculty(this.currentUser.faculty.id)
-			.subscribe((lecturers: models.User[]) => {
-				this.lecturers = lecturers.sort(compareLecturersByName);
-
-				for (let lecturer of lecturers) {
-					this.classService.getClassesByLecturerAndYearAndSemester(
-						lecturer.id,
-						getCurrentYear(),
-						getCurrentSemester())
-						.subscribe((classes: models.Class[]) => {
-							let infoArray: ClassInfo[] = [];
-
-							this.lecturersClasses.set(lecturer.id, infoArray);
-
-							for (let c of classes) {
-								Observable.forkJoin([
-										this.classroomService.getClassroomsByClass(c.id),
-										this.groupService.getGroupsByClass(c.id)
-									],
-									(classrooms: models.Classroom[],
-									 groups: models.Group[]): ClassInfo => {
-										return {
-											c: c,
-											classrooms: classrooms,
-											groups: groups
-										}
-									})
-									.subscribe((info: ClassInfo) => infoArray.push(info));
-							}
-						});
-				}
+				this.lecturerService.getLecturersByFaculty(user.faculty.id)
+					.subscribe(this.initLecturers);
 			});
 	}
 
@@ -154,4 +127,36 @@ export class ScheduleComponent implements OnInit {
 	getClassEnd = getClassEnd;
 
 	floor = Math.floor;
+
+	private initLecturers(lecturers: models.User[]): void {
+		this.lecturers = lecturers.sort(compareLecturersByName);
+
+		for (let lecturer of lecturers) {
+			this.classService.getClassesByLecturerAndYearAndSemester(
+				lecturer.id,
+				getCurrentYear(),
+				getCurrentSemester())
+				.subscribe((classes: models.Class[]) => {
+					let infoArray: ClassInfo[] = [];
+
+					this.lecturersClasses.set(lecturer.id, infoArray);
+
+					for (let c of classes) {
+						Observable.forkJoin([
+								this.classroomService.getClassroomsByClass(c.id),
+								this.groupService.getGroupsByClass(c.id)
+							],
+							(classrooms: models.Classroom[],
+							 groups: models.Group[]): ClassInfo => {
+								return {
+									c: c,
+									classrooms: classrooms,
+									groups: groups
+								}
+							})
+							.subscribe((info: ClassInfo) => infoArray.push(info));
+					}
+				});
+		}
+	}
 }

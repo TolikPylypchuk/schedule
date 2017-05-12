@@ -1,23 +1,26 @@
 import { Injectable } from "@angular/core";
-import { Http, Response, Headers } from "@angular/http";
+import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+
+import { AuthService } from "../auth/auth.service";
 
 import { Subject } from "../models/models";
 import { handleError } from "./services";
 
 @Injectable()
 export class SubjectService {
-	private api = "http://localhost:8080";
-	private headers = new Headers({ "Content-Type": "application/json" });
+	private subjectsUrl = "http://localhost:8080/subjects";
+	private headers;
 
 	private http: Http;
 
-	constructor(http: Http) {
+	constructor(http: Http, authService: AuthService) {
 		this.http = http;
+		this.headers = authService.getHeaders();
 	}
 
 	getSubjects(): Observable<Subject[]> {
-		return this.http.get(`${this.api}/subjects`)
+		return this.http.get(this.subjectsUrl)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject[]
@@ -25,7 +28,7 @@ export class SubjectService {
 	}
 
 	getSubject(id: number): Observable<Subject> {
-		return this.http.get(`${this.api}/subjects/${id}`)
+		return this.http.get(`${this.subjectsUrl}/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -33,7 +36,7 @@ export class SubjectService {
 	}
 
 	getSubjectByPlan(planId: number): Observable<Subject> {
-		return this.http.get(`${this.api}/subjects/planId/${planId}`)
+		return this.http.get(`${this.subjectsUrl}/planId/${planId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -41,7 +44,7 @@ export class SubjectService {
 	}
 
 	getSubjectByClass(classId: number): Observable<Subject> {
-		return this.http.get(`${this.api}/subjects/classId/${classId}`)
+		return this.http.get(`${this.subjectsUrl}/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -50,7 +53,7 @@ export class SubjectService {
 
 	addSubject(subject: Subject): Observable<Response> {
 		return this.http.post(
-			`${this.api}/subjects/`,
+			this.subjectsUrl,
 			JSON.stringify(subject),
 			{ headers: this.headers })
 			.catch(handleError);
@@ -58,14 +61,16 @@ export class SubjectService {
 
 	updateSubject(subject: Subject): Observable<Response> {
 		return this.http.put(
-			`${this.api}/subjects/${subject.id}`,
+			`${this.subjectsUrl}/${subject.id}`,
 			JSON.stringify(subject),
 			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteSubject(subject: Subject): Observable<Response> {
-		return this.http.delete(`${this.api}/subjects/${subject.id}`)
+		return this.http.delete(
+			`${this.subjectsUrl}/${subject.id}`,
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 }

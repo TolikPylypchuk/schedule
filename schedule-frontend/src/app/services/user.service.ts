@@ -1,23 +1,26 @@
 import { Injectable } from "@angular/core";
-import { Http, Response, Headers } from "@angular/http";
+import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+
+import { AuthService } from "../auth/auth.service";
 
 import { User } from "../models/models";
 import { handleError } from "./services";
 
 @Injectable()
 export class UserService {
-	private api = "http://localhost:8080";
-	private headers = new Headers({ "Content-Type": "application/json" });
+	private usersUrl = "http://localhost:8080/users";
+	private headers;
 
 	private http: Http;
 
-	constructor(http: Http) {
+	constructor(http: Http, authService: AuthService) {
 		this.http = http;
+		this.headers = authService.getHeaders();
 	}
 
 	getLecturers(): Observable<User[]> {
-		return this.http.get(`${this.api}/lecturers`)
+		return this.http.get(this.usersUrl)
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
@@ -25,7 +28,7 @@ export class UserService {
 	}
 
 	getLecturer(id: number): Observable<User> {
-		return this.http.get(`${this.api}/lecturers/${id}`)
+		return this.http.get(`${this.usersUrl}/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User
@@ -33,7 +36,7 @@ export class UserService {
 	}
 
 	getLecturersByFaculty(facultyId: number): Observable<User[]> {
-		return this.http.get(`${this.api}/lecturers/facultyId/${facultyId}`)
+		return this.http.get(`${this.usersUrl}/facultyId/${facultyId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
@@ -41,7 +44,7 @@ export class UserService {
 	}
 
 	getLecturersBySubject(subjectId: number): Observable<User[]> {
-		return this.http.get(`${this.api}/lecturers/subjectId/${subjectId}`)
+		return this.http.get(`${this.usersUrl}/subjectId/${subjectId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
@@ -49,7 +52,7 @@ export class UserService {
 	}
 
 	getLecturersByClass(classId: number): Observable<User[]> {
-		return this.http.get(`${this.api}/lecturers/classId/${classId}`)
+		return this.http.get(`${this.usersUrl}/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
@@ -57,7 +60,7 @@ export class UserService {
 	}
 
 	getLecturerByWish(wishId: number): Observable<User> {
-		return this.http.get(`${this.api}/lecturer/wishId/${wishId}`)
+		return this.http.get(`${this.usersUrl}/lecturer/wishId/${wishId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User
@@ -66,7 +69,7 @@ export class UserService {
 
 	addLecturer(lecturer: User): Observable<Response> {
 		return this.http.post(
-			`${this.api}/lecturers/`,
+			this.usersUrl,
 			JSON.stringify(lecturer),
 			{ headers: this.headers })
 			.catch(handleError);
@@ -74,15 +77,16 @@ export class UserService {
 
 	updateLecturer(lecturer: User): Observable<Response> {
 		return this.http.put(
-			`${this.api}/lecturers/${lecturer.id}`,
+			`${this.usersUrl}/${lecturer.id}`,
 			JSON.stringify(lecturer),
 			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteLecturer(lecturer: User): Observable<Response> {
-		return this.http.delete(`${this.api}/lecturers/${lecturer.id}`)
+		return this.http.delete(
+			`${this.usersUrl}/${lecturer.id}`,
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 }
-

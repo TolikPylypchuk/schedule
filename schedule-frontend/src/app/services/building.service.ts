@@ -1,23 +1,26 @@
 import { Injectable } from "@angular/core";
-import { Http, Response, Headers } from "@angular/http";
+import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+
+import { AuthService } from "../auth/auth.service";
 
 import { Building } from "../models/models";
 import { handleError } from "./services";
 
 @Injectable()
 export class BuildingService {
-	private api = "http://localhost:8080";
-	private headers = new Headers({ "Content-Type": "application/json" });
+	private buildingsUrl = "http://localhost:8080/buildings";
+	private headers;
 
 	private http: Http;
 
-	constructor(http: Http) {
+	constructor(http: Http, authService: AuthService) {
 		this.http = http;
+		this.headers = authService.getHeaders();
 	}
 
 	getBuildings(): Observable<Building[]> {
-		return this.http.get(`${this.api}/buildings`)
+		return this.http.get(this.buildingsUrl)
 						.map(response =>
 							response.status === 200
 								? response.json() as Building[]
@@ -26,7 +29,7 @@ export class BuildingService {
 	}
 
 	getBuilding(id: number): Observable<Building> {
-		return this.http.get(`${this.api}/buildings/${id}`)
+		return this.http.get(`${this.buildingsUrl}/${id}`)
 						.map(response =>
 							response.status === 200
 								? response.json() as Building
@@ -36,7 +39,7 @@ export class BuildingService {
 
 	addBuilding(building: Building): Observable<Response> {
 		return this.http.post(
-			`${this.api}/buildings/`,
+			this.buildingsUrl,
 			JSON.stringify(building),
 			{ headers: this.headers })
 			.catch(handleError);
@@ -44,14 +47,16 @@ export class BuildingService {
 
 	updateBuilding(building: Building): Observable<Response> {
 		return this.http.put(
-			`${this.api}/buildings/${building.id}`,
+			`${this.buildingsUrl}/${building.id}`,
 			JSON.stringify(building),
 			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteBuilding(building: Building): Observable<Response> {
-		return this.http.delete(`${this.api}/buildings/${building.id}`)
-						.catch(handleError);
+		return this.http.delete(
+			`${this.buildingsUrl}/${building.id}`,
+			{ headers: this.headers })
+			.catch(handleError);
 	}
 }
