@@ -5,10 +5,11 @@ import { Observable } from "rxjs/Observable";
 import { Class } from "../models/models";
 import { handleError } from "./services";
 
-const prefix = "http://localhost:8080";
-
 @Injectable()
 export class ClassService {
+	private api = "http://localhost:8080";
+	private headers = new Headers({ "Content-Type": "application/json" });
+
 	private http: Http;
 
 	constructor(http: Http) {
@@ -16,7 +17,7 @@ export class ClassService {
 	}
 
 	getClasses(): Observable<Class[]> {
-		return this.http.get(`${prefix}/classes`)
+		return this.http.get(`${this.api}/classes`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -24,7 +25,7 @@ export class ClassService {
 	}
 
 	getClass(id: number): Observable<Class> {
-		return this.http.get(`${prefix}/classes/${id}`)
+		return this.http.get(`${this.api}/classes/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class
@@ -32,7 +33,7 @@ export class ClassService {
 	}
 
 	getClassesByGroup(groupId: number): Observable<Class[]> {
-		return this.http.get(`${prefix}/classes/groupId/${groupId}`)
+		return this.http.get(`${this.api}/classes/groupId/${groupId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -42,7 +43,7 @@ export class ClassService {
 	getClassesByGroupAndYearAndSemester(
 		groupId: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
-			`${prefix}/classes/groupId/${groupId}/year/${year}/semester/${semester}`)
+			`${this.api}/classes/groupId/${groupId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -50,7 +51,7 @@ export class ClassService {
 	}
 
 	getClassesByClassroom(classroomId: number): Observable<Class[]> {
-		return this.http.get(`${prefix}/classes/classroomId/${classroomId}`)
+		return this.http.get(`${this.api}/classes/classroomId/${classroomId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -60,7 +61,7 @@ export class ClassService {
 	getClassesByClassroomAndYearAndSemester(
 		classroomId: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
-			`${prefix}/classes/classroomId/${classroomId}/year/${year}/semester/${semester}`)
+			`${this.api}/classes/classroomId/${classroomId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -68,7 +69,7 @@ export class ClassService {
 	}
 
 	getClassesByLecturer(lecturerId: number): Observable<Class[]> {
-		return this.http.get(`${prefix}/classes/lecturerId/${lecturerId}`)
+		return this.http.get(`${this.api}/classes/lecturerId/${lecturerId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -78,7 +79,7 @@ export class ClassService {
 	getClassesByLecturerAndYearAndSemester(
 		lecturerId: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
-			`${prefix}/classes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
+			`${this.api}/classes/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -86,7 +87,7 @@ export class ClassService {
 	}
 
 	getClassesByDayOfWeek(day: number): Observable<Class[]> {
-		return this.http.get(`${prefix}/classes/day/${day}`)
+		return this.http.get(`${this.api}/classes/day/${day}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -96,7 +97,7 @@ export class ClassService {
 	getClassesByDayOfWeekAndYearAndSemester(
 		day: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
-			`${prefix}/classes/day/${day}/year/${year}/semester/${semester}`)
+			`${this.api}/classes/day/${day}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
@@ -105,26 +106,22 @@ export class ClassService {
 
 	addClass(c: Class): Observable<Response> {
 		return this.http.post(
-			`${prefix}/classes`,
+			`${this.api}/classes`,
 			JSON.stringify(c),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	updateClass(c: Class): Observable<Response> {
 		return this.http.put(
-			`${prefix}/classes/${c.id}`,
+			`${this.api}/classes/${c.id}`,
 			JSON.stringify(c),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteClass(c: Class): Observable<Response> {
-		return this.http.delete(`${prefix}/classes/${c.id}`)
+		return this.http.delete(`${this.api}/classes/${c.id}`)
 			.catch(handleError);
 	}
 }

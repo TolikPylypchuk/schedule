@@ -5,10 +5,11 @@ import { Observable } from "rxjs/Observable";
 import { Subject } from "../models/models";
 import { handleError } from "./services";
 
-const prefix = "http://localhost:8080";
-
 @Injectable()
 export class SubjectService {
+	private api = "http://localhost:8080";
+	private headers = new Headers({ "Content-Type": "application/json" });
+
 	private http: Http;
 
 	constructor(http: Http) {
@@ -16,7 +17,7 @@ export class SubjectService {
 	}
 
 	getSubjects(): Observable<Subject[]> {
-		return this.http.get(`${prefix}/subjects`)
+		return this.http.get(`${this.api}/subjects`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject[]
@@ -24,7 +25,7 @@ export class SubjectService {
 	}
 
 	getSubject(id: number): Observable<Subject> {
-		return this.http.get(`${prefix}/subjects/${id}`)
+		return this.http.get(`${this.api}/subjects/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -32,7 +33,7 @@ export class SubjectService {
 	}
 
 	getSubjectByPlan(planId: number): Observable<Subject> {
-		return this.http.get(`${prefix}/subjects/planId/${planId}`)
+		return this.http.get(`${this.api}/subjects/planId/${planId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -40,7 +41,7 @@ export class SubjectService {
 	}
 
 	getSubjectByClass(classId: number): Observable<Subject> {
-		return this.http.get(`${prefix}/subjects/classId/${classId}`)
+		return this.http.get(`${this.api}/subjects/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
@@ -49,26 +50,22 @@ export class SubjectService {
 
 	addSubject(subject: Subject): Observable<Response> {
 		return this.http.post(
-			`${prefix}/subjects/`,
+			`${this.api}/subjects/`,
 			JSON.stringify(subject),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	updateSubject(subject: Subject): Observable<Response> {
 		return this.http.put(
-			`${prefix}/subjects/${subject.id}`,
+			`${this.api}/subjects/${subject.id}`,
 			JSON.stringify(subject),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteSubject(subject: Subject): Observable<Response> {
-		return this.http.delete(`${prefix}/subjects/${subject.id}`)
+		return this.http.delete(`${this.api}/subjects/${subject.id}`)
 			.catch(handleError);
 	}
 }

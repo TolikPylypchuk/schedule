@@ -5,10 +5,11 @@ import { Observable } from "rxjs/Observable";
 import { ClassroomType } from "../models/models";
 import { handleError } from "./services";
 
-const prefix = "http://localhost:8080";
-
 @Injectable()
 export class ClassroomTypeService {
+	private api = "http://localhost:8080";
+	private headers = new Headers({ "Content-Type": "application/json" });
+
 	private http: Http;
 
 	constructor(http: Http) {
@@ -16,7 +17,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomTypes(): Observable<ClassroomType[]> {
-		return this.http.get(`${prefix}/classroomTypes`)
+		return this.http.get(`${this.api}/classroomTypes`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType[]
@@ -24,7 +25,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomType(id: number): Observable<ClassroomType> {
-		return this.http.get(`${prefix}/classroomTypes/${id}`)
+		return this.http.get(`${this.api}/classroomTypes/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
@@ -32,7 +33,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomTypeByClassroom(classroomId: number): Observable<ClassroomType> {
-		return this.http.get(`${prefix}/classroomTypes/classroomId/${classroomId}`)
+		return this.http.get(`${this.api}/classroomTypes/classroomId/${classroomId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
@@ -40,7 +41,7 @@ export class ClassroomTypeService {
 	}
 
 	getClassroomTypesBySubject(subjectId: number): Observable<ClassroomType> {
-		return this.http.get(`${prefix}/classroomTypes/subjectId/${subjectId}`)
+		return this.http.get(`${this.api}/classroomTypes/subjectId/${subjectId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
@@ -49,26 +50,22 @@ export class ClassroomTypeService {
 
 	addClassroomType(classroomType: ClassroomType): Observable<Response> {
 		return this.http.post(
-			`${prefix}/classroomTypes/`,
+			`${this.api}/classroomTypes/`,
 			JSON.stringify(classroomType),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	updateClassroomType(classroomType: ClassroomType): Observable<Response> {
 		return this.http.put(
-			`${prefix}/classroomTypes/${classroomType.id}`,
+			`${this.api}/classroomTypes/${classroomType.id}`,
 			JSON.stringify(classroomType),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteClassroomType(classroomType: ClassroomType): Observable<Response> {
-		return this.http.delete(`${prefix}/classroomTypes/${classroomType.id}`)
+		return this.http.delete(`${this.api}/classroomTypes/${classroomType.id}`)
 			.catch(handleError);
 	}
 }

@@ -5,10 +5,11 @@ import { Observable } from "rxjs/Observable";
 import { Group } from "../models/models";
 import { handleError } from "./services";
 
-const prefix = "http://localhost:8080";
-
 @Injectable()
 export class GroupService {
+	private api = "http://localhost:8080";
+	private headers = new Headers({ "Content-Type": "application/json" });
+
 	private http: Http;
 
 	constructor(http: Http) {
@@ -16,7 +17,7 @@ export class GroupService {
 	}
 
 	getGroups(): Observable<Group[]> {
-		return this.http.get(`${prefix}/groups`)
+		return this.http.get(`${this.api}/groups`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -24,7 +25,7 @@ export class GroupService {
 	}
 
 	getGroup(id: number): Observable<Group> {
-		return this.http.get(`${prefix}/groups/${id}`)
+		return this.http.get(`${this.api}/groups/${id}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group
@@ -32,7 +33,7 @@ export class GroupService {
 	}
 
 	getGroupsByYear(year: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/groups/year/${year}`)
+		return this.http.get(`${this.api}/groups/year/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -40,23 +41,27 @@ export class GroupService {
 	}
 
 	getGroupsByFaculty(facultyId: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/groups/facultyId/${facultyId}`)
+		return this.http.get(`${this.api}/groups/facultyId/${facultyId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
 					: null);
 	}
 
-	getGroupsByFacultyAndYear(facultyId: number, year: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/groups/facultyId/${facultyId}/year/${year}`)
+	getGroupsByFacultyAndYear(
+		facultyId: number, year: number): Observable<Group[]> {
+		return this.http.get(
+			`${this.api}/groups/facultyId/${facultyId}/year/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
 					: null);
 	}
 
-	getGroupsByFacultyAndYearSince(facultyId: number, year: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/groups/facultyId/${facultyId}/since/${year}`)
+	getGroupsByFacultyAndYearSince(
+		facultyId: number, year: number): Observable<Group[]> {
+		return this.http.get(
+			`${this.api}/groups/facultyId/${facultyId}/since/${year}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -64,7 +69,7 @@ export class GroupService {
 	}
 
 	getGroupsByClass(classId: number): Observable<Group[]> {
-		return this.http.get(`${prefix}/groups/classId/${classId}`)
+		return this.http.get(`${this.api}/groups/classId/${classId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]
@@ -72,7 +77,7 @@ export class GroupService {
 	}
 
 	getGroupByPlan(planId: number): Observable<Group> {
-		return this.http.get(`${prefix}/group/planId/${planId}`)
+		return this.http.get(`${this.api}/group/planId/${planId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group
@@ -81,26 +86,22 @@ export class GroupService {
 
 	addGroup(group: Group): Observable<Response> {
 		return this.http.post(
-			`${prefix}/groups/`,
+			`${this.api}/groups/`,
 			JSON.stringify(group),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	updateGroup(group: Group): Observable<Response> {
 		return this.http.put(
-			`${prefix}/groups/${group.id}`,
+			`${this.api}/groups/${group.id}`,
 			JSON.stringify(group),
-			{
-				headers: new Headers({ "Content-Type": "application/json" })
-			})
+			{ headers: this.headers })
 			.catch(handleError);
 	}
 
 	deleteGroup(group: Group): Observable<Response> {
-		return this.http.delete(`${prefix}/groups/${group.id}`)
+		return this.http.delete(`${this.api}/groups/${group.id}`)
 			.catch(handleError);
 	}
 }
