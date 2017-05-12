@@ -14,7 +14,7 @@ import {
 	getLecturersAsString, getClassroomsAsString
 } from "../models/functions";
 
-import { Class, Classroom, Group, Lecturer } from "../models/models";
+import { Class, Classroom, Group, User } from "../models/models";
 
 interface ClassInfo {
 	day: string;
@@ -84,7 +84,7 @@ export class GroupComponent implements OnInit {
 										this.classroomService.getClassroomsByClass(c.id),
 										this.lecturerService.getLecturersByClass(c.id)
 									],
-									(cr: Classroom[], l: Lecturer[]): ClassInfo => {
+									(cr: Classroom[], l: User[]): ClassInfo => {
 										return {
 											day: c.dayOfWeek,
 											number: c.number,

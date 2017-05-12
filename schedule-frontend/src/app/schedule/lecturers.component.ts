@@ -5,7 +5,7 @@ import {
 	UserService, FacultyService
 } from "../services/services";
 
-import { Faculty, Lecturer } from "../models/models";
+import { Faculty, User } from "../models/models";
 import { compareLecturersByName } from "../models/functions";
 
 @Component({
@@ -18,7 +18,7 @@ export class LecturersComponent implements OnInit {
 	private lecturerService: UserService;
 
 	faculties: Faculty[];
-	lecturers: Map<number, Lecturer[]>;
+	lecturers: Map<number, User[]>;
 
 	constructor(
 		router: Router,
@@ -38,7 +38,7 @@ export class LecturersComponent implements OnInit {
 
 				for (let faculty of faculties) {
 					this.lecturerService.getLecturersByFaculty(faculty.id)
-						.subscribe((lecturers: Lecturer[]) => {
+						.subscribe((lecturers: User[]) => {
 							lecturers.sort(compareLecturersByName);
 							this.lecturers.set(faculty.id, lecturers);
 						});

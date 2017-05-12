@@ -14,7 +14,7 @@ import {
 	getGroupsAsString, getClassroomsAsString
 } from "../models/functions";
 
-import { Class, Classroom, Group, Lecturer } from "../models/models";
+import { Class, Classroom, Group, User } from "../models/models";
 
 interface ClassInfo {
 	day: string;
@@ -68,7 +68,7 @@ export class LecturerComponent implements OnInit {
 
 		this.route.params
 			.switchMap((params: Params) => this.lecturerService.getLecturer(+params["id"]))
-			.subscribe((lecturer: Lecturer) => {
+			.subscribe((lecturer: User) => {
 				this.currentLecturer = getLecturerInitials(lecturer);
 
 				this.classService.getClassesByLecturerAndYearAndSemester(

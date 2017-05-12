@@ -2,6 +2,10 @@ export interface EntityBase {
 	id: number;
 }
 
+export interface Authority extends EntityBase {
+	name: string;
+}
+
 export interface Building extends EntityBase {
 	name: string;
 	street: string;
@@ -41,14 +45,6 @@ export interface Group extends EntityBase {
 	faculty: Faculty;
 }
 
-export interface Lecturer extends EntityBase {
-	firstName: string;
-	middleName: string;
-	lastName: string;
-	position: string;
-	faculty: Faculty;
-}
-
 export interface Plan extends EntityBase {
 	numLectures: number;
 	numPractice: number;
@@ -63,6 +59,18 @@ export interface Subject extends EntityBase {
 	name: string;
 }
 
+export interface User extends EntityBase {
+	username?: string;
+	password?: string;
+	authorities: Authority[],
+
+	firstName: string;
+	middleName: string;
+	lastName: string;
+	position: string;
+	faculty: Faculty;
+}
+
 export interface Wish extends EntityBase {
 	startTime: string;
 	endTime: string;
@@ -70,5 +78,10 @@ export interface Wish extends EntityBase {
 	comment: string;
 	year: number;
 	semester: string;
-	lecturer: Lecturer;
+	lecturer: User;
+}
+
+export interface ChangePasswordModel {
+	oldPassword: string;
+	newPassword: string;
 }

@@ -42,8 +42,8 @@ export class ScheduleComponent implements OnInit {
 	private subjectService: services.SubjectService;
 	private wishService: services.WishService;
 
-	currentUser: models.Lecturer;
-	lecturers: models.Lecturer[] = [];
+	currentUser: models.User;
+	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, ClassInfo[]> = new Map();
 
 	constructor(
@@ -73,7 +73,7 @@ export class ScheduleComponent implements OnInit {
 		this.currentUser = this.authService.getCurrentUser();
 
 		this.lecturerService.getLecturersByFaculty(this.currentUser.faculty.id)
-			.subscribe((lecturers: models.Lecturer[]) => {
+			.subscribe((lecturers: models.User[]) => {
 				this.lecturers = lecturers.sort(compareLecturersByName);
 
 				for (let lecturer of lecturers) {
@@ -107,7 +107,7 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	getClassFrequency(
-		lecturer: models.Lecturer,
+		lecturer: models.User,
 		day: number,
 		num: number): ClassFrequency {
 		let frequency: ClassFrequency = ClassFrequency.NONE;
@@ -134,7 +134,7 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	getClassInfo(
-		lecturer: models.Lecturer,
+		lecturer: models.User,
 		day: number,
 		num: number,
 		frequency: string): ClassInfo {

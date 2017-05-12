@@ -1,5 +1,5 @@
 import {
-	Classroom, Group, Lecturer
+	Classroom, Group, User
 } from "./models";
 
 export function getCurrentYear(): number {
@@ -117,7 +117,7 @@ export function getClassEnd(num: number): string {
 	return result;
 }
 
-export function getLecturerInitials(lecturer: Lecturer): string {
+export function getLecturerInitials(lecturer: User): string {
 	return lecturer
 		? `${lecturer.lastName} ${lecturer.firstName[0]}.\xA0${lecturer.middleName[0]}.`
 		: "";
@@ -168,10 +168,10 @@ export function getClassroomsAsString(classrooms: Classroom[]): string {
 		: "";
 }
 
-export function getLecturersAsString(lecturers: Lecturer[]): string {
+export function getLecturersAsString(lecturers: User[]): string {
 	return lecturers
 		? lecturers.reduce(
-			(result: string, lecturer: Lecturer) =>
+			(result: string, lecturer: User) =>
 				`${result}, ${getLecturerInitials(lecturer)}`,
 			"").substr(2)
 		: "";
@@ -186,7 +186,7 @@ export function getGroupsAsString(groups: Group[]): string {
 		: "";
 }
 
-export function compareLecturersByName(l1: Lecturer, l2: Lecturer) {
+export function compareLecturersByName(l1: User, l2: User) {
 	let result = l1.lastName.localeCompare(l2.lastName);
 
 	if (result === 0)

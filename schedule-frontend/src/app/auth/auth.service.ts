@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 
-import { Lecturer } from "../models/models";
+import { User } from "../models/models";
 
 @Injectable()
 export class AuthService {
-	getCurrentUser(): Lecturer {
+	getCurrentUser(): User {
 		return {
 			id: 1,
 			firstName: "Адмін",

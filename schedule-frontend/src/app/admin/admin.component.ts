@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { AuthService } from "../auth/auth";
-import { Lecturer } from '../models/models';
+import { User } from '../models/models';
 
 @Component({
 	selector: "schedule-admin",
@@ -12,7 +12,7 @@ export class AdminComponent implements OnInit {
 	private router: Router;
 	private authService: AuthService;
 
-	currentUser: Lecturer;
+	currentUser: User;
 
 	constructor(router: Router, authService: AuthService) {
 		this.router = router;
