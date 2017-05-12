@@ -20,7 +20,7 @@ export class AdminComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.authService.getCurrentUser()
+		this.authService.getCurrentUserAsObservable()
 			.subscribe((user: User) => this.currentUser = user);
 	}
 

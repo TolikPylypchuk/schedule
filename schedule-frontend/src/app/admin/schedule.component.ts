@@ -70,7 +70,7 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.authService.getCurrentUser()
+		this.authService.getCurrentUserAsObservable()
 			.subscribe((user: models.User) => {
 				this.currentUser = user;
 

@@ -18,14 +18,27 @@ export class AuthService {
 
 	private currentUserSource = new BehaviorSubject<User>(null);
 	private loggedIn = false;
+	private returnUrl: string = null;
 
 	constructor(http: Http) {
 		this.http = http;
 		this.headers = this.getHeaders();
 	}
 
-	getCurrentUser(): Observable<User> {
+	getCurrentUser(): User {
+		return this.currentUserSource.getValue();
+	}
+
+	getCurrentUserAsObservable(): Observable<User> {
 		return this.currentUserSource.asObservable();
+	}
+
+	getReturnUrl(): string {
+		return this.returnUrl;
+	}
+
+	setReturnUrl(returnUrl: string): void {
+		this.returnUrl = returnUrl;
 	}
 
 	login(username: string, password: string): Observable<boolean> {

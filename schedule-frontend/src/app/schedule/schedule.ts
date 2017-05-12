@@ -9,6 +9,7 @@ import { LecturerComponent } from "./lecturer.component";
 export {
 	ScheduleModule,
 	RoutesModule,
+
 	GroupsComponent,
 	LecturersComponent,
 	GroupComponent,

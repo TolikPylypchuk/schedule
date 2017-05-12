@@ -7,6 +7,7 @@ import { ScheduleComponent } from "./schedule.component";
 export {
 	AdminModule,
 	RoutesModule,
+
 	AdminComponent,
 	ScheduleComponent
 }
