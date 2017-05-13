@@ -3,7 +3,7 @@ import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
 import { Plan } from "../models/models";
-import { handleError, getHeaders } from "../common/functions";
+import { handleError, getHeaders } from "../functions";
 
 @Injectable()
 export class PlanService {

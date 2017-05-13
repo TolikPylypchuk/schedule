@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { AuthService } from "../auth/auth";
-import { User } from '../models/models';
+import { User } from '../common/models/models';
 
 @Component({
 	selector: "schedule-editor-home",

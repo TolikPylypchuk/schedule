@@ -1,16 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 
-import * as models from "../models/models";
+import * as models from "../common/models/models";
 
-import * as services from "../services/services";
+import * as services from "../common/services/services";
 import { AuthService } from "../auth/auth";
 
 import {
 	getCurrentYear, getCurrentSemester, getLecturerInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareLecturersByName
-} from "../models/functions";
+} from "../common/models/functions";
 
 interface ClassInfo {
 	c: models.Class,

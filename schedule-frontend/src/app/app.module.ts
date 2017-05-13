@@ -12,7 +12,7 @@ import { EditorModule } from "./editor/editor";
 import { AdminModule } from "./admin/admin";
 import { RoutesModule } from "./routes.module";
 
-import * as services from "./services/services";
+import * as services from "./common/services/services";
 
 @NgModule({
 	declarations: [

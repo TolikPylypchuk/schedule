@@ -3,13 +3,13 @@ import { Router } from "@angular/router";
 
 import {
 	GroupService, FacultyService
-} from "../services/services";
+} from "../common/services/services";
 
 import {
 	getCurrentGroupCourse, getCurrentGroupName
-} from "../models/functions";
+} from "../common/models/functions";
 
-import { Faculty, Group } from "../models/models";
+import { Faculty, Group } from "../common/models/models";
 
 @Component({
 	selector: "schedule-groups",

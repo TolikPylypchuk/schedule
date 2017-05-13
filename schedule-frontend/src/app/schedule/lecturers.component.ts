@@ -3,10 +3,10 @@ import { Router } from "@angular/router";
 
 import {
 	UserService, FacultyService
-} from "../services/services";
+} from "../common/services/services";
 
-import { Faculty, User } from "../models/models";
-import { compareLecturersByName } from "../models/functions";
+import { Faculty, User } from "../common/models/models";
+import { compareLecturersByName } from "../common/models/functions";
 
 @Component({
 	selector: "schedule-lecturers",

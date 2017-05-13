@@ -4,7 +4,7 @@ import { Observable } from "rxjs/Observable";
 
 import {
 	ClassService, ClassroomService, GroupService, UserService
-} from "../services/services";
+} from "../common/services/services";
 
 import {
 	getCurrentYear, getCurrentSemester,
@@ -12,9 +12,9 @@ import {
 	getClassStart, getClassEnd,
 	getDayOfWeekNumber,
 	getGroupsAsString, getClassroomsAsString
-} from "../models/functions";
+} from "../common/models/functions";
 
-import { Class, Classroom, Group, User } from "../models/models";
+import { Class, Classroom, Group, User } from "../common/models/models";
 
 interface ClassInfo {
 	day: string;
