@@ -19,7 +19,7 @@ export class UserService {
 		this.headers = authService.getHeaders();
 	}
 
-	getLecturers(): Observable<User[]> {
+	getUsers(): Observable<User[]> {
 		return this.http.get(this.usersUrl)
 			.map(response =>
 				response.status === 200
@@ -27,7 +27,31 @@ export class UserService {
 					: null);
 	}
 
-	getLecturer(id: number): Observable<User> {
+	getLecturers(): Observable<User[]> {
+		return this.http.get(`${this.usersUrl}/role/lecturer`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null);
+	}
+
+	getEditors(): Observable<User[]> {
+		return this.http.get(`${this.usersUrl}/role/editor`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null);
+	}
+
+	getAdmins(): Observable<User[]> {
+		return this.http.get(`${this.usersUrl}/role/admin`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null);
+	}
+
+	getUser(id: number): Observable<User> {
 		return this.http.get(`${this.usersUrl}/${id}`)
 			.map(response =>
 				response.status === 200
@@ -35,8 +59,26 @@ export class UserService {
 					: null);
 	}
 
-	getLecturersByFaculty(facultyId: number): Observable<User[]> {
+	getUsersByFaculty(facultyId: number): Observable<User[]> {
 		return this.http.get(`${this.usersUrl}/facultyId/${facultyId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null);
+	}
+
+	getLecturersByFaculty(facultyId: number): Observable<User[]> {
+		return this.http.get(
+			`${this.usersUrl}/role/lecturer/facultyId/${facultyId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null);
+	}
+
+	getEditorsByFaculty(facultyId: number): Observable<User[]> {
+		return this.http.get(
+			`${this.usersUrl}/role/editor/facultyId/${facultyId}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]

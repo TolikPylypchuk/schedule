@@ -21,12 +21,18 @@ import ua.edu.lnu.schedule.security.services.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+	private AuthorityRepository authorities;
 	private ClassRepository classes;
 	private SubjectRepository subjects;
 	private UserRepository users;
 	private WishRepository wishes;
 	
 	private UserService userService;
+	
+	@Autowired
+	public void setAuthorities(AuthorityRepository authorities) {
+		this.authorities = authorities;
+	}
 	
 	@Autowired
 	public void setClasses(ClassRepository classes) {
@@ -76,10 +82,38 @@ public class UserController {
 		return this.users.findByUsername(p.getName());
 	}
 	
+	@RequestMapping(value = "/role/{role}", method = RequestMethod.GET)
+	public @ResponseBody Iterable<User> getByRole(
+		@PathVariable("role") String role) {
+		Authority authority = this.authorities.findByName(
+			this.userService.getAuthorityName(role));
+		
+		return authority == null
+			? new ArrayList<>()
+			: this.users.findAllByAuthoritiesContaining(authority);
+	}
+	
 	@RequestMapping(value = "/facultyId/{facultyId}", method = RequestMethod.GET)
 	public @ResponseBody Iterable<User> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
 		return this.users.findAllByFaculty_Id(facultyId);
+	}
+	
+	@RequestMapping(
+		value = "/role/{role}/facultyId/{facultyId}",
+		method = RequestMethod.GET)
+	public @ResponseBody Iterable<User> getByRoleAndFaculty(
+		@PathVariable("role") String role,
+		@PathVariable("facultyId") int facultyId) {
+		Authority authority = this.authorities.findByName(
+			this.userService.getAuthorityName(role));
+		
+		return authority == null
+			? new ArrayList<>()
+			: this.users.findAllByFaculty_IdAndAuthoritiesContaining(
+				facultyId,
+				this.authorities.findByName(
+					this.userService.getAuthorityName(role)));
 	}
 	
 	@RequestMapping(value = "/subjectId/{subjectId}", method = RequestMethod.GET)

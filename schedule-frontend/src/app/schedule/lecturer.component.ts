@@ -67,7 +67,7 @@ export class LecturerComponent implements OnInit {
 		const semester = getCurrentSemester();
 
 		this.route.params
-			.switchMap((params: Params) => this.lecturerService.getLecturer(+params["id"]))
+			.switchMap((params: Params) => this.lecturerService.getUser(+params["id"]))
 			.subscribe((lecturer: User) => {
 				this.currentLecturer = getLecturerInitials(lecturer);
 

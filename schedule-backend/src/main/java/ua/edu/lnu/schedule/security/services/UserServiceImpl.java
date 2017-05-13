@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 		user.getAuthorities().remove(authority);
 	}
 	
-	private Authority.Name getAuthorityName(String roleName) {
+	public Authority.Name getAuthorityName(String roleName) {
 		Authority.Name name = null;
 		
 		switch (roleName.toLowerCase()) {
