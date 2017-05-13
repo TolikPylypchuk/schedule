@@ -25,11 +25,11 @@ export class UserRoleGuard implements CanActivate {
 
 		const user = this.authService.getCurrentUser();
 
-		const navigateUrl = user.roles.find(r => r.name === "ROLE_ADMIN")
+		const navigateUrl = user.authorities.find(r => r.name === "ROLE_ADMIN")
 			? "/admin"
-			: user.roles.find(r => r.name === "ROLE_EDITOR")
+			: user.authorities.find(r => r.name === "ROLE_EDITOR")
 				? "/editor"
-				: user.roles.find(r => r.name === "ROLE_LECTURER")
+				: user.authorities.find(r => r.name === "ROLE_LECTURER")
 					? "/lecturer"
 					: null;
 

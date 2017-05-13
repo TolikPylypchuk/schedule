@@ -2,21 +2,17 @@ import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { Plan } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class PlanService {
 	private plansUrl = "http://localhost:8080/plans";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getPlans(): Observable<Plan[]> {
@@ -75,7 +71,7 @@ export class PlanService {
 		return this.http.post(
 			this.plansUrl,
 			JSON.stringify(plan),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -83,15 +79,14 @@ export class PlanService {
 		return this.http.put(
 			`${this.plansUrl}/${plan.id}`,
 			JSON.stringify(plan),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deletePlan(plan: Plan): Observable<Response> {
 		return this.http.delete(
 			`${this.plansUrl}/${plan.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }
-

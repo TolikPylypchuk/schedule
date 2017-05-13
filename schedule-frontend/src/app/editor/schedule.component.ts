@@ -4,7 +4,7 @@ import { Observable } from "rxjs/Observable";
 import * as models from "../models/models";
 
 import * as services from "../services/services";
-import { AuthService } from "../auth/auth.service";
+import { AuthService } from "../auth/auth";
 
 import {
 	getCurrentYear, getCurrentSemester, getLecturerInitials,
@@ -27,7 +27,7 @@ export enum ClassFrequency {
 }
 
 @Component({
-	selector: "schedule-admin-schedule",
+	selector: "schedule-editor-schedule",
 	templateUrl: "./schedule.component.html"
 })
 export class ScheduleComponent implements OnInit {

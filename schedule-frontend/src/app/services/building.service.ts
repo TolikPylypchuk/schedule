@@ -1,22 +1,18 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { Building } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class BuildingService {
 	private buildingsUrl = "http://localhost:8080/buildings";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getBuildings(): Observable<Building[]> {
@@ -41,7 +37,7 @@ export class BuildingService {
 		return this.http.post(
 			this.buildingsUrl,
 			JSON.stringify(building),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -49,14 +45,14 @@ export class BuildingService {
 		return this.http.put(
 			`${this.buildingsUrl}/${building.id}`,
 			JSON.stringify(building),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deleteBuilding(building: Building): Observable<Response> {
 		return this.http.delete(
 			`${this.buildingsUrl}/${building.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }

@@ -62,7 +62,7 @@ export interface Subject extends EntityBase {
 export interface User extends EntityBase {
 	username?: string;
 	password?: string;
-	roles: Role[],
+	authorities: Role[],
 
 	firstName: string;
 	middleName: string;

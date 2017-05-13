@@ -2,21 +2,17 @@ import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { Wish } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class WishService {
 	private wishesUrl = "http://localhost:8080/wishes";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getWishes(): Observable<Wish[]> {
@@ -57,7 +53,7 @@ export class WishService {
 		return this.http.post(
 			this.wishesUrl,
 			JSON.stringify(wish),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -65,15 +61,14 @@ export class WishService {
 		return this.http.put(
 			`${this.wishesUrl}/${wish.id}`,
 			JSON.stringify(wish),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deleteWish(wish: Wish): Observable<Response> {
 		return this.http.delete(
 			`${this.wishesUrl}/${wish.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }
-

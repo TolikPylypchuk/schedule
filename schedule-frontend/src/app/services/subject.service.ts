@@ -2,21 +2,17 @@ import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { Subject } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class SubjectService {
 	private subjectsUrl = "http://localhost:8080/subjects";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getSubjects(): Observable<Subject[]> {
@@ -55,7 +51,7 @@ export class SubjectService {
 		return this.http.post(
 			this.subjectsUrl,
 			JSON.stringify(subject),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -63,15 +59,14 @@ export class SubjectService {
 		return this.http.put(
 			`${this.subjectsUrl}/${subject.id}`,
 			JSON.stringify(subject),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deleteSubject(subject: Subject): Observable<Response> {
 		return this.http.delete(
 			`${this.subjectsUrl}/${subject.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }
-

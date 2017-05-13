@@ -5,10 +5,10 @@ import { AuthService } from "../auth/auth";
 import { User } from '../models/models';
 
 @Component({
-	selector: "schedule-admin",
-	templateUrl: "./admin.component.html"
+	selector: "schedule-editor",
+	templateUrl: "./editor.component.html"
 })
-export class AdminComponent implements OnInit {
+export class EditorComponent implements OnInit {
 	private router: Router;
 	private authService: AuthService;
 

@@ -2,21 +2,17 @@ import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { User } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class UserService {
 	private usersUrl = "http://localhost:8080/users";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getUsers(): Observable<User[]> {
@@ -113,7 +109,7 @@ export class UserService {
 		return this.http.post(
 			this.usersUrl,
 			JSON.stringify(lecturer),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -121,14 +117,14 @@ export class UserService {
 		return this.http.put(
 			`${this.usersUrl}/${lecturer.id}`,
 			JSON.stringify(lecturer),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deleteLecturer(lecturer: User): Observable<Response> {
 		return this.http.delete(
 			`${this.usersUrl}/${lecturer.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }

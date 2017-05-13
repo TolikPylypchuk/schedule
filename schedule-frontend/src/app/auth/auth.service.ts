@@ -4,7 +4,7 @@ import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { User } from "../models/models";
-import { handleError } from "../services/services";
+import { handleError } from "../common/functions";
 
 declare const localStorage;
 
@@ -16,7 +16,24 @@ export class AuthService {
 
 	private http: Http;
 
-	private currentUserSource = new BehaviorSubject<User>(null);
+	private currentUserSource = new BehaviorSubject<User>({
+		id: 16,
+		firstName: "Анастасія",
+		middleName: "Василівна",
+		lastName: "Коломоєць",
+		position: null,
+		faculty: {
+			"id": 1,
+			"name": "Факультет прикладної математики та інформатики"
+		},
+		authorities: [
+			{
+				"id": 2,
+				"name": "ROLE_EDITOR"
+			}
+		]
+	});
+
 	private loggedIn = false;
 	private returnUrl: string = null;
 
@@ -76,12 +93,15 @@ export class AuthService {
 	}
 
 	isLoggedIn(): boolean {
-		return this.loggedIn;
+		return true; //this.loggedIn;
 	}
 
 	getToken(): string {
+		/*
 		const token = JSON.parse(localStorage.getItem("authToken"));
 		return token ? token : null;
+		*/
+		return "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJrb2xvbW9ldHMuYW5hc3Rhc2lhIiwiYXVkaWVuY2UiOiJ3ZWIiLCJjcmVhdGVkIjoxNDk0NjYxNzAyMTA3LCJleHAiOjE0OTUyNjY1MDJ9.qJ1nAR5WU_hw_xc9NjzPQWTDWKJ-fNsS5EZCr9XPmR1w98KoVuhlK9Rbsd-d5KnmNr01EoW5GqyKiBxLeDAJjA";
 	}
 
 	getHeaders(): Headers {

@@ -2,21 +2,17 @@ import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { Class } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class ClassService {
 	private classesUrl = "http://localhost:8080/classes";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getClasses(): Observable<Class[]> {
@@ -111,7 +107,7 @@ export class ClassService {
 		return this.http.post(
 			this.classesUrl,
 			JSON.stringify(c),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -119,14 +115,14 @@ export class ClassService {
 		return this.http.put(
 			`${this.classesUrl}/${c.id}`,
 			JSON.stringify(c),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deleteClass(c: Class): Observable<Response> {
 		return this.http.delete(
 			`${this.classesUrl}/${c.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }

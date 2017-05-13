@@ -7,7 +7,7 @@ import { AppComponent } from "./app.component";
 
 import { AuthModule } from "./auth/auth";
 import { ScheduleModule } from "./schedule/schedule";
-import { AdminModule } from "./admin/admin";
+import { AdminModule } from "./editor/editor";
 import { RoutesModule } from "./routes.module";
 
 import * as services from "./services/services";

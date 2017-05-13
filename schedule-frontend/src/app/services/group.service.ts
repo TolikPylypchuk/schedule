@@ -2,21 +2,17 @@ import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "../auth/auth.service";
-
 import { Group } from "../models/models";
-import { handleError } from "./services";
+import { handleError, getHeaders } from "../common/functions";
 
 @Injectable()
 export class GroupService {
 	private groupsUrl = "http://localhost:8080/groups";
-	private headers;
 
 	private http: Http;
 
-	constructor(http: Http, authService: AuthService) {
+	constructor(http: Http) {
 		this.http = http;
-		this.headers = authService.getHeaders();
 	}
 
 	getGroups(): Observable<Group[]> {
@@ -91,7 +87,7 @@ export class GroupService {
 		return this.http.post(
 			this.groupsUrl,
 			JSON.stringify(group),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
@@ -99,14 +95,14 @@ export class GroupService {
 		return this.http.put(
 			`${this.groupsUrl}/${group.id}`,
 			JSON.stringify(group),
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
 	deleteGroup(group: Group): Observable<Response> {
 		return this.http.delete(
 			`${this.groupsUrl}/${group.id}`,
-			{ headers: this.headers })
+			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 }
