@@ -1,16 +1,24 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
+import { ScheduleComponent } from "./schedule.component";
 import { GroupsComponent } from "./groups.component";
 import { LecturersComponent } from "./lecturers.component";
 import { GroupComponent } from "./group.component";
 import { LecturerComponent } from "./lecturer.component";
 
 const routes: Routes = [
-	{ path: "schedule/groups", component: GroupsComponent },
-	{ path: "schedule/lecturers", component: LecturersComponent },
-	{ path: "schedule/group/:id", component: GroupComponent },
-	{ path: "schedule/lecturer/:id", component: LecturerComponent }
+	{
+		path: "schedule",
+		component: ScheduleComponent,
+		children: [
+			{ path: "groups", component: GroupsComponent },
+			{ path: "lecturers", component: LecturersComponent },
+			{ path: "group/:id", component: GroupComponent },
+			{ path: "lecturer/:id", component: LecturerComponent },
+			{ path: "", redirectTo: "groups", pathMatch: "full" }
+		]
+	}
 ];
 
 @NgModule({

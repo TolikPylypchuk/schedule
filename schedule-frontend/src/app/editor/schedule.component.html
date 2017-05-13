@@ -25,10 +25,10 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr *ngFor="let user of users">
-		<th class="text-center">{{ getLecturerInitials(user) }}</th>
+	<tr *ngFor="let lecturer of lecturers">
+		<th class="text-center">{{ getLecturerInitials(lecturer) }}</th>
 		<td *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
-			<div [ngSwitch]="getClassFrequency(user, floor(n / 9 + 1), n % 9 + 1)">
+			<div [ngSwitch]="getClassFrequency(lecturer, floor(n / 9 + 1), n % 9 + 1)">
 				<ng-container *ngSwitchCase="0"> <!-- NONE -->
 					<button class="btn btn-sm btn-outline-primary">
 						<span class="fa fa-plus" aria-hidden="true"></span>
@@ -37,16 +37,17 @@
 				<ng-container *ngSwitchCase="1"> <!-- WEEKLY -->
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(user, floor(n / 9 + 1), n % 9 + 1, "щотижня").c.subject.name }}
+							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "щотижня").c.subject.name }}
 						</small>
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="2"> <!-- NUMERATOR -->
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(user, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").c.subject.name }}
+							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").c.subject.name }}
 						</small>
 					</button>
+					<br />
 					<button class="btn btn-sm btn-outline-primary">
 						<span class="fa fa-plus" aria-hidden="true"></span>
 					</button>
@@ -55,21 +56,23 @@
 					<button class="btn btn-sm btn-outline-primary">
 						<span class="fa fa-plus" aria-hidden="true"></span>
 					</button>
+					<br />
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(user, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").c.subject.name }}
+							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").c.subject.name }}
 						</small>
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="4"> <!-- BOTH -->
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(user, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").c.subject.name }}
+							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").c.subject.name }}
 						</small>
 					</button>
+					<br />
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(user, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").c.subject.name }}
+							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").c.subject.name }}
 						</small>
 					</button>
 				</ng-container>

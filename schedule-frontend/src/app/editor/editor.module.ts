@@ -6,11 +6,13 @@ import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
 import { EditorComponent } from "./editor.component";
+import { HomeComponent } from "./home.component";
 import { ScheduleComponent } from "./schedule.component";
 
 @NgModule({
 	declarations: [
 		EditorComponent,
+		HomeComponent,
 		ScheduleComponent
 	],
 	imports: [

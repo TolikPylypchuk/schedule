@@ -35,7 +35,7 @@ export class AuthService {
 		]
 	});
 
-	private loggedIn = false;
+	private loggedIn = true;
 	private returnUrl: string = null;
 
 	constructor(http: Http, router: Router) {

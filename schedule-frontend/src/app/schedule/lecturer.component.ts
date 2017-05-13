@@ -39,7 +39,7 @@ export class LecturerComponent implements OnInit {
 	private classService: ClassService;
 	private classroomService: ClassroomService;
 	private groupService: GroupService;
-	private lecturerService: UserService;
+	private userService: UserService;
 
 	private currentLecturer: string;
 	private classes: ClassInfo[] = [];
@@ -52,14 +52,14 @@ export class LecturerComponent implements OnInit {
 		classService: ClassService,
 		classroomService: ClassroomService,
 		groupService: GroupService,
-		lecturerService: UserService) {
+		userService: UserService) {
 		this.route = route;
 		this.router = router;
 
 		this.classService = classService;
 		this.classroomService = classroomService;
 		this.groupService = groupService;
-		this.lecturerService = lecturerService;
+		this.userService = userService;
 	}
 
 	ngOnInit(): void {
@@ -67,7 +67,7 @@ export class LecturerComponent implements OnInit {
 		const semester = getCurrentSemester();
 
 		this.route.params
-			.switchMap((params: Params) => this.lecturerService.getUser(+params["id"]))
+			.switchMap((params: Params) => this.userService.getUser(+params["id"]))
 			.subscribe((lecturer: User) => {
 				this.currentLecturer = getLecturerInitials(lecturer);
 

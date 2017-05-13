@@ -6,7 +6,7 @@ import { UserRoleGuard } from "./auth/user-role.guard";
 const routes: Routes = [
 	{
 		path: "",
-		redirectTo: "schedule/groups",
+		redirectTo: "schedule",
 		pathMatch: "full",
 		canActivate: [ UserRoleGuard ]
 	}

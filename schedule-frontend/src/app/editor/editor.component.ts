@@ -1,30 +1,7 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-
-import { AuthService } from "../auth/auth";
-import { User } from '../models/models';
+import { Component } from "@angular/core";
 
 @Component({
-	selector: "schedule-editor",
+	selector: "schedule-editor-root",
 	templateUrl: "./editor.component.html"
 })
-export class EditorComponent implements OnInit {
-	private router: Router;
-	private authService: AuthService;
-
-	currentUser: User;
-
-	constructor(router: Router, authService: AuthService) {
-		this.router = router;
-		this.authService = authService;
-	}
-
-	ngOnInit(): void {
-		this.authService.getCurrentUser()
-			.subscribe((user: User) => this.currentUser = user);
-	}
-
-	navigateToSchedule(): void {
-		this.router.navigate([ "/admin/schedule" ]);
-	}
-}
+export class EditorComponent { }

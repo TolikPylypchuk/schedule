@@ -2,11 +2,22 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
 import { EditorComponent } from "./editor.component";
+import { HomeComponent } from "./home.component";
 import { ScheduleComponent } from './schedule.component';
 
+import { AuthGuard, EditorGuard } from '../auth/auth';
+
 const routes: Routes = [
-	{ path: "editor/schedule", component: ScheduleComponent },
-	{ path: "editor", component: EditorComponent }
+	{
+		path: "editor",
+		component: EditorComponent,
+		children: [
+			{ path: "schedule", component: ScheduleComponent },
+			{ path: "", component: HomeComponent, pathMatch: "full" }
+		],
+		canActivate: [ AuthGuard, EditorGuard ],
+		canActivateChild: [ AuthGuard, EditorGuard ]
+	}
 ];
 
 @NgModule({

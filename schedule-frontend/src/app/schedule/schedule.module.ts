@@ -4,6 +4,7 @@ import { HttpModule } from "@angular/http";
 
 import { RoutesModule } from "./routes.module";
 
+import { ScheduleComponent } from "./schedule.component";
 import { GroupsComponent } from "./groups.component";
 import { LecturersComponent } from "./lecturers.component";
 import { GroupComponent } from "./group.component";
@@ -11,6 +12,7 @@ import { LecturerComponent } from "./lecturer.component";
 
 @NgModule({
 	declarations: [
+		ScheduleComponent,
 		GroupsComponent,
 		LecturersComponent,
 		GroupComponent,

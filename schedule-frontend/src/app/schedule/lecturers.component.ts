@@ -15,7 +15,7 @@ import { compareLecturersByName } from "../models/functions";
 export class LecturersComponent implements OnInit {
 	private router: Router;
 	private facultyService: FacultyService;
-	private lecturerService: UserService;
+	private userService: UserService;
 
 	faculties: Faculty[];
 	lecturers: Map<number, User[]>;
@@ -23,10 +23,10 @@ export class LecturersComponent implements OnInit {
 	constructor(
 		router: Router,
 		facultyService: FacultyService,
-		lecturerService: UserService) {
+		userService: UserService) {
 		this.router = router;
 		this.facultyService = facultyService;
-		this.lecturerService = lecturerService;
+		this.userService = userService;
 		this.lecturers = new Map();
 	}
 
@@ -37,7 +37,7 @@ export class LecturersComponent implements OnInit {
 				this.faculties = faculties;
 
 				for (let faculty of faculties) {
-					this.lecturerService.getLecturersByFaculty(faculty.id)
+					this.userService.getLecturersByFaculty(faculty.id)
 						.subscribe((lecturers: User[]) => {
 							lecturers.sort(compareLecturersByName);
 							this.lecturers.set(faculty.id, lecturers);

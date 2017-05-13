@@ -37,9 +37,9 @@ export class ScheduleComponent implements OnInit {
 	private classroomService: services.ClassroomService;
 	private classroomTypeService: services.ClassroomTypeService;
 	private groupService: services.GroupService;
-	private lecturerService: services.UserService;
 	private planService: services.PlanService;
 	private subjectService: services.SubjectService;
+	private userService: services.UserService;
 	private wishService: services.WishService;
 
 	currentUser: models.User;
@@ -53,9 +53,9 @@ export class ScheduleComponent implements OnInit {
 		classroomService: services.ClassroomService,
 		classroomTypeService: services.ClassroomTypeService,
 		groupService: services.GroupService,
-		lecturerService: services.UserService,
 		planService: services.PlanService,
 		subjectService: services.SubjectService,
+		userService: services.UserService,
 		wishService: services.WishService) {
 		this.authService = authService;
 		this.buildingService = buildingService;
@@ -63,9 +63,9 @@ export class ScheduleComponent implements OnInit {
 		this.classroomService = classroomService;
 		this.classroomTypeService = classroomTypeService;
 		this.groupService = groupService;
-		this.lecturerService = lecturerService;
 		this.planService = planService;
 		this.subjectService = subjectService;
+		this.userService = userService;
 		this.wishService = wishService;
 	}
 
@@ -74,8 +74,9 @@ export class ScheduleComponent implements OnInit {
 			.subscribe((user: models.User) => {
 				this.currentUser = user;
 
-				this.lecturerService.getLecturersByFaculty(user.faculty.id)
-					.subscribe(this.initLecturers);
+				this.userService.getLecturersByFaculty(user.faculty.id)
+					.subscribe((lecturers: models.User[]) =>
+						this.initLecturers(lecturers));
 			});
 	}
 
