@@ -20,7 +20,7 @@ export class EditorComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.authService.getCurrentUserAsObservable()
+		this.authService.getCurrentUser()
 			.subscribe((user: User) => this.currentUser = user);
 	}
 

@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Http, Headers, Response } from '@angular/http';
+import { Http, Headers, Response } from "@angular/http";
+import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
@@ -12,9 +13,9 @@ declare const localStorage;
 export class AuthService {
 	private authUrl = "http://localhost:8080/auth";
 	private currentUserUrl = "http://localhost:8080/users/current";
-	private headers: Headers;
 
 	private http: Http;
+	private router: Router;
 
 	private currentUserSource = new BehaviorSubject<User>({
 		id: 16,
@@ -37,16 +38,12 @@ export class AuthService {
 	private loggedIn = false;
 	private returnUrl: string = null;
 
-	constructor(http: Http) {
+	constructor(http: Http, router: Router) {
 		this.http = http;
-		this.headers = this.getHeaders();
+		this.router = router
 	}
 
-	getCurrentUser(): User {
-		return this.currentUserSource.getValue();
-	}
-
-	getCurrentUserAsObservable(): Observable<User> {
+	getCurrentUser(): Observable<User> {
 		return this.currentUserSource.asObservable();
 	}
 
@@ -62,7 +59,7 @@ export class AuthService {
 		return this.http.post(
 			this.authUrl,
 			JSON.stringify({ username: username, password: password }),
-			{ headers: this.headers })
+			{ headers: this.getHeaders() })
 			.map((response: Response) => {
 				const token = response.json() && response.json().token;
 
@@ -75,8 +72,11 @@ export class AuthService {
 							response.status === 200
 								? response.json() as User
 								: null)
-						.subscribe((user: User) =>
-							this.currentUserSource.next(user));
+						.subscribe((user: User) => {
+							this.currentUserSource.next(user);
+							this.router.navigate([ this.getReturnUrl() ]);
+							this.setReturnUrl("");
+						});
 
 					return true;
 				}
