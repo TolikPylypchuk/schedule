@@ -3,8 +3,11 @@ import {
 	CanActivate, ActivatedRouteSnapshot,
 	Router, RouterStateSnapshot
 } from "@angular/router";
+import { Observable } from "rxjs/Observable";
 
 import { AuthService } from "./auth.service";
+
+import { User } from "../models/models";
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -18,23 +21,30 @@ export class UserRoleGuard implements CanActivate {
 
 	canActivate(
 		route: ActivatedRouteSnapshot,
-		state: RouterStateSnapshot): boolean {
-		if (!this.authService.isLoggedIn) {
+		state: RouterStateSnapshot): Observable<boolean> | boolean {
+		if (!this.authService.isLoggedIn()) {
 			return true;
 		}
 
-		const user = this.authService.getCurrentUser();
+		return this.authService.getCurrentUser()
+			.map((user: User) => {
+				if (!user) {
+					return true;
+				}
 
-		const navigateUrl = user.authorities.find(r => r.name === "ROLE_ADMIN")
-			? "/admin"
-			: user.authorities.find(r => r.name === "ROLE_EDITOR")
-				? "/editor"
-				: user.authorities.find(r => r.name === "ROLE_LECTURER")
-					? "/lecturer"
-					: null;
+				const navigateUrl = user.authorities.find(r => r.name === "ROLE_ADMIN")
+					? "/admin"
+					: user.authorities.find(r => r.name === "ROLE_EDITOR")
+						? "/editor"
+						: user.authorities.find(r => r.name === "ROLE_LECTURER")
+							? "/lecturer"
+							: null;
 
-		this.router.navigate([ navigateUrl ]);
+				if (navigateUrl) {
+					this.router.navigate([ navigateUrl ]);
+				}
 
-		return false;
+				return false;
+			});
 	}
 }
