@@ -21,7 +21,6 @@ export function getHeaders(): Headers {
 		: new Headers({ "Content-Type": "application/json" });
 }
 
-
 export function handleError(error: Response | any): ErrorObservable {
 	let message: string;
 

@@ -21,7 +21,7 @@ export class LecturerGuard implements CanActivate, CanActivateChild {
 
 	canActivate(
 		route: ActivatedRouteSnapshot,
-		state: RouterStateSnapshot): Observable<boolean> | boolean {
+		state: RouterStateSnapshot): Observable<boolean> {
 		return this.authService.getCurrentUser()
 			.map((currentUser: User) => {
 				if (currentUser && currentUser.authorities.find(
@@ -38,7 +38,7 @@ export class LecturerGuard implements CanActivate, CanActivateChild {
 
 	canActivateChild(
 		route: ActivatedRouteSnapshot,
-		state: RouterStateSnapshot): Observable<boolean> | boolean {
+		state: RouterStateSnapshot): Observable<boolean> {
 		return this.canActivate(route, state);
 	}
 }
