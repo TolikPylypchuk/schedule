@@ -5,15 +5,11 @@ import { HttpModule } from "@angular/http";
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
-import { EditorComponent } from "./editor.component";
-import { HomeComponent } from "./home.component";
-import { ScheduleComponent } from "./schedule.component";
+import { AdminComponent } from "./admin.component";
 
 @NgModule({
 	declarations: [
-		EditorComponent,
-		HomeComponent,
-		ScheduleComponent
+		AdminComponent
 	],
 	imports: [
 		BrowserModule,
@@ -22,4 +18,4 @@ import { ScheduleComponent } from "./schedule.component";
 		RoutesModule
 	]
 })
-export class EditorModule { }
+export class AdminModule { }

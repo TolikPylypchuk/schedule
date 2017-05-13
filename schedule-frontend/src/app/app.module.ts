@@ -7,7 +7,9 @@ import { AppComponent } from "./app.component";
 
 import { AuthModule } from "./auth/auth";
 import { ScheduleModule } from "./schedule/schedule";
-import { AdminModule } from "./editor/editor";
+import { LecturerModule } from "./lecturer/lecturer";
+import { EditorModule } from "./editor/editor";
+import { AdminModule } from "./admin/admin";
 import { RoutesModule } from "./routes.module";
 
 import * as services from "./services/services";
@@ -22,6 +24,8 @@ import * as services from "./services/services";
 		HttpModule,
 		AuthModule,
 		ScheduleModule,
+		LecturerModule,
+		EditorModule,
 		AdminModule,
 		RoutesModule
 	],
