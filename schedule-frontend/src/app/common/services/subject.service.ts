@@ -47,6 +47,14 @@ export class SubjectService {
 					: null);
 	}
 
+	getSubjectsByLecturer(lecturerId: number): Observable<Subject[]> {
+		return this.http.get(`${this.subjectsUrl}/lecturerId/${lecturerId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Subject[]
+					: null);
+	}
+
 	addSubject(subject: Subject): Observable<Response> {
 		return this.http.post(
 			this.subjectsUrl,

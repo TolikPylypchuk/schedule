@@ -30,7 +30,8 @@
 		<td *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
 			<div [ngSwitch]="getClassFrequency(lecturer, floor(n / 9 + 1), n % 9 + 1)">
 				<ng-container *ngSwitchCase="0"> <!-- NONE -->
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="addClassClicked(0, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<span class="fa fa-plus" aria-hidden="true"></span>
 					</button>
 				</ng-container>
@@ -48,12 +49,14 @@
 						</small>
 					</button>
 					<br />
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="addClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<span class="fa fa-plus" aria-hidden="true"></span>
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="3"> <!-- DENOMINATOR -->
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="addClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<span class="fa fa-plus" aria-hidden="true"></span>
 					</button>
 					<br />

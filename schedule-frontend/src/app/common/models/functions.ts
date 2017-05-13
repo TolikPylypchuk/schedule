@@ -147,17 +147,33 @@ export function getDayOfWeekNumber(day: string): number {
 		case "п'ятниця":
 			num = 5;
 			break;
-		case "saturday":
-		case "субота":
-			num = 6;
-			break;
-		case "sunday":
-		case "неділя":
-			num = 7;
-			break;
 	}
 
 	return num;
+}
+
+export function getDayOfWeekName(day: number): string {
+	let name = "";
+
+	switch (day) {
+		case 1:
+			name = "Понеділок";
+			break;
+		case 2:
+			name = "Вівторок";
+			break;
+		case 3:
+			name = "Середа";
+			break;
+		case 4:
+			name = "Четвер";
+			break;
+		case 5:
+			name = "П'ятниця";
+			break;
+	}
+
+	return name;
 }
 
 export function getClassroomsAsString(classrooms: Classroom[]): string {

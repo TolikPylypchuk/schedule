@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @Entity
@@ -177,7 +176,6 @@ public class Class implements Serializable {
 		this.classroomType = classroomType;
 	}
 	
-	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_group",
@@ -205,7 +203,6 @@ public class Class implements Serializable {
 		this.subject = subject;
 	}
 	
-	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_classroom",
@@ -223,7 +220,6 @@ public class Class implements Serializable {
 		this.classrooms = classrooms;
 	}
 	
-	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "class_user",

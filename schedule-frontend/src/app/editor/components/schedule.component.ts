@@ -1,5 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs/Observable";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+
+import { ClassModalComponent } from "./class-modal.component";
 
 import { AuthService } from "../../auth/auth";
 
@@ -8,7 +11,7 @@ import * as services from "../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester, getLecturerInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
-	compareLecturersByName
+	compareLecturersByName, getDayOfWeekName
 } from "../../common/models/functions";
 
 interface ClassInfo {
@@ -30,7 +33,10 @@ export enum ClassFrequency {
 	templateUrl: "./schedule.component.html"
 })
 export class ScheduleComponent implements OnInit {
+	private modalService: NgbModal;
+
 	private authService: AuthService;
+
 	private buildingService: services.BuildingService;
 	private classService: services.ClassService;
 	private classroomService: services.ClassroomService;
@@ -46,6 +52,7 @@ export class ScheduleComponent implements OnInit {
 	lecturersClasses: Map<number, ClassInfo[]> = new Map();
 
 	constructor(
+		modalService: NgbModal,
 		authService: AuthService,
 		buildingService: services.BuildingService,
 		classService: services.ClassService,
@@ -56,6 +63,7 @@ export class ScheduleComponent implements OnInit {
 		subjectService: services.SubjectService,
 		userService: services.UserService,
 		wishService: services.WishService) {
+		this.modalService = modalService;
 		this.authService = authService;
 		this.buildingService = buildingService;
 		this.classService = classService;
@@ -120,6 +128,24 @@ export class ScheduleComponent implements OnInit {
 
 	getArrayOfNumbers(num: number): number[] {
 		return Array.apply(null, {length: num}).map(Number.call, Number);
+	}
+
+	addClassClicked(
+		frequency: ClassFrequency,
+		day: number,
+		num: number,
+		lecturer: models.User): void {
+		const modalRef = this.modalService.open(
+			ClassModalComponent, { size: "lg" });
+		const modal = modalRef.componentInstance as ClassModalComponent;
+		modal.currentClass.frequency = frequency == ClassFrequency.NONE
+			? null
+			: frequency == ClassFrequency.NUMERATOR
+				? "По чисельнику"
+				: "По знаменнику";
+		modal.currentClass.dayOfWeek = getDayOfWeekName(day);
+		modal.currentClass.number = num;
+		modal.currentClass.lecturers = [ lecturer ];
 	}
 
 	getLecturerInitials = getLecturerInitials;

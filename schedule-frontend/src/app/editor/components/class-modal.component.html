@@ -1,0 +1,80 @@
+<form>
+	<div class="modal-header">
+		<h4 class="modal-title">
+			{{ currentClass.dayOfWeek }}, {{ currentClass.number}} пара
+		</h4>
+		<button type="button" class="close" aria-label="Close"
+		        (click)="activeModal.dismiss('')">
+			<i class="fa fa-remove" aria-hidden="true"></i>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		<h6 class="h6">
+			{{ getLecturerInitials(currentClass.lecturers[0]) }}
+		</h6>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="subjectSelect">Предмет:</label>
+						<select class="form-control" id="subjectSelect" required
+						        name="subject" [(ngModel)]="currentClass.subject">
+							<option *ngFor="let subject of subjects">
+								{{ subject.name }}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="classroomTypeSelect">Тип аудиторії:</label>
+						<select class="form-control" id="classroomTypeSelect" required
+						        name="classroomType"
+						        [(ngModel)]="currentClass.classroomType">
+							<option *ngFor="let type of classroomTypes">
+								{{ type.type }}
+							</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="classTypeSelect">Тип пари:</label>
+						<select class="form-control" id="classTypeSelect" required
+						        name="type" [(ngModel)]="currentClass.type">
+							<option *ngFor="let type of [ 'Лекція', 'Практична', 'Лабораторна' ]">
+								{{ type }}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="buildingSelect">Корпус:</label>
+						<select class="form-control" id="buildingSelect" required
+						        name="selectedBuilding"
+						        [(ngModel)]="selectedBuilding">
+							<option *ngFor="let building of buildings">
+								{{ building.name }}
+							</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-primary">
+			OK
+		</button>
+		<button type="button" class="btn btn-secondary"
+		        (click)="activeModal.close('')">
+			Скасувати
+		</button>
+	</div>
+</form>

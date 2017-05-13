@@ -4,6 +4,7 @@ import { RoutesModule } from "./routes.module";
 import { EditorComponent } from "./components/editor.component";
 import { HomeComponent } from "./components/home.component";
 import { ScheduleComponent } from "./components/schedule.component";
+import { ClassModalComponent } from "./components/class-modal.component";
 
 export {
 	EditorModule,
@@ -11,5 +12,6 @@ export {
 
 	EditorComponent,
 	HomeComponent,
-	ScheduleComponent
+	ScheduleComponent,
+	ClassModalComponent
 }

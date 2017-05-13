@@ -1,5 +1,5 @@
 export interface EntityBase {
-	id: number;
+	id?: number;
 }
 
 export interface Building extends EntityBase {
@@ -13,10 +13,13 @@ export interface Class extends EntityBase {
 	frequency: string;
 	dayOfWeek: string;
 	year: number;
-	semester: string;
+	semester: number;
 	type: string;
 	classroomType: ClassroomType;
 	subject: Subject;
+	classrooms?: Classroom[];
+	groups?: Group[];
+	lecturers?: User[];
 }
 
 export interface Classroom extends EntityBase {
