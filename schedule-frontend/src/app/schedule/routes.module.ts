@@ -1,11 +1,11 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { ScheduleComponent } from "./schedule.component";
-import { GroupsComponent } from "./groups.component";
-import { LecturersComponent } from "./lecturers.component";
-import { GroupComponent } from "./group.component";
-import { LecturerComponent } from "./lecturer.component";
+import { ScheduleComponent } from "./components/schedule.component";
+import { GroupsComponent } from "./components/groups.component";
+import { LecturersComponent } from "./components/lecturers.component";
+import { GroupComponent } from "./components/group.component";
+import { LecturerComponent } from "./components/lecturer.component";
 
 const routes: Routes = [
 	{

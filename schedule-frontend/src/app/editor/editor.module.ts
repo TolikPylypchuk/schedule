@@ -5,9 +5,9 @@ import { HttpModule } from "@angular/http";
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
-import { EditorComponent } from "./editor.component";
-import { HomeComponent } from "./home.component";
-import { ScheduleComponent } from "./schedule.component";
+import { EditorComponent } from "./components/editor.component";
+import { HomeComponent } from "./components/home.component";
+import { ScheduleComponent } from "./components/schedule.component";
 
 @NgModule({
 	declarations: [

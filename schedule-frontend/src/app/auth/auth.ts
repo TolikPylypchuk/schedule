@@ -1,15 +1,15 @@
-import { LoginComponent } from "./login.component";
-
-import { AuthService } from "./auth.service";
-
-import { AuthGuard } from "./auth.guard";
-import { LecturerGuard } from "./lecturer.guard";
-import { EditorGuard } from "./editor.guard";
-import { AdminGuard } from "./admin.guard";
-import { UserRoleGuard } from "./user-role.guard";
-
 import { AuthModule } from "./auth.module";
 import { RoutesModule } from "./routes.module";
+
+import { LoginComponent } from "./components/login.component";
+
+import { AuthService } from "./services/auth.service";
+
+import { AuthGuard } from "./guards/auth.guard";
+import { LecturerGuard } from "./guards/lecturer.guard";
+import { EditorGuard } from "./guards/editor.guard";
+import { AdminGuard } from "./guards/admin.guard";
+import { UserRoleGuard } from "./guards/user-role.guard";
 
 export {
 	AuthModule,

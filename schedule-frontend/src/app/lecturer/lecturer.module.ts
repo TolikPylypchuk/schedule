@@ -5,7 +5,7 @@ import { HttpModule } from "@angular/http";
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
-import { LecturerComponent } from "./lecturer.component";
+import { LecturerComponent } from "./components/lecturer.component";
 
 @NgModule({
 	declarations: [

@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { LecturerComponent } from "./lecturer.component";
+import { LecturerComponent } from "./components/lecturer.component";
 
 import { AuthGuard, LecturerGuard } from '../auth/auth';
 

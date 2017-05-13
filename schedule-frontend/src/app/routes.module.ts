@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { UserRoleGuard } from "./auth/user-role.guard";
+import { UserRoleGuard } from "./auth/auth";
 
 const routes: Routes = [
 	{

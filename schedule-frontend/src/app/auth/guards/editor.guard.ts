@@ -5,9 +5,9 @@ import {
 } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "./auth.service";
+import { AuthService } from "../services/auth.service";
 
-import { User } from "../common/models/models";
+import { User } from "../../common/models/models";
 
 @Injectable()
 export class EditorGuard implements CanActivate, CanActivateChild {

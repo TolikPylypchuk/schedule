@@ -4,8 +4,8 @@ import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-import { User } from "../common/models/models";
-import { handleError } from "../common/functions";
+import { User } from "../../common/models/models";
+import { handleError } from "../../common/functions";
 
 declare const localStorage;
 

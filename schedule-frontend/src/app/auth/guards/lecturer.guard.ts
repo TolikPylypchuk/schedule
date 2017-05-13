@@ -5,12 +5,12 @@ import {
 } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
-import { AuthService } from "./auth.service";
+import { AuthService } from "../services/auth.service";
 
-import { User } from "../common/models/models";
+import { User } from "../../common/models/models";
 
 @Injectable()
-export class AdminGuard implements CanActivate, CanActivateChild {
+export class LecturerGuard implements CanActivate, CanActivateChild {
 	private router: Router;
 	private authService: AuthService;
 
@@ -25,7 +25,7 @@ export class AdminGuard implements CanActivate, CanActivateChild {
 		return this.authService.getCurrentUser()
 			.map((currentUser: User) => {
 				if (currentUser && currentUser.authorities.find(
-						a => a.name == "ROLE_ADMIN")) {
+						a => a.name == "ROLE_LECTURER")) {
 					return true;
 				}
 

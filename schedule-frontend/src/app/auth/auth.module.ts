@@ -2,15 +2,15 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 
-import { LoginComponent } from "./login.component";
+import { LoginComponent } from "./components/login.component";
 
-import { AuthService } from "./auth.service";
+import { AuthService } from "./services/auth.service";
 
-import { AuthGuard } from "./auth.guard";
-import { LecturerGuard } from "./lecturer.guard";
-import { EditorGuard } from "./editor.guard";
-import { AdminGuard } from "./admin.guard";
-import { UserRoleGuard } from "./user-role.guard";
+import { AuthGuard } from "./guards/auth.guard";
+import { LecturerGuard } from "./guards/lecturer.guard";
+import { EditorGuard } from "./guards/editor.guard";
+import { AdminGuard } from "./guards/admin.guard";
+import { UserRoleGuard } from "./guards/user-role.guard";
 
 import { RoutesModule } from "./routes.module";
 

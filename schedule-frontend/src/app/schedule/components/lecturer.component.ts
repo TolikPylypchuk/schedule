@@ -2,19 +2,19 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
+import { Class, Classroom, Group, User } from "../../common/models/models";
+
 import {
 	ClassService, ClassroomService, GroupService, UserService
-} from "../common/services/services";
+} from "../../common/services/services";
 
 import {
 	getCurrentYear, getCurrentSemester,
-	getCurrentGroupName,
+	getLecturerInitials,
 	getClassStart, getClassEnd,
 	getDayOfWeekNumber,
-	getLecturersAsString, getClassroomsAsString
-} from "../common/models/functions";
-
-import { Class, Classroom, Group, User } from "../common/models/models";
+	getGroupsAsString, getClassroomsAsString
+} from "../../common/models/functions";
 
 interface ClassInfo {
 	day: string;
@@ -25,23 +25,23 @@ interface ClassInfo {
 	subject: string;
 	type: string;
 	classrooms: string;
-	lecturers: string
+	groups: string
 }
 
 @Component({
-	selector: "schedule-group",
-	templateUrl: "./group.component.html"
+	selector: "schedule-lecturer",
+	templateUrl: "./lecturer.component.html"
 })
-export class GroupComponent implements OnInit {
+export class LecturerComponent implements OnInit {
 	private route: ActivatedRoute;
 	private router: Router;
 
 	private classService: ClassService;
 	private classroomService: ClassroomService;
 	private groupService: GroupService;
-	private lecturerService: UserService;
+	private userService: UserService;
 
-	private currentGroup: string;
+	private currentLecturer: string;
 	private classes: ClassInfo[] = [];
 
 	isLoaded = false;
@@ -52,14 +52,14 @@ export class GroupComponent implements OnInit {
 		classService: ClassService,
 		classroomService: ClassroomService,
 		groupService: GroupService,
-		lecturerService: UserService) {
+		userService: UserService) {
 		this.route = route;
 		this.router = router;
 
 		this.classService = classService;
 		this.classroomService = classroomService;
 		this.groupService = groupService;
-		this.lecturerService = lecturerService;
+		this.userService = userService;
 	}
 
 	ngOnInit(): void {
@@ -67,12 +67,12 @@ export class GroupComponent implements OnInit {
 		const semester = getCurrentSemester();
 
 		this.route.params
-			.switchMap((params: Params) => this.groupService.getGroup(+params["id"]))
-			.subscribe((group: Group) => {
-				this.currentGroup = getCurrentGroupName(group);
+			.switchMap((params: Params) => this.userService.getUser(+params["id"]))
+			.subscribe((lecturer: User) => {
+				this.currentLecturer = getLecturerInitials(lecturer);
 
-				this.classService.getClassesByGroupAndYearAndSemester(
-					group.id, currentYear, semester)
+				this.classService.getClassesByLecturerAndYearAndSemester(
+					lecturer.id, currentYear, semester)
 					.subscribe((classes: Class[]) => {
 						let observables: Observable<any>[] = [];
 
@@ -82,9 +82,9 @@ export class GroupComponent implements OnInit {
 							for (let c of classes) {
 								observables.push(Observable.forkJoin([
 										this.classroomService.getClassroomsByClass(c.id),
-										this.lecturerService.getLecturersByClass(c.id)
+										this.groupService.getGroupsByClass(c.id)
 									],
-									(cr: Classroom[], l: User[]): ClassInfo => {
+									(cr: Classroom[], g: Group[]): ClassInfo => {
 										return {
 											day: c.dayOfWeek,
 											number: c.number,
@@ -94,7 +94,7 @@ export class GroupComponent implements OnInit {
 											subject: c.subject.name,
 											type: c.type,
 											classrooms: getClassroomsAsString(cr),
-											lecturers: getLecturersAsString(l)
+											groups: getGroupsAsString(g)
 										};
 									}));
 							}

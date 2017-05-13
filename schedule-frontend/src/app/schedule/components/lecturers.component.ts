@@ -1,12 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
+import { Faculty, User } from "../../common/models/models";
+
 import {
 	UserService, FacultyService
-} from "../common/services/services";
+} from "../../common/services/services";
 
-import { Faculty, User } from "../common/models/models";
-import { compareLecturersByName } from "../common/models/functions";
+import { compareLecturersByName } from "../../common/models/functions";
 
 @Component({
 	selector: "schedule-lecturers",
