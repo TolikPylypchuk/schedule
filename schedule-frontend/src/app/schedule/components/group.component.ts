@@ -73,65 +73,67 @@ export class GroupComponent implements OnInit {
 
 				this.classService.getClassesByGroupAndYearAndSemester(
 					group.id, currentYear, semester)
-					.subscribe((classes: Class[]) => {
-						let observables: Observable<any>[] = [];
+					.subscribe((classes: Class[]) => this.initClasses(classes));
+			});
+	}
 
-						if (classes.length === 0) {
-							this.isLoaded = true;
-						} else {
-							for (let c of classes) {
-								observables.push(Observable.forkJoin([
-										this.classroomService.getClassroomsByClass(c.id),
-										this.lecturerService.getLecturersByClass(c.id)
-									],
-									(cr: Classroom[], l: User[]): ClassInfo => {
-										return {
-											day: c.dayOfWeek,
-											number: c.number,
-											start: getClassStart(c.number),
-											end: getClassEnd(c.number),
-											frequency: c.frequency,
-											subject: c.subject.name,
-											type: c.type,
-											classrooms: getClassroomsAsString(cr),
-											lecturers: getLecturersAsString(l)
-										};
-									}));
+	private initClasses(classes: Class[]): void {
+		let observables: Observable<any>[] = [];
+
+		if (classes.length === 0) {
+			this.isLoaded = true;
+		} else {
+			for (let c of classes) {
+				observables.push(Observable.forkJoin([
+						this.classroomService.getClassroomsByClass(c.id),
+						this.lecturerService.getLecturersByClass(c.id)
+					],
+					(classrooms: Classroom[], lecturers: User[]): ClassInfo => {
+						return {
+							day: c.dayOfWeek,
+							number: c.number,
+							start: getClassStart(c.number),
+							end: getClassEnd(c.number),
+							frequency: c.frequency,
+							subject: c.subject.name,
+							type: c.type,
+							classrooms: getClassroomsAsString(classrooms),
+							lecturers: getLecturersAsString(lecturers)
+						};
+					}));
+			}
+
+			Observable.forkJoin(
+				observables,
+				(...args: ClassInfo[]): ClassInfo[] => args)
+				.subscribe((tempClasses: ClassInfo[]) => {
+					tempClasses.sort(
+						(c1: ClassInfo, c2: ClassInfo) => {
+							const day1 = getDayOfWeekNumber(c1.day);
+							const day2 = getDayOfWeekNumber(c2.day);
+
+							let result = day1 > day2
+								? 1
+								: day1 < day2 ? -1 : 0;
+
+							if (result === 0) {
+								result = c1.number > c2.number
+									? 1
+									: c1.number < c2.number ? -1 : 0;
+
+								if (result === 0) {
+									result = c1.frequency === "По чисельнику"
+										? -1
+										: 1;
+								}
 							}
 
-							Observable.forkJoin(
-								observables,
-								(...args: ClassInfo[]): ClassInfo[] => args)
-								.subscribe((tempClasses: ClassInfo[]) => {
-									tempClasses.sort(
-										(c1: ClassInfo, c2: ClassInfo) => {
-											const day1 = getDayOfWeekNumber(c1.day);
-											const day2 = getDayOfWeekNumber(c2.day);
+							return result;
+						});
 
-											let result = day1 > day2
-												? 1
-												: day1 < day2 ? -1 : 0;
-
-											if (result === 0) {
-												result = c1.number > c2.number
-													? 1
-													: c1.number < c2.number ? -1 : 0;
-
-												if (result === 0) {
-													result = c1.frequency === "По чисельнику"
-														? -1
-														: 1;
-												}
-											}
-
-											return result;
-										});
-
-									this.classes = tempClasses;
-									this.isLoaded = true;
-								});
-						}
-					});
-			});
+					this.classes = tempClasses;
+					this.isLoaded = true;
+				});
+		}
 	}
 }
