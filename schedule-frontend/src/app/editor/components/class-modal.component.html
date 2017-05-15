@@ -58,8 +58,11 @@
 						        required name="classroomType"
 						        [(ngModel)]="currentClass.classroomType"
 						        (change)="classroomTypeSelected()">
-							<option *ngFor="let type of [ defaultClassroomType ].concat(classroomTypes)"
-							        [ngValue]="type === defaultClassroomType ? null : type">
+							<option selected [value]="null">
+								Виберіть тип аудиторії
+							</option>
+							<option *ngFor="let type of classroomTypes"
+							        [ngValue]="type">
 								{{ type.type }}
 							</option>
 						</select>
@@ -69,11 +72,13 @@
 					<div class="form-group">
 						<label for="buildingSelect">Корпус:</label>
 						<select class="form-control" id="buildingSelect"
-						        required name="selectedBuilding"
-						        [(ngModel)]="selectedBuilding"
+						        required name="building"
+						        [(ngModel)]="currentClass.building"
 						        (change)="buildingSelected()">
-							<option *ngFor="let building of buildings; let first = first"
-							        [attr.selected]="first ? 'selected' : null"
+							<option selected [value]="null">
+								Виберіть корпус
+							</option>
+							<option *ngFor="let building of buildings"
 							        [ngValue]="building">
 								{{ building.name }}
 							</option>

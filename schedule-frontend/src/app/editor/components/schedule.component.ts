@@ -145,6 +145,7 @@ export class ScheduleComponent implements OnInit {
 				: "По знаменнику";
 		modal.currentClass.dayOfWeek = getDayOfWeekName(day);
 		modal.currentClass.number = num;
+		modal.contextLecturer = lecturer;
 		modal.currentClass.lecturers = [ lecturer ];
 	}
 

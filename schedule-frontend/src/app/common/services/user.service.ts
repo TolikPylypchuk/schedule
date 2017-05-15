@@ -105,25 +105,55 @@ export class UserService {
 					: null);
 	}
 
-	addLecturer(lecturer: User): Observable<Response> {
+	getAvailableLecturers(
+		facultyId: number,
+		subjectId: number,
+		day: number,
+		num: number): Observable<User[]> {
+		return this.http.get(
+			`${this.usersUrl}/role/lecturer/available/facultyId/${facultyId}` +
+			`/subjectId/${subjectId}/day/${day}/number/${num}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null);
+	}
+
+	addUser(user: User, roles: string): Observable<Response> {
 		return this.http.post(
-			this.usersUrl,
-			JSON.stringify(lecturer),
+			`${this.usersUrl}?roles=${roles}`,
+			JSON.stringify(user),
 			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
-	updateLecturer(lecturer: User): Observable<Response> {
+	addUserToRole(user: User, role: string): Observable<Response> {
+		return this.http.post(
+			`${this.usersUrl}/${user.id}/roles/add/${role}`,
+			{ },
+			{ headers: getHeaders() })
+			.catch(handleError);
+	}
+
+	removeUserFromRole(user: User, role: string): Observable<Response> {
+		return this.http.post(
+			`${this.usersUrl}/${user.id}/roles/remove/${role}`,
+			{ },
+			{ headers: getHeaders() })
+			.catch(handleError);
+	}
+
+	updateUser(user: User): Observable<Response> {
 		return this.http.put(
-			`${this.usersUrl}/${lecturer.id}`,
-			JSON.stringify(lecturer),
+			`${this.usersUrl}/${user.id}`,
+			JSON.stringify(user),
 			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
-	deleteLecturer(lecturer: User): Observable<Response> {
+	deleteUser(user: User): Observable<Response> {
 		return this.http.delete(
-			`${this.usersUrl}/${lecturer.id}`,
+			`${this.usersUrl}/${user.id}`,
 			{ headers: getHeaders() })
 			.catch(handleError);
 	}

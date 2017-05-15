@@ -55,8 +55,22 @@ export class ClassroomService {
 					: null);
 	}
 
-	getClassroomsByType(type: number): Observable<Classroom[]> {
-		return this.http.get(`${this.classroomsUrl}/type/${type}`)
+	getClassroomsByType(typeId: number): Observable<Classroom[]> {
+		return this.http.get(`${this.classroomsUrl}/typeId/${typeId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Classroom[]
+					: null);
+	}
+
+	getAvailableClassrooms(
+		buildingId: number,
+		typeId: number,
+		day: number,
+		num: number): Observable<Classroom[]> {
+		return this.http.get(
+			`${this.classroomsUrl}/available/buildingId/${buildingId}` +
+			`/typeId/${typeId}/day/${day}/number/${num}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]

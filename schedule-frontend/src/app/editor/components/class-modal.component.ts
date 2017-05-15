@@ -7,9 +7,14 @@ import * as services from "../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials, getGroupsAsString,
-	getCurrentGroupName, compareLecturersByName,
-	getLecturersAsString
+	getCurrentGroupName, getLecturersAsString,
+	getDayOfWeekNumber
 } from "../../common/models/functions";
+import { AuthService } from "../../auth/services/auth.service";
+
+interface ClassInfo extends models.Class {
+	building: models.Building;
+}
 
 @Component({
 	selector: "schedule-editor-class-modal",
@@ -18,6 +23,7 @@ import {
 export class ClassModalComponent implements OnInit {
 	private activeModal: NgbActiveModal;
 
+	private authService: AuthService;
 	private buildingService: services.BuildingService;
 	private classService: services.ClassService;
 	private classroomService: services.ClassroomService;
@@ -27,7 +33,9 @@ export class ClassModalComponent implements OnInit {
 	private subjectService: services.SubjectService;
 	private userService: services.UserService;
 
-	currentClass: models.Class = {
+	currentEditor: models.User = null;
+
+	currentClass: ClassInfo = {
 		number: 0,
 		frequency: null,
 		dayOfWeek: null,
@@ -38,10 +46,11 @@ export class ClassModalComponent implements OnInit {
 		subject: null,
 		classrooms: [],
 		groups: [],
-		lecturers: []
+		lecturers: [],
+		building: null
 	};
 
-	selectedBuilding: models.Building;
+	contextLecturer: models.User;
 	buildings: models.Building[] = [];
 	subjects: models.Subject[] = [];
 	classroomTypes: models.ClassroomType[] = [];
@@ -49,10 +58,9 @@ export class ClassModalComponent implements OnInit {
 	availableGroups: models.Group[] = [];
 	availableLecturers: models.User[] = [];
 
-	defaultClassroomType = { type: "Виберіть тип аудиторії" };
-
 	constructor(
 		activeModal: NgbActiveModal,
+		authService: AuthService,
 		buildingService: services.BuildingService,
 		classService: services.ClassService,
 		classroomService: services.ClassroomService,
@@ -62,6 +70,7 @@ export class ClassModalComponent implements OnInit {
 		subjectService: services.SubjectService,
 		userService: services.UserService) {
 		this.activeModal = activeModal;
+		this.authService = authService;
 		this.buildingService = buildingService;
 		this.classService = classService;
 		this.classroomService = classroomService;
@@ -82,6 +91,9 @@ export class ClassModalComponent implements OnInit {
 
 		this.classroomTypeService.getClassroomTypes()
 			.subscribe((types: models.ClassroomType[]) => this.classroomTypes = types);
+
+		this.authService.getCurrentUser()
+			.subscribe((user: models.User) => this.currentEditor = user);
 	}
 
 	subjectSelected(): void {
@@ -91,52 +103,22 @@ export class ClassModalComponent implements OnInit {
 
 		this.currentClass.groups = [];
 
-		this.planService.getPlansBySubjectAndYearAndSemester(
-			this.currentClass.subject.id, this.currentClass.year, this.currentClass.semester)
-			.map((plans: models.Plan[]) => plans.map(p => p.group))
-			.subscribe((groups: models.Group[]) => {
-				this.availableGroups = [];
-				for (let group of groups) {
-					this.classService.getClassesByGroupAndYearAndSemester(
-						group.id,
-						this.currentClass.year,
-						this.currentClass.semester)
-						.subscribe((classes: models.Class[]) => {
-							if (classes.every(c =>
-								c.dayOfWeek !== this.currentClass.dayOfWeek ||
-								c.number !== this.currentClass.number)) {
-								this.availableGroups.push(group);
-								this.availableGroups.sort(
-									(g1: models.Group, g2: models.Group) =>
-										getCurrentGroupName(g1)
-											.localeCompare(
-												getCurrentGroupName(g2)));
-							}
-						});
-				}
-			});
+		this.groupService.getAvailableGroups(
+			this.currentEditor.faculty.id,
+			this.currentClass.subject.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number)
+			.subscribe((groups: models.Group[]) =>
+				this.availableGroups = groups);
 
-		this.userService.getLecturersBySubject(this.currentClass.subject.id)
-			.subscribe((lecturers: models.User[]) => {
-				this.availableLecturers = [];
-				for (let lecturer of lecturers) {
-					if (!this.currentClass.lecturers.find(l => l.id == lecturer.id)) {
-						this.classService.getClassesByLecturerAndYearAndSemester(
-							lecturer.id,
-							this.currentClass.year,
-							this.currentClass.semester)
-							.subscribe((classes: models.Class[]) => {
-								if (classes.every(c =>
-									c.dayOfWeek !== this.currentClass.dayOfWeek ||
-									c.number !== this.currentClass.number)) {
-									this.availableLecturers.push(lecturer);
-									this.availableLecturers.sort(compareLecturersByName);
-								}
-							});
-					}
-				}
-			});
-
+		this.userService.getAvailableLecturers(
+			this.currentEditor.faculty.id,
+			this.currentClass.subject.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number)
+			.subscribe((lecturers: models.User[]) =>
+				this.availableLecturers = lecturers.filter(
+					l => l.id !== this.contextLecturer.id));
 	}
 
 	classTypeSelected(): void {

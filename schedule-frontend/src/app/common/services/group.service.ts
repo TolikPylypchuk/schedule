@@ -83,6 +83,20 @@ export class GroupService {
 					: null);
 	}
 
+	getAvailableGroups(
+		facultyId: number,
+		subjectId: number,
+		day: number,
+		num: number): Observable<Group[]> {
+		return this.http.get(
+			`${this.groupsUrl}/available/facultyId/${facultyId}` +
+			`/subjectId/${subjectId}/day/${day}/number/${num}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null);
+	}
+
 	addGroup(group: Group): Observable<Response> {
 		return this.http.post(
 			this.groupsUrl,
