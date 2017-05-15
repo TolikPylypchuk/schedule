@@ -20,7 +20,8 @@
 					<div class="form-group">
 						<label for="subjectSelect">Предмет:</label>
 						<select class="form-control" id="subjectSelect" required
-						        name="subject" [(ngModel)]="currentClass.subject">
+						        name="subject" [(ngModel)]="currentClass.subject"
+						        (change)="subjectSelected()">
 							<option *ngFor="let subject of subjects">
 								{{ subject.name }}
 							</option>
@@ -29,12 +30,12 @@
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="classroomTypeSelect">Тип аудиторії:</label>
-						<select class="form-control" id="classroomTypeSelect" required
-						        name="classroomType"
-						        [(ngModel)]="currentClass.classroomType">
-							<option *ngFor="let type of classroomTypes">
-								{{ type.type }}
+						<label for="classTypeSelect">Тип пари:</label>
+						<select class="form-control" id="classTypeSelect" required
+						        name="type" [(ngModel)]="currentClass.type"
+						        (change)="classTypeSelected()">
+							<option *ngFor="let type of [ 'Лекція', 'Практична', 'Лабораторна' ]">
+								{{ type }}
 							</option>
 						</select>
 					</div>
@@ -43,11 +44,13 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="classTypeSelect">Тип пари:</label>
-						<select class="form-control" id="classTypeSelect" required
-						        name="type" [(ngModel)]="currentClass.type">
-							<option *ngFor="let type of [ 'Лекція', 'Практична', 'Лабораторна' ]">
-								{{ type }}
+						<label for="classroomTypeSelect">Тип аудиторії:</label>
+						<select class="form-control" id="classroomTypeSelect" required
+						        name="classroomType"
+						        [(ngModel)]="currentClass.classroomType"
+						        (change)="classroomTypeSelected()">
+							<option *ngFor="let type of classroomTypes">
+								{{ type.type }}
 							</option>
 						</select>
 					</div>
@@ -57,13 +60,37 @@
 						<label for="buildingSelect">Корпус:</label>
 						<select class="form-control" id="buildingSelect" required
 						        name="selectedBuilding"
-						        [(ngModel)]="selectedBuilding">
+						        [(ngModel)]="selectedBuilding"
+						        (change)="buildingSelected()">
 							<option *ngFor="let building of buildings">
 								{{ building.name }}
 							</option>
 						</select>
 					</div>
 				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					Групи: {{ getGroupsAsString(currentClass.groups) }}
+					<button class="btn btn-primary ml-2" type="button"
+					        data-toggle="collapse" data-target="#collapseGroups"
+					        aria-expanded="false" aria-controls="collapseGroups">
+						Додати
+					</button>
+
+					<div class="collapse mt-2" id="collapseGroups">
+						<div *ngIf="availableGroups.length === 0">
+							<p>Немає вільних груп.</p>
+						</div>
+						<div *ngFor="let group of availableGroups" class="form-check">
+							<label class="form-check-label" (change)="groupChecked(group)">
+								<input type="checkbox" class="form-check-input"/>
+								{{ getCurrentGroupName(group) }}
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6"></div>
 			</div>
 		</div>
 	</div>

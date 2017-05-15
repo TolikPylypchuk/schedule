@@ -67,7 +67,7 @@ public class Wish implements Serializable {
 	}
 	
 	@Column(name = "day_of_week")
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	public DayOfWeek getDayOfWeek() {
 		return this.dayOfWeek;
 	}
@@ -86,7 +86,7 @@ public class Wish implements Serializable {
 	}
 	
 	@Column(name = "semester", nullable = false)
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	public Semester getSemester() {
 		return this.semester;
 	}

@@ -5,7 +5,9 @@ import * as models from "../../common/models/models";
 import * as services from "../../common/services/services";
 
 import {
-	getCurrentYear, getCurrentSemester, getLecturerInitials
+	getCurrentYear, getCurrentSemester,
+	getLecturerInitials, getGroupsAsString,
+	getCurrentGroupName
 } from "../../common/models/functions";
 
 @Component({
@@ -23,7 +25,6 @@ export class ClassModalComponent implements OnInit {
 	private planService: services.PlanService;
 	private subjectService: services.SubjectService;
 	private userService: services.UserService;
-	private wishService: services.WishService;
 
 	currentClass: models.Class = {
 		number: 0,
@@ -43,6 +44,9 @@ export class ClassModalComponent implements OnInit {
 	buildings: models.Building[] = [];
 	subjects: models.Subject[] = [];
 	classroomTypes: models.ClassroomType[] = [];
+	availableClassrooms: models.Classroom[] = [];
+	availableGroups: models.Group[] = [];
+	availableLecturers: models.User[] = [];
 
 	constructor(
 		activeModal: NgbActiveModal,
@@ -53,8 +57,7 @@ export class ClassModalComponent implements OnInit {
 		groupService: services.GroupService,
 		planService: services.PlanService,
 		subjectService: services.SubjectService,
-		userService: services.UserService,
-		wishService: services.WishService) {
+		userService: services.UserService) {
 		this.activeModal = activeModal;
 		this.buildingService = buildingService;
 		this.classService = classService;
@@ -64,13 +67,15 @@ export class ClassModalComponent implements OnInit {
 		this.planService = planService;
 		this.subjectService = subjectService;
 		this.userService = userService;
-		this.wishService = wishService;
 	}
 
 	ngOnInit(): void {
 		this.subjectService.getSubjectsByLecturer(
 			this.currentClass.lecturers[0].id)
-			.subscribe((subjects: models.Subject[]) => this.subjects = subjects);
+			.subscribe((subjects: models.Subject[]) => {
+				this.subjects = subjects;
+				this.subjectSelected();
+			});
 
 		this.buildingService.getBuildings()
 			.subscribe((buildings: models.Building[]) => this.buildings = buildings);
@@ -79,5 +84,57 @@ export class ClassModalComponent implements OnInit {
 			.subscribe((types: models.ClassroomType[]) => this.classroomTypes = types);
 	}
 
+	subjectSelected(): void {
+		this.currentClass.groups = [];
+
+		this.planService.getPlansBySubjectAndYearAndSemester(
+			this.subjects[0].id, this.currentClass.year, this.currentClass.semester)
+			.map((plans: models.Plan[]) => plans.map(p => p.group))
+			.subscribe((groups: models.Group[]) => {
+				this.availableGroups = [];
+				for (let group of groups) {
+					this.classService.getClassesByGroupAndYearAndSemester(
+						group.id,
+						this.currentClass.year,
+						this.currentClass.semester)
+						.subscribe((classes: models.Class[]) => {
+							if (classes.every(c =>
+								c.dayOfWeek !== this.currentClass.dayOfWeek ||
+								c.number !== this.currentClass.number)) {
+								this.availableGroups.push(group);
+								this.availableGroups.sort(
+									(g1: models.Group, g2: models.Group) =>
+										getCurrentGroupName(g1)
+											.localeCompare(
+												getCurrentGroupName(g2)));
+							}
+						});
+				}
+			});
+	}
+
+	classTypeSelected(): void {
+
+	}
+
+	classroomTypeSelected(): void {
+
+	}
+
+	buildingSelected(): void {
+
+	}
+
+	groupChecked(group: models.Group): void {
+		if (this.currentClass.groups.includes(group)) {
+			this.currentClass.groups = this.currentClass.groups.filter(
+				g => g.id !== group.id);
+		} else {
+			this.currentClass.groups.push(group);
+		}
+	}
+
+	getCurrentGroupName = getCurrentGroupName;
+	getGroupsAsString = getGroupsAsString;
 	getLecturerInitials = getLecturerInitials;
 }
