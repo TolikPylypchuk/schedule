@@ -7,7 +7,8 @@ import * as services from "../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials, getGroupsAsString,
-	getCurrentGroupName
+	getCurrentGroupName, compareLecturersByName,
+	getLecturersAsString
 } from "../../common/models/functions";
 
 @Component({
@@ -48,6 +49,8 @@ export class ClassModalComponent implements OnInit {
 	availableGroups: models.Group[] = [];
 	availableLecturers: models.User[] = [];
 
+	defaultClassroomType = { type: "Виберіть тип аудиторії" };
+
 	constructor(
 		activeModal: NgbActiveModal,
 		buildingService: services.BuildingService,
@@ -72,10 +75,7 @@ export class ClassModalComponent implements OnInit {
 	ngOnInit(): void {
 		this.subjectService.getSubjectsByLecturer(
 			this.currentClass.lecturers[0].id)
-			.subscribe((subjects: models.Subject[]) => {
-				this.subjects = subjects;
-				this.subjectSelected();
-			});
+			.subscribe((subjects: models.Subject[]) => this.subjects = subjects);
 
 		this.buildingService.getBuildings()
 			.subscribe((buildings: models.Building[]) => this.buildings = buildings);
@@ -85,10 +85,14 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	subjectSelected(): void {
+		if (!this.currentClass.subject) {
+			return;
+		}
+
 		this.currentClass.groups = [];
 
 		this.planService.getPlansBySubjectAndYearAndSemester(
-			this.subjects[0].id, this.currentClass.year, this.currentClass.semester)
+			this.currentClass.subject.id, this.currentClass.year, this.currentClass.semester)
 			.map((plans: models.Plan[]) => plans.map(p => p.group))
 			.subscribe((groups: models.Group[]) => {
 				this.availableGroups = [];
@@ -111,6 +115,28 @@ export class ClassModalComponent implements OnInit {
 						});
 				}
 			});
+
+		this.userService.getLecturersBySubject(this.currentClass.subject.id)
+			.subscribe((lecturers: models.User[]) => {
+				this.availableLecturers = [];
+				for (let lecturer of lecturers) {
+					if (!this.currentClass.lecturers.find(l => l.id == lecturer.id)) {
+						this.classService.getClassesByLecturerAndYearAndSemester(
+							lecturer.id,
+							this.currentClass.year,
+							this.currentClass.semester)
+							.subscribe((classes: models.Class[]) => {
+								if (classes.every(c =>
+									c.dayOfWeek !== this.currentClass.dayOfWeek ||
+									c.number !== this.currentClass.number)) {
+									this.availableLecturers.push(lecturer);
+									this.availableLecturers.sort(compareLecturersByName);
+								}
+							});
+					}
+				}
+			});
+
 	}
 
 	classTypeSelected(): void {
@@ -134,7 +160,17 @@ export class ClassModalComponent implements OnInit {
 		}
 	}
 
+	lecturerChecked(lecturer: models.User): void {
+		if (this.currentClass.lecturers.includes(lecturer)) {
+			this.currentClass.lecturers = this.currentClass.lecturers.filter(
+				l => l.id !== lecturer.id);
+		} else {
+			this.currentClass.lecturers.push(lecturer);
+		}
+	}
+
 	getCurrentGroupName = getCurrentGroupName;
 	getGroupsAsString = getGroupsAsString;
+	getLecturersAsString = getLecturersAsString;
 	getLecturerInitials = getLecturerInitials;
 }
