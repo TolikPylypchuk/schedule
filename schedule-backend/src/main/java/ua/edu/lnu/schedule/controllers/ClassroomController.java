@@ -1,16 +1,21 @@
 package ua.edu.lnu.schedule.controllers;
 
-import java.util.ArrayList;
-import java.util.Locale;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.DayOfWeek;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.Classroom;
 import ua.edu.lnu.schedule.models.ClassroomType;
+import ua.edu.lnu.schedule.models.Semester;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
@@ -63,7 +68,6 @@ public class ClassroomController {
 		return c == null
 			? new ArrayList<>()
 			: this.classrooms.findAllByClassesContaining(c);
-		
 	}
 	
 	@RequestMapping(value = "/buildingId/{buildingId}", method = RequestMethod.GET)
@@ -88,40 +92,68 @@ public class ClassroomController {
 			? this.classrooms.findAll()
 			: this.classrooms.findAllByType_Id(typeId);
 	}
-
+	
+	@RequestMapping(
+		value = "/available/buildingId/{buildingId}" +
+			"/typeId/{typeId}/day/{day}/number/{number}",
+		method = RequestMethod.GET)
+	public @ResponseBody Iterable<Classroom> getAvailable(
+		@PathVariable("buildingId") int buildingId,
+		@PathVariable("typeId") int typeId,
+		@PathVariable("day") int day,
+		@PathVariable("number") int number) {
+		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
+		
+		Semester currentSemester =
+			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
+		
+		int currentYear = currentSemester == Semester.FIRST
+			? calendar.get(Calendar.YEAR)
+			: calendar.get(Calendar.YEAR) - 1;
+		
+		List<Class> potentialClasses =
+			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
+				DayOfWeek.of(day), number, currentYear, currentSemester);
+		
+		return this.classrooms.findAllByBuilding_Id(buildingId).stream()
+			.filter(cr -> potentialClasses.stream()
+				.flatMap(c -> c.getClassrooms().stream())
+				.noneMatch(c -> Objects.equals(c.getId(), cr.getId())))
+			.collect(Collectors.toList());
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(
-		@RequestBody Classroom classroom,
-		HttpServletResponse response) {
+	public ResponseEntity<?> post(
+		@RequestBody Classroom classroom)
+		throws URISyntaxException {
 		this.classrooms.save(classroom);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		return ResponseEntity.created(
+			new URI("/classrooms/" + classroom.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Classroom classroom,
-		HttpServletResponse response) {
+		@RequestBody Classroom classroom) {
 		if (!this.classrooms.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		classroom.setId(id);
 		this.classrooms.save(classroom);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.classrooms.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.classrooms.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

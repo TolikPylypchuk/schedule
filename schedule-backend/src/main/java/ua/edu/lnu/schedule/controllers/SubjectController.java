@@ -1,10 +1,13 @@
 package ua.edu.lnu.schedule.controllers;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
@@ -104,36 +107,36 @@ public class SubjectController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Subject subject, HttpServletResponse response) {
+	public ResponseEntity<?> post(@RequestBody Subject subject)
+		throws URISyntaxException {
 		this.subjects.save(subject);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		return ResponseEntity.created(
+			new URI("/subjects/" + subject.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Subject subject,
-		HttpServletResponse response) {
+		@RequestBody Subject subject) {
 		if (!this.subjects.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		subject.setId(id);
 		this.subjects.save(subject);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.subjects.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.subjects.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

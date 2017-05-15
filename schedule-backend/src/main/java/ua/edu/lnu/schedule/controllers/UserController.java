@@ -1,13 +1,17 @@
 package ua.edu.lnu.schedule.controllers;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.time.DayOfWeek;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -149,11 +153,45 @@ public class UserController {
 		return this.users.findByWishesContaining(wish);
 	}
 	
+	@RequestMapping(
+		value = "/role/lecturer/available/facultyId/{facultyId}" +
+			"/subjectId/{subjectId}/day/{day}/number/{number}",
+		method = RequestMethod.GET)
+	public @ResponseBody Iterable<User> getAvailable(
+		@PathVariable("facultyId") int facultyId,
+		@PathVariable("subjectId") int subjectId,
+		@PathVariable("day") int day,
+		@PathVariable("number") int number) {
+		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
+		
+		Semester currentSemester =
+			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
+		
+		int currentYear = currentSemester == Semester.FIRST
+			? calendar.get(Calendar.YEAR)
+			: calendar.get(Calendar.YEAR) - 1;
+		
+		List<Class> potentialClasses =
+			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
+				DayOfWeek.of(day), number, currentYear, currentSemester);
+		
+		Subject subject = this.subjects.findOne(subjectId);
+		
+		return subject == null
+			? new ArrayList<>()
+			: this.users.findAllByFaculty_IdAndSubjectsContaining(facultyId, subject)
+				.stream()
+				.filter(lecturer -> potentialClasses.stream()
+					.flatMap(c -> c.getLecturers().stream())
+					.noneMatch(l -> Objects.equals(l.getId(), lecturer.getId())))
+				.collect(Collectors.toList());
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(
+	public ResponseEntity<?> post(
 		@RequestBody User user,
-		@RequestParam("roles") String rolesParam,
-		HttpServletResponse response) {
+		@RequestParam("roles") String rolesParam)
+		throws URISyntaxException {
 		String[] roles = rolesParam.split(",");
 		
 		if (!Arrays.stream(roles).allMatch(role -> {
@@ -162,8 +200,7 @@ public class UserController {
 				   role.equals("editor") ||
 				   role.equals("lecturer");
 		})) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			return ResponseEntity.badRequest().build();
 		}
 		
 		user.setAuthorities(new HashSet<>());
@@ -174,49 +211,44 @@ public class UserController {
 		
 		this.userService.save(user);
 		
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		return ResponseEntity.created(new URI("/users/" + user.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}/roles/add/{role}", method = RequestMethod.POST)
-	public void addUserToRole(
+	public ResponseEntity<?> addUserToRole(
 		@PathVariable("id") int id,
-		@PathVariable("role") String role,
-		HttpServletResponse response) {
+		@PathVariable("role") String role) {
 		User user = this.users.findOne(id);
 		
 		if (user == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.userService.addUserToRole(user, role);
 		this.users.save(user);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}/roles/remove/{role}", method = RequestMethod.POST)
-	public void removeUserFromRole(
+	public ResponseEntity<?> removeUserFromRole(
 		@PathVariable("id") int id,
-		@PathVariable("role") String role,
-		HttpServletResponse response) {
+		@PathVariable("role") String role) {
 		User user = this.users.findOne(id);
 		
 		if (user == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.userService.removeUserFromRole(user, role);
 		this.users.save(user);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/current/changePassword", method = RequestMethod.POST)
-	public void changePassword(
+	public ResponseEntity<?> changePassword(
 		@RequestBody ChangePasswordModel model,
-		HttpServletResponse response,
 		Authentication authentication) {
 		User user = this.users.findByUsername(
 			((UserDetails)authentication.getPrincipal()).getUsername());
@@ -224,23 +256,20 @@ public class UserController {
 		boolean success = this.userService.changePassword(
 			user, model.getOldPassword(), model.getNewPassword());
 		
-		response.setStatus(
-			success
-				? HttpServletResponse.SC_NO_CONTENT
-				: HttpServletResponse.SC_FORBIDDEN);
+		return success
+			? ResponseEntity.noContent().build()
+			: ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody User user,
-		HttpServletResponse response,
 		Authentication authentication) {
 		User userToChange = this.users.findOne(id);
 		
 		if (userToChange == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		if (user.getFirstName() != null) {
@@ -261,13 +290,12 @@ public class UserController {
 		
 		this.users.save(userToChange);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/current", method = RequestMethod.PUT)
-	public void putCurrent(
+	public ResponseEntity<?> putCurrent(
 		@RequestBody ChangePasswordModel model,
-		HttpServletResponse response,
 		Principal p) {
 		User user = this.users.findByUsername(p.getName());
 		
@@ -285,18 +313,17 @@ public class UserController {
 		
 		this.users.save(user);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.users.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.users.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

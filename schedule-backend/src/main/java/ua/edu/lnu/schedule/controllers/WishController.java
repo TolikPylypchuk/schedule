@@ -3,11 +3,15 @@ package ua.edu.lnu.schedule.controllers;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Semester;
 import ua.edu.lnu.schedule.models.Wish;
 import ua.edu.lnu.schedule.repositories.WishRepository;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/wishes")
@@ -55,36 +59,35 @@ public class WishController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Wish wish, HttpServletResponse response) {
+	public ResponseEntity<?> post(@RequestBody Wish wish)
+		throws URISyntaxException {
 		this.wishes.save(wish);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+
+		return ResponseEntity.created(new URI("/wishes/" + wish.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Wish group,
-		HttpServletResponse response) {
+		@RequestBody Wish group) {
 		if (!this.wishes.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		group.setId(id);
 		this.wishes.save(group);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.wishes.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.wishes.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

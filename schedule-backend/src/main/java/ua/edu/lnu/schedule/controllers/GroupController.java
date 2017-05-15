@@ -1,15 +1,19 @@
 package ua.edu.lnu.schedule.controllers;
 
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.DayOfWeek;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
-import ua.edu.lnu.schedule.models.Group;
-import ua.edu.lnu.schedule.models.Plan;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.GroupRepository;
 import ua.edu.lnu.schedule.repositories.PlanRepository;
@@ -110,37 +114,71 @@ public class GroupController {
 		return this.groups.findByPlansContaining(plan);
 	}
 	
+	@RequestMapping(
+		value = "/available/facultyId/{facultyId}" +
+			"/subjectId/{subjectId}/day/{day}/number/{number}",
+		method = RequestMethod.GET)
+	public @ResponseBody Iterable<Group> getAvailable(
+		@PathVariable("facultyId") int facultyId,
+		@PathVariable("subjectId") int subjectId,
+		@PathVariable("day") int day,
+		@PathVariable("number") int number) {
+		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
+		
+		Semester currentSemester =
+			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
+		
+		int currentYear = currentSemester == Semester.FIRST
+			? calendar.get(Calendar.YEAR)
+			: calendar.get(Calendar.YEAR) - 1;
+		
+		List<Plan> plans = this.plans.findAllBySubject_IdAndYearAndSemester(
+			subjectId, currentYear, currentSemester);
+		
+		List<Class> potentialClasses =
+			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
+				DayOfWeek.of(day), number, currentYear, currentSemester);
+		
+		return this.groups.findAllByFaculty_Id(facultyId).stream()
+			.filter(group -> plans.stream()
+				.anyMatch(plan -> Objects.equals(plan.getGroup().getId(), group.getId())))
+			.filter(group -> potentialClasses.stream()
+				.flatMap(c -> c.getGroups().stream())
+				.noneMatch(g -> Objects.equals(g.getId(), group.getId())))
+			.collect(Collectors.toList());
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Group group, HttpServletResponse response) {
+	public ResponseEntity<?> post(@RequestBody Group group)
+		throws URISyntaxException {
 		this.groups.save(group);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		return ResponseEntity.created(
+			new URI("/groups/" + group.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Group group,
-		HttpServletResponse response) {
+		@RequestBody Group group) {
 		if (!this.groups.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		group.setId(id);
 		this.groups.save(group);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.groups.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.groups.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

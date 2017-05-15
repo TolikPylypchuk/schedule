@@ -1,12 +1,14 @@
 package ua.edu.lnu.schedule.controllers;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Building;
 import ua.edu.lnu.schedule.repositories.BuildingRepository;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/buildings")
@@ -29,38 +31,37 @@ public class BuildingController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(
-		@RequestBody Building building,
-		HttpServletResponse response) {
+	public ResponseEntity<?> post(
+		@RequestBody Building building)
+		throws URISyntaxException {
 		this.buildings.save(building);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		return ResponseEntity.created(
+			new URI("/buildings/" + building.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Building building,
-		HttpServletResponse response) {
+		@RequestBody Building building) {
 		if (!this.buildings.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			ResponseEntity.notFound().build();
 		}
 		
 		building.setId(id);
 		this.buildings.save(building);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.buildings.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			ResponseEntity.notFound().build();
 		}
 		
 		this.buildings.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

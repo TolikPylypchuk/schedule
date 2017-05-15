@@ -3,11 +3,15 @@ package ua.edu.lnu.schedule.controllers;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Plan;
 import ua.edu.lnu.schedule.models.Semester;
 import ua.edu.lnu.schedule.repositories.PlanRepository;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/plans")
@@ -72,36 +76,36 @@ public class PlanController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Plan plan, HttpServletResponse response) {
+	public ResponseEntity<?> post(@RequestBody Plan plan)
+		throws URISyntaxException {
 		this.plans.save(plan);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+
+		return ResponseEntity.created(
+			new URI("/plans/" + plan.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Plan plan,
-		HttpServletResponse response) {
+		@RequestBody Plan plan) {
 		if (!this.plans.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		plan.setId(id);
 		this.plans.save(plan);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.plans.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.plans.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

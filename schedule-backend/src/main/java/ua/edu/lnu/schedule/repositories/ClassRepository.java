@@ -25,5 +25,9 @@ public interface ClassRepository extends CrudRepository<Class, Integer> {
 	List<Class> findAllByDayOfWeekAndYearAndSemester(
 		DayOfWeek day, int year, Semester semester);
 	
+	List<Class> findAllByDayOfWeekAndNumber(DayOfWeek day, int number);
+	List<Class> findAllByDayOfWeekAndNumberAndYearAndSemester(
+		DayOfWeek day, int number, int year, Semester semester);
+	
 	List<Class> findAllByYearAndSemester(int year, Semester semester);
 }

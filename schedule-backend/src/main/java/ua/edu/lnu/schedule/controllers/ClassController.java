@@ -1,11 +1,14 @@
 package ua.edu.lnu.schedule.controllers;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
@@ -170,40 +173,40 @@ public class ClassController {
 	public @ResponseBody Iterable<Class> getByYearSemester(
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
-		return this.classes.findAllByYearAndSemester(year, Semester.fromNumber(semester));
+		return this.classes.findAllByYearAndSemester(
+			year, Semester.fromNumber(semester));
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Class c, HttpServletResponse response) {
+	public ResponseEntity<?> post(@RequestBody Class c)
+		throws URISyntaxException {
 		this.classes.save(c);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		return ResponseEntity.created(
+			new URI("/classes/" + c.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Class c,
-		HttpServletResponse response) {
+		@RequestBody Class c) {
 		if (!this.classes.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		c.setId(id);
 		this.classes.save(c);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.classes.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.classes.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

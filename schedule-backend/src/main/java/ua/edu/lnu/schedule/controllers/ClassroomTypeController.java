@@ -3,6 +3,7 @@ package ua.edu.lnu.schedule.controllers;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.ClassroomType;
@@ -11,6 +12,9 @@ import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/classroomTypes")
@@ -79,38 +83,37 @@ public class ClassroomTypeController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(
-		@RequestBody ClassroomType classroomType,
-		HttpServletResponse response) {
+	public ResponseEntity<?> post(
+		@RequestBody ClassroomType classroomType)
+		throws URISyntaxException {
 		this.classroomTypes.save(classroomType);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		return ResponseEntity.created(
+			new URI("/classroomTypes/" + classroomType.getId())).build();
     }
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody ClassroomType classroomType,
-        HttpServletResponse response) {
+		@RequestBody ClassroomType classroomType) {
 		if (!this.classrooms.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 
 		classroomType.setId(id);
 		this.classroomTypes.save(classroomType);
 
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.classroomTypes.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 
 		this.classroomTypes.delete(id);
 
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

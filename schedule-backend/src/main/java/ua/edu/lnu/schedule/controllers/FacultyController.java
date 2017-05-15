@@ -1,12 +1,14 @@
 package ua.edu.lnu.schedule.controllers;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.Faculty;
 import ua.edu.lnu.schedule.repositories.FacultyRepository;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/faculties")
@@ -29,36 +31,36 @@ public class FacultyController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody Faculty faculty, HttpServletResponse response) {
+	public ResponseEntity<?> post(@RequestBody Faculty faculty)
+		throws URISyntaxException {
 		this.faculties.save(faculty);
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		return ResponseEntity.created(
+			new URI("/faculties" + faculty.getId())).build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void put(
+	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
-		@RequestBody Faculty faculty,
-		HttpServletResponse response) {
+		@RequestBody Faculty faculty) {
 		if (!this.faculties.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		faculty.setId(id);
 		this.faculties.save(faculty);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") int id, HttpServletResponse response) {
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.faculties.exists(id)) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return ResponseEntity.notFound().build();
 		}
 		
 		this.faculties.delete(id);
 		
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

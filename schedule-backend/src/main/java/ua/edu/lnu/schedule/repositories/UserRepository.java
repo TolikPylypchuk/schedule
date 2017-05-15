@@ -14,6 +14,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 	List<User> findAllByFaculty_IdAndAuthoritiesContaining(
 		Integer id, Authority authority);
 	List<User> findAllBySubjectsContaining(Subject subject);
+	List<User> findAllByFaculty_IdAndSubjectsContaining(
+		Integer facultyId, Subject subject);
 	List<User> findAllByClassesContaining(Class c);
 	User findByWishesContaining(Wish wish);
 }
