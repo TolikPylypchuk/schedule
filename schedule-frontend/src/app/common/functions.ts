@@ -16,7 +16,7 @@ export function getHeaders(): Headers {
 	return getAuthToken()
 		? new Headers({
 			"Content-Type": "application/json",
-			"Authentication": `Bearer ${getAuthToken()}`
+			"Authorization": `Bearer ${getAuthToken()}`
 		})
 		: new Headers({
 			"Content-Type": "application/json"

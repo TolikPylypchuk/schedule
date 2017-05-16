@@ -12,10 +12,6 @@ import {
 } from "../../common/models/functions";
 import { AuthService } from "../../auth/services/auth.service";
 
-interface ClassInfo extends models.Class {
-	building: models.Building;
-}
-
 @Component({
 	selector: "schedule-editor-class-modal",
 	templateUrl: "./class-modal.component.html"
@@ -35,7 +31,7 @@ export class ClassModalComponent implements OnInit {
 
 	currentEditor: models.User = null;
 
-	currentClass: ClassInfo = {
+	currentClass: models.Class = {
 		number: 0,
 		frequency: null,
 		dayOfWeek: null,
@@ -46,18 +42,23 @@ export class ClassModalComponent implements OnInit {
 		subject: null,
 		classrooms: [],
 		groups: [],
-		lecturers: [],
-		building: null
+		lecturers: []
 	};
 
 	contextLecturer: models.User;
-	buildings: models.Building[] = [];
+	availableBuildings: models.Building[] = [];
 	subjects: models.Subject[] = [];
 	classroomTypes: models.ClassroomType[] = [];
-	availableClassrooms: models.Classroom[] = [];
+	availableClassrooms: {
+		building: models.Building;
+		classrooms: models.Classroom[];
+	}[] = [];
 	availableGroups: models.Group[] = [];
 	availableLecturers: models.User[] = [];
 	frequencySet: boolean;
+	isEditing: boolean;
+	error = true;
+	errorText: string = null;
 
 	constructor(
 		activeModal: NgbActiveModal,
@@ -85,13 +86,16 @@ export class ClassModalComponent implements OnInit {
 	ngOnInit(): void {
 		this.subjectService.getSubjectsByLecturer(
 			this.currentClass.lecturers[0].id)
-			.subscribe((subjects: models.Subject[]) => this.subjects = subjects);
+			.subscribe((subjects: models.Subject[]) =>
+				this.subjects = subjects);
 
 		this.buildingService.getBuildings()
-			.subscribe((buildings: models.Building[]) => this.buildings = buildings);
+			.subscribe((buildings: models.Building[]) =>
+				this.availableBuildings = buildings);
 
 		this.classroomTypeService.getClassroomTypes()
-			.subscribe((types: models.ClassroomType[]) => this.classroomTypes = types);
+			.subscribe((types: models.ClassroomType[]) =>
+				this.classroomTypes = types);
 
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => this.currentEditor = user);
@@ -129,23 +133,28 @@ export class ClassModalComponent implements OnInit {
 		this.currentClass.classrooms = [];
 		this.availableClassrooms = [];
 
-		if (!this.currentClass.classroomType || !this.currentClass.building) {
+		if (!this.currentClass.classroomType) {
 			return;
 		}
 
-		this.classroomService.getAvailableClassrooms(
-			this.currentClass.building.id,
-			this.currentClass.classroomType.id,
-			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
-			.subscribe((classrooms: models.Classroom[]) =>
-				this.availableClassrooms = classrooms);
+		for (let building of this.availableBuildings) {
+			this.classroomService.getAvailableClassrooms(
+				building.id,
+				this.currentClass.classroomType.id,
+				getDayOfWeekNumber(this.currentClass.dayOfWeek),
+				this.currentClass.number)
+				.subscribe((classrooms: models.Classroom[]) =>
+					this.availableClassrooms.push({
+						building: building,
+						classrooms: classrooms
+					}));
+		}
 	}
 
 	classroomChecked(classroom: models.Classroom): void {
 		if (this.currentClass.classrooms.includes(classroom)) {
 			this.currentClass.classrooms = this.currentClass.classrooms.filter(
-				g => g.id !== classroom.id);
+				c => c.id !== classroom.id);
 		} else {
 			this.currentClass.classrooms.push(classroom);
 		}
@@ -180,9 +189,33 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	submit(): void {
+		if (!this.isClassValid()) {
+			this.errorText = "Заповніть усі поля.";
+			this.error = false;
+			return;
+		}
+
 		this.classService.addClass(this.currentClass)
-			.subscribe((response) =>
-				this.activeModal.close(response));
+			.subscribe(
+				() => this.activeModal.close(this.currentClass),
+				() => this.errorText =
+					"Під час створення пари сталася помилка. " +
+					"Спробуйте ще раз.");
+	}
+
+	isClassValid(): boolean {
+		return this.currentClass.classrooms.length !== 0 &&
+				this.currentClass.groups.length !== 0 &&
+				this.currentClass.frequency !== null;
+	}
+
+	deleteClass(): void {
+		this.classService.deleteClass(this.currentClass)
+			.subscribe(
+				() => this.activeModal.close(this.currentClass.id),
+				() => this.errorText =
+					"Під час видалення пари сталася помилка. " +
+					"Спробуйте ще раз.");
 	}
 
 	getCurrentGroupName = getCurrentGroupName;

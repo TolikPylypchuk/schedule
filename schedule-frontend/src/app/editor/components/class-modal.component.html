@@ -12,6 +12,18 @@
 	<div class="modal-body">
 		<div class="container">
 			<div class="row">
+				<div class="col">
+					<button *ngIf="isEditing" type="button"
+					        class="btn btn-danger float-right"
+					        (click)="deleteClass()">
+						Видалити
+					</button>
+					<p *ngIf="!error" class="text-danger text-center">
+						{{ errorText }}
+					</p>
+				</div>
+			</div>
+			<div class="row">
 				<div class="col form-group text-center">
 					<div *ngFor="let f of [ 'Щотижня', 'По чисельнику', 'По знаменнику' ]"
 					     class="form-check form-check-inline">
@@ -78,22 +90,52 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-md-6">
-					<div class="form-group">
-						<label for="buildingSelect">Корпус:</label>
-						<select class="form-control" id="buildingSelect"
-						        required name="building"
-						        [(ngModel)]="currentClass.building"
-						        (change)="resetClassrooms()">
-							<option selected [value]="null">
-								Виберіть корпус
-							</option>
-							<option *ngFor="let building of buildings"
-							        [ngValue]="building">
-								{{ building.name }}
-							</option>
-						</select>
+				<div class="col-md-4">
+					<div>Аудиторії:</div>
+					<div>
+						{{ getClassroomsAsString(this.currentClass.classrooms) }}
 					</div>
+					<div class="collapse mt-2" id="collapseClassrooms">
+						<div id="classrooms" role="tablist" aria-multiselectable="true">
+							<div *ngFor="let item of availableClassrooms" class="card">
+								<div class="card-header" role="tab"
+								     id="header{{ item.building.id }}">
+									<h6 class="m-0">
+										<a data-toggle="collapse"
+										   data-parent="#classrooms"
+										   href="#collapse{{ item.building.id }}"
+										   aria-expanded="false"
+										   [attr.aria-controls]="'collapse' + item.building.id">
+											{{ item.building.name }}
+										</a>
+									</h6>
+								</div>
+								<div class="collapse" id="collapse{{ item.building.id }}"
+								     role="tabpanel" [attr.aria-labelledby]="item.building.id">
+									<div class="card-block">
+										<div *ngIf="item.classrooms.length === 0">
+											<p>Немає вільних аудиторій.</p>
+										</div>
+										<div *ngFor="let classroom of item.classrooms"
+										     class="form-check">
+											<label class="form-check-label"
+											       (change)="classroomChecked(classroom)">
+												<input type="checkbox" class="form-check-input" />
+												{{ classroom.number }} (місць: {{ classroom.capacity }})
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<button class="btn btn-primary float-right" type="button"
+					        data-toggle="collapse" data-target="#collapseClassrooms"
+					        aria-expanded="false" aria-controls="collapseClassrooms">
+						Додати
+					</button>
 				</div>
 			</div>
 			<div class="row">
@@ -152,43 +194,11 @@
 					</button>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-4">
-					<div>Аудиторії:</div>
-					<div>
-						{{ getClassroomsAsString(currentClass.classrooms) }}
-						<span *ngIf="getTotalCapacity() !== 0">
-							(всього&nbsp;місць:&nbsp;{{ getTotalCapacity() }})
-						</span>
-					</div>
-					<div class="collapse mt-2" id="collapseClassrooms">
-						<div *ngIf="availableClassrooms.length === 0">
-							<p>Немає вільних аудиторій.</p>
-						</div>
-						<div *ngFor="let classroom of availableClassrooms"
-						     class="form-check">
-							<label class="form-check-label"
-							       (change)="classroomChecked(classroom)">
-								<input type="checkbox" class="form-check-input" />
-								{{ classroom.number }} (місць: {{ classroom.capacity }})
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-2">
-					<button class="btn btn-primary float-right" type="button"
-					        data-toggle="collapse" data-target="#collapseClassrooms"
-					        aria-expanded="false" aria-controls="collapseClassrooms">
-						Додати
-					</button>
-				</div>
-				<div class="col-sm-6"></div>
-			</div>
 		</div>
 	</div>
 
 	<div class="modal-footer">
-		<button type="submit" class="btn btn-primary">
+		<button type="submit" class="btn btn-success">
 			OK
 		</button>
 		<button type="button" class="btn btn-secondary"

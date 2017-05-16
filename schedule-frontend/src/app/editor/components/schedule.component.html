@@ -36,16 +36,18 @@
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="1"> <!-- WEEKLY -->
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="editClassClicked(1, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<small>
-							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "щотижня").c.subject.name }}
+							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "щотижня").subject.name }}
 						</small>
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="2"> <!-- NUMERATOR -->
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="editClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<small>
-							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").c.subject.name }}
+							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
 						</small>
 					</button>
 					<br />
@@ -60,22 +62,23 @@
 						<span class="fa fa-plus" aria-hidden="true"></span>
 					</button>
 					<br />
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="editClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<small>
-							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").c.subject.name }}
+							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
 						</small>
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="4"> <!-- BOTH -->
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").c.subject.name }}
+							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
 						</small>
 					</button>
 					<br />
 					<button class="btn btn-sm btn-outline-primary">
 						<small>
-							{{ getClassInfo(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").c.subject.name }}
+							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
 						</small>
 					</button>
 				</ng-container>

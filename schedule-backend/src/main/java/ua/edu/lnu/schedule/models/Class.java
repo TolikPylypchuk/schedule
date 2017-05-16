@@ -74,10 +74,10 @@ public class Class implements Serializable {
 					result = Type.LECTURE;
 					break;
 				case "практична":
-					result = Type.LECTURE;
+					result = Type.PRACTICE;
 					break;
 				case "лабораторна":
-					result = Type.LECTURE;
+					result = Type.LAB;
 					break;
 			}
 			
@@ -183,7 +183,7 @@ public class Class implements Serializable {
 			@JoinColumn(name = "class", referencedColumnName = "id")
 		},
 		inverseJoinColumns = {
-			@JoinColumn(name = "group", referencedColumnName = "id")
+			@JoinColumn(name = "`group`", referencedColumnName = "id")
 		})
 	public Set<Group> getGroups() {
 		return this.groups;
