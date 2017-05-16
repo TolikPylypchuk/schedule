@@ -8,7 +8,7 @@ import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials, getGroupsAsString,
 	getCurrentGroupName, getLecturersAsString,
-	getDayOfWeekNumber
+	getDayOfWeekNumber, getClassroomsAsString
 } from "../../common/models/functions";
 import { AuthService } from "../../auth/services/auth.service";
 
@@ -57,6 +57,7 @@ export class ClassModalComponent implements OnInit {
 	availableClassrooms: models.Classroom[] = [];
 	availableGroups: models.Group[] = [];
 	availableLecturers: models.User[] = [];
+	frequencySet: boolean;
 
 	constructor(
 		activeModal: NgbActiveModal,
@@ -96,12 +97,15 @@ export class ClassModalComponent implements OnInit {
 			.subscribe((user: models.User) => this.currentEditor = user);
 	}
 
-	subjectSelected(): void {
+	resetGroupsAndLecturers(): void {
 		if (!this.currentClass.subject) {
 			return;
 		}
 
 		this.currentClass.groups = [];
+		this.currentClass.lecturers = [ this.contextLecturer ];
+		this.availableGroups = [];
+		this.availableLecturers = [];
 
 		this.groupService.getAvailableGroups(
 			this.currentEditor.faculty.id,
@@ -121,16 +125,30 @@ export class ClassModalComponent implements OnInit {
 					l => l.id !== this.contextLecturer.id));
 	}
 
-	classTypeSelected(): void {
+	resetClassrooms(): void {
+		this.currentClass.classrooms = [];
+		this.availableClassrooms = [];
 
+		if (!this.currentClass.classroomType || !this.currentClass.building) {
+			return;
+		}
+
+		this.classroomService.getAvailableClassrooms(
+			this.currentClass.building.id,
+			this.currentClass.classroomType.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number)
+			.subscribe((classrooms: models.Classroom[]) =>
+				this.availableClassrooms = classrooms);
 	}
 
-	classroomTypeSelected(): void {
-
-	}
-
-	buildingSelected(): void {
-
+	classroomChecked(classroom: models.Classroom): void {
+		if (this.currentClass.classrooms.includes(classroom)) {
+			this.currentClass.classrooms = this.currentClass.classrooms.filter(
+				g => g.id !== classroom.id);
+		} else {
+			this.currentClass.classrooms.push(classroom);
+		}
 	}
 
 	groupChecked(group: models.Group): void {
@@ -151,7 +169,24 @@ export class ClassModalComponent implements OnInit {
 		}
 	}
 
+	getTotalNumberOfStudents(): number {
+		return this.currentClass.groups.reduce(
+			(prev: number, curr: models.Group) => prev + curr.numStudents, 0);
+	}
+
+	getTotalCapacity(): number {
+		return this.currentClass.classrooms.reduce(
+			(prev: number, curr: models.Classroom) => prev + curr.capacity, 0);
+	}
+
+	submit(): void {
+		this.classService.addClass(this.currentClass)
+			.subscribe((response) =>
+				this.activeModal.close(response));
+	}
+
 	getCurrentGroupName = getCurrentGroupName;
+	getClassroomsAsString = getClassroomsAsString;
 	getGroupsAsString = getGroupsAsString;
 	getLecturersAsString = getLecturersAsString;
 	getLecturerInitials = getLecturerInitials;

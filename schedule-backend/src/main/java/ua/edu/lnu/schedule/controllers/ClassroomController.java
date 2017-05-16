@@ -79,7 +79,7 @@ public class ClassroomController {
 	@RequestMapping(value = "/capacity/{capacity}", method = RequestMethod.GET)
 	public @ResponseBody Iterable<Classroom> getByCapacity(
 		@PathVariable("capacity") int capacity) {
-		return this.classrooms.findAllByCapacityIsLessThanEqual(capacity);
+		return this.classrooms.findAllByCapacityGreaterThanEqual(capacity);
 	}
 
 	@RequestMapping(value = "/typeId/{typeId}", method = RequestMethod.GET)
@@ -87,10 +87,12 @@ public class ClassroomController {
 			@PathVariable("typeId") int typeId) {
 		ClassroomType type = this.classroomTypes.findOne(typeId);
 
-		return type.getType().toLowerCase(Locale.forLanguageTag("uk-UA"))
-			.equals("будь-яка")
-			? this.classrooms.findAll()
-			: this.classrooms.findAllByType_Id(typeId);
+		return type == null
+			? new ArrayList<>()
+			: type.getType().toLowerCase(Locale.forLanguageTag("uk-UA"))
+				.equals("будь-яка")
+				? this.classrooms.findAll()
+				: this.classrooms.findAllByType_Id(typeId);
 	}
 	
 	@RequestMapping(
@@ -115,7 +117,18 @@ public class ClassroomController {
 			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
 				DayOfWeek.of(day), number, currentYear, currentSemester);
 		
-		return this.classrooms.findAllByBuilding_Id(buildingId).stream()
+		ClassroomType type = this.classroomTypes.findOne(typeId);
+		
+		if (type == null) {
+			return new ArrayList<>();
+		}
+		
+		List<Classroom> result = type.getType().toLowerCase(Locale.forLanguageTag("uk-UA"))
+			.equals("будь-яка")
+			? this.classrooms.findAllByBuilding_Id(buildingId)
+			: this.classrooms.findAllByBuilding_IdAndType_Id(buildingId, typeId);
+		
+		return result.stream()
 			.filter(cr -> potentialClasses.stream()
 				.flatMap(c -> c.getClassrooms().stream())
 				.noneMatch(c -> Objects.equals(c.getId(), cr.getId())))

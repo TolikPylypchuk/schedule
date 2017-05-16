@@ -1,4 +1,4 @@
-<form>
+<form (ngSubmit)="submit()" #classForm="ngForm">
 	<div class="modal-header">
 		<h4 class="modal-title">
 			{{ currentClass.dayOfWeek }}, {{ currentClass.number}} пара
@@ -10,11 +10,22 @@
 	</div>
 
 	<div class="modal-body">
-		<h6 class="h6">
-			{{ getLecturerInitials(currentClass.lecturers[0]) }}
-		</h6>
-
 		<div class="container">
+			<div class="row">
+				<div class="col form-group text-center">
+					<div *ngFor="let f of [ 'Щотижня', 'По чисельнику', 'По знаменнику' ]"
+					     class="form-check form-check-inline">
+						<label class="form-check-label"
+						       [style.cursor]="frequencySet ? 'not-allowed' : 'pointer'">
+							<input class="form-check-input" type="radio"
+							       [(ngModel)]="currentClass.frequency"
+							       name="frequency" [value]="f"
+							       [attr.disabled]="frequencySet ? true : null" />
+							{{ f }}
+						</label>
+					</div>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
@@ -22,7 +33,7 @@
 						<select class="form-control" id="subjectSelect"
 						        required name="subject"
 						        [(ngModel)]="currentClass.subject"
-						        (change)="subjectSelected()">
+						        (change)="resetGroupsAndLecturers()">
 							<option selected [value]="null">
 								Виберіть предмет
 							</option>
@@ -38,8 +49,7 @@
 						<label for="classTypeSelect">Тип пари:</label>
 						<select class="form-control" id="classTypeSelect"
 						        required name="type"
-						        [(ngModel)]="currentClass.type"
-						        (change)="classTypeSelected()">
+						        [(ngModel)]="currentClass.type">
 							<option selected [value]="null">
 								Виберіть тип пари
 							</option>
@@ -57,7 +67,7 @@
 						<select class="form-control" id="classroomTypeSelect"
 						        required name="classroomType"
 						        [(ngModel)]="currentClass.classroomType"
-						        (change)="classroomTypeSelected()">
+						        (change)="resetClassrooms()">
 							<option selected [value]="null">
 								Виберіть тип аудиторії
 							</option>
@@ -74,7 +84,7 @@
 						<select class="form-control" id="buildingSelect"
 						        required name="building"
 						        [(ngModel)]="currentClass.building"
-						        (change)="buildingSelected()">
+						        (change)="resetClassrooms()">
 							<option selected [value]="null">
 								Виберіть корпус
 							</option>
@@ -87,17 +97,14 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-6">
-					<span class="mr-2">
-						Групи: {{ getGroupsAsString(currentClass.groups) }}
-					</span>
-
-					<button class="btn btn-primary" type="button"
-					        data-toggle="collapse" data-target="#collapseGroups"
-					        aria-expanded="false" aria-controls="collapseGroups">
-						Додати
-					</button>
-
+				<div class="col-md-4">
+					<div>Групи:</div>
+					<div>
+						{{ getGroupsAsString(currentClass.groups) }}
+						<span *ngIf="getTotalNumberOfStudents() !== 0">
+							(всього&nbsp;студентів:&nbsp;{{ getTotalNumberOfStudents() }})
+						</span>
+					</div>
 					<div class="collapse mt-2" id="collapseGroups">
 						<div *ngIf="availableGroups.length === 0">
 							<p>Немає вільних груп.</p>
@@ -108,20 +115,21 @@
 							       (change)="groupChecked(group)">
 								<input type="checkbox" class="form-check-input" />
 								{{ getCurrentGroupName(group) }}
+								(студентів: {{ group.numStudents }})
 							</label>
 						</div>
 					</div>
 				</div>
-				<div class="col-md-6">
-					<span class="mr-2">
-						Викладачі: {{ getLecturersAsString(currentClass.lecturers) }}
-					</span>
-					<button class="btn btn-primary" type="button"
-					        data-toggle="collapse" data-target="#collapseLecturers"
-					        aria-expanded="false" aria-controls="collapseLecturers">
+				<div class="col-md-2">
+					<button class="btn btn-primary float-right" type="button"
+					        data-toggle="collapse" data-target="#collapseGroups"
+					        aria-expanded="false" aria-controls="collapseGroups">
 						Додати
 					</button>
-
+				</div>
+				<div class="col-md-4">
+					<div>Викладачі:</div>
+					<div>{{ getLecturersAsString(currentClass.lecturers) }}</div>
 					<div class="collapse mt-2" id="collapseLecturers">
 						<div *ngIf="availableLecturers.length === 0">
 							<p>Немає вільних викладачів.</p>
@@ -136,6 +144,45 @@
 						</div>
 					</div>
 				</div>
+				<div class="col-md-2">
+					<button class="btn btn-primary float-right" type="button"
+					        data-toggle="collapse" data-target="#collapseLecturers"
+					        aria-expanded="false" aria-controls="collapseLecturers">
+						Додати
+					</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<div>Аудиторії:</div>
+					<div>
+						{{ getClassroomsAsString(currentClass.classrooms) }}
+						<span *ngIf="getTotalCapacity() !== 0">
+							(всього&nbsp;місць:&nbsp;{{ getTotalCapacity() }})
+						</span>
+					</div>
+					<div class="collapse mt-2" id="collapseClassrooms">
+						<div *ngIf="availableClassrooms.length === 0">
+							<p>Немає вільних аудиторій.</p>
+						</div>
+						<div *ngFor="let classroom of availableClassrooms"
+						     class="form-check">
+							<label class="form-check-label"
+							       (change)="classroomChecked(classroom)">
+								<input type="checkbox" class="form-check-input" />
+								{{ classroom.number }} (місць: {{ classroom.capacity }})
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<button class="btn btn-primary float-right" type="button"
+					        data-toggle="collapse" data-target="#collapseClassrooms"
+					        aria-expanded="false" aria-controls="collapseClassrooms">
+						Додати
+					</button>
+				</div>
+				<div class="col-sm-6"></div>
 			</div>
 		</div>
 	</div>

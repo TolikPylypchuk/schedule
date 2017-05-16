@@ -101,7 +101,7 @@ export class AuthService {
 		const token = JSON.parse(localStorage.getItem("authToken"));
 		return token ? token : null;
 		*/
-		return "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJrb2xvbW9ldHMuYW5hc3Rhc2lhIiwiYXVkaWVuY2UiOiJ3ZWIiLCJjcmVhdGVkIjoxNDk0NjYxNzAyMTA3LCJleHAiOjE0OTUyNjY1MDJ9.qJ1nAR5WU_hw_xc9NjzPQWTDWKJ-fNsS5EZCr9XPmR1w98KoVuhlK9Rbsd-d5KnmNr01EoW5GqyKiBxLeDAJjA";
+		return "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJrb2xvbW9ldHMuYW5hc3Rhc2lhIiwiYXVkaWVuY2UiOiJ3ZWIiLCJjcmVhdGVkIjoxNDk0OTI1NTQzMTQ2LCJleHAiOjE0OTU1MzAzNDN9.XEhp0s1mT5DRw3c5iFJCsI7qJBTAkxzT67bL574UWbJyamzVNipUBjpgbeSV5BuRmgBrYkSfeAoU_ZD5LjuGyQ";
 	}
 
 	getHeaders(): Headers {

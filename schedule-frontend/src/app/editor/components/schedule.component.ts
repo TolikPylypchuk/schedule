@@ -143,6 +143,7 @@ export class ScheduleComponent implements OnInit {
 			: frequency == ClassFrequency.NUMERATOR
 				? "По чисельнику"
 				: "По знаменнику";
+		modal.frequencySet = frequency != ClassFrequency.NONE;
 		modal.currentClass.dayOfWeek = getDayOfWeekName(day);
 		modal.currentClass.number = num;
 		modal.contextLecturer = lecturer;
