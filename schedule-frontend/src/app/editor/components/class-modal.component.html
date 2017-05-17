@@ -93,7 +93,10 @@
 				<div class="col-md-4">
 					<div>Аудиторії:</div>
 					<div>
-						{{ getClassroomsAsString(this.currentClass.classrooms) }}
+						{{ getClassroomsAsString(currentClass.classrooms) }}
+						<span *ngIf="getTotalCapacity() !== 0">
+							(всього&nbsp;місць:&nbsp;{{ getTotalCapacity() }})
+						</span>
 					</div>
 					<div class="collapse mt-2" id="collapseClassrooms">
 						<div id="classrooms" role="tablist" aria-multiselectable="true">
@@ -155,7 +158,8 @@
 						     class="form-check">
 							<label class="form-check-label"
 							       (change)="groupChecked(group)">
-								<input type="checkbox" class="form-check-input" />
+								<input type="checkbox" class="form-check-input"
+								       [attr.checked]="isGroupChecked(group) ? checked : null" />
 								{{ getCurrentGroupName(group) }}
 								(студентів: {{ group.numStudents }})
 							</label>

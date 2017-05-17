@@ -12,7 +12,6 @@ import {
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareLecturersByName, getDayOfWeekName
 } from "../../common/models/functions";
-
 export enum ClassFrequency {
 	NONE,
 	WEEKLY,
@@ -151,6 +150,7 @@ export class ScheduleComponent implements OnInit {
 
 		const currentClass = this.getClass(lecturer, day, num, frequencyName);
 		modal.currentClass = {
+			id: currentClass.id,
 			number: currentClass.number,
 			frequency: currentClass.frequency,
 			dayOfWeek: currentClass.dayOfWeek,
@@ -184,7 +184,8 @@ export class ScheduleComponent implements OnInit {
 					c.groups = changedClass.groups;
 					c.lecturers = changedClass.lecturers;
 				}
-			});
+			},
+			() => { });
 	}
 
 	addClassClicked(
@@ -208,7 +209,8 @@ export class ScheduleComponent implements OnInit {
 
 		modalRef.result.then(
 			(newClass: models.Class) =>
-				this.lecturersClasses.get(lecturer.id).push(newClass));
+				this.lecturersClasses.get(lecturer.id).push(newClass),
+			() => { });
 	}
 
 	getLecturerInitials = getLecturerInitials;

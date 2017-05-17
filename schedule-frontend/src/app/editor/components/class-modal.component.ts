@@ -86,30 +86,77 @@ export class ClassModalComponent implements OnInit {
 	ngOnInit(): void {
 		this.subjectService.getSubjectsByLecturer(
 			this.currentClass.lecturers[0].id)
-			.subscribe((subjects: models.Subject[]) =>
-				this.subjects = subjects);
+			.subscribe((subjects: models.Subject[]) => {
+				this.subjects = subjects;
 
-		this.buildingService.getBuildings()
-			.subscribe((buildings: models.Building[]) =>
-				this.availableBuildings = buildings);
+				if (this.isEditing) {
+					this.currentClass.subject = subjects.find(
+						s => s.id === this.currentClass.subject.id);
+
+					this.setGroupsAndLecturers();
+				}
+			});
 
 		this.classroomTypeService.getClassroomTypes()
-			.subscribe((types: models.ClassroomType[]) =>
-				this.classroomTypes = types);
+			.subscribe((types: models.ClassroomType[]) => {
+				this.classroomTypes = types;
+
+				if (this.isEditing) {
+					this.currentClass.classroomType = types.find(
+						t => t.id === this.currentClass.classroomType.id);
+				}
+
+				this.buildingService.getBuildings()
+					.subscribe((buildings: models.Building[]) => {
+						this.availableBuildings = buildings;
+
+						if (this.isEditing) {
+							this.setClassrooms();
+						}
+					});
+			});
 
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => this.currentEditor = user);
 	}
 
-	resetGroupsAndLecturers(): void {
+	setGroupsAndLecturers(): void {
+		this.availableGroups = [];
+		this.availableLecturers = [];
+
 		if (!this.currentClass.subject) {
 			return;
 		}
 
+		this.groupService.getAvailableGroups(
+			this.currentEditor.faculty.id,
+			this.currentClass.subject.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number)
+			.subscribe((groups: models.Group[]) =>
+				this.availableGroups = groups.concat(this.currentClass.groups)
+					.sort((g1: models.Group, g2: models.Group) =>
+						getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2))));
+
+		this.userService.getAvailableLecturers(
+			this.currentEditor.faculty.id,
+			this.currentClass.subject.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number)
+			.subscribe((lecturers: models.User[]) =>
+				this.availableLecturers = lecturers.filter(
+					l => l.id !== this.contextLecturer.id));
+	}
+
+	resetGroupsAndLecturers(): void {
 		this.currentClass.groups = [];
 		this.currentClass.lecturers = [ this.contextLecturer ];
 		this.availableGroups = [];
 		this.availableLecturers = [];
+
+		if (!this.currentClass.subject) {
+			return;
+		}
 
 		this.groupService.getAvailableGroups(
 			this.currentEditor.faculty.id,
@@ -127,6 +174,27 @@ export class ClassModalComponent implements OnInit {
 			.subscribe((lecturers: models.User[]) =>
 				this.availableLecturers = lecturers.filter(
 					l => l.id !== this.contextLecturer.id));
+	}
+
+	setClassrooms(): void {
+		this.availableClassrooms = [];
+
+		if (!this.currentClass.classroomType) {
+			return;
+		}
+
+		for (let building of this.availableBuildings) {
+			this.classroomService.getAvailableClassrooms(
+				building.id,
+				this.currentClass.classroomType.id,
+				getDayOfWeekNumber(this.currentClass.dayOfWeek),
+				this.currentClass.number)
+				.subscribe((classrooms: models.Classroom[]) =>
+					this.availableClassrooms.push({
+						building: building,
+						classrooms: classrooms
+					}));
+		}
 	}
 
 	resetClassrooms(): void {
@@ -169,6 +237,10 @@ export class ClassModalComponent implements OnInit {
 		}
 	}
 
+	isGroupChecked(group: models.Group): boolean {
+		return this.currentClass.groups.find(g => g.id === group.id) as any;
+	}
+
 	lecturerChecked(lecturer: models.User): void {
 		if (this.currentClass.lecturers.includes(lecturer)) {
 			this.currentClass.lecturers = this.currentClass.lecturers.filter(
@@ -195,12 +267,15 @@ export class ClassModalComponent implements OnInit {
 			return;
 		}
 
-		this.classService.addClass(this.currentClass)
-			.subscribe(
-				() => this.activeModal.close(this.currentClass),
-				() => this.errorText =
-					"Під час створення пари сталася помилка. " +
-					"Спробуйте ще раз.");
+		const action = this.isEditing
+			? this.classService.updateClass(this.currentClass)
+			: this.classService.addClass(this.currentClass);
+
+		action.subscribe(
+			() => this.activeModal.close(this.currentClass),
+			() => this.errorText =
+				"Під час створення пари сталася помилка. " +
+				"Спробуйте ще раз.");
 	}
 
 	isClassValid(): boolean {
