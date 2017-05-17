@@ -87,10 +87,11 @@ export class GroupService {
 		facultyId: number,
 		subjectId: number,
 		day: number,
-		num: number): Observable<Group[]> {
+		num: number,
+		frequency: string): Observable<Group[]> {
 		return this.http.get(
 			`${this.groupsUrl}/available/facultyId/${facultyId}` +
-			`/subjectId/${subjectId}/day/${day}/number/${num}`)
+			`/subjectId/${subjectId}/day/${day}/number/${num}/frequency/${frequency}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Group[]

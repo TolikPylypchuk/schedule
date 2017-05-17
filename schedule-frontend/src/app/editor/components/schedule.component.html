@@ -70,13 +70,15 @@
 					</button>
 				</ng-container>
 				<ng-container *ngSwitchCase="4"> <!-- BOTH -->
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="editClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<small>
 							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
 						</small>
 					</button>
 					<br />
-					<button class="btn btn-sm btn-outline-primary">
+					<button class="btn btn-sm btn-outline-primary"
+					        (click)="editClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
 						<small>
 							{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
 						</small>

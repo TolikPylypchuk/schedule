@@ -13,10 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.security.jwt.JwtAuthenticationRequest;
 import ua.edu.lnu.schedule.security.jwt.JwtAuthenticationResponse;
@@ -52,9 +49,7 @@ public class AuthenticationController {
 		this.userDetailsService = userDetailsService;
 	}
 	
-	@RequestMapping(
-		value = "${jwt.route.authentication.path}",
-		method = RequestMethod.POST)
+	@PostMapping("${jwt.route.authentication.path}")
 	public ResponseEntity<?> createAuthenticationToken(
 		@RequestBody JwtAuthenticationRequest authenticationRequest,
 		Device device)
@@ -77,9 +72,7 @@ public class AuthenticationController {
 		return ResponseEntity.ok(new JwtAuthenticationResponse(token));
 	}
 	
-	@RequestMapping(
-		value = "${jwt.route.authentication.refresh}",
-		method = RequestMethod.GET)
+	@GetMapping("${jwt.route.authentication.refresh}")
 	public ResponseEntity<?> refreshAndGetAuthenticationToken(
 		HttpServletRequest request) {
 		String token = request.getHeader(this.tokenHeader);

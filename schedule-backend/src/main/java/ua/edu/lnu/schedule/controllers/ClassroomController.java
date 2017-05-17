@@ -42,12 +42,12 @@ public class ClassroomController {
 		this.classroomTypes = classroomTypes;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Classroom> getAll() {
 		return this.classrooms.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Classroom getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		Classroom classroom = this.classrooms.findOne(id);
@@ -60,7 +60,7 @@ public class ClassroomController {
 		return classroom;
 	}
 	
-	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	@GetMapping("/classId/{classId}")
 	public @ResponseBody Iterable<Classroom> getByClass(
 		@PathVariable("classId") int classId) {
 		Class c = this.classes.findOne(classId);
@@ -70,19 +70,19 @@ public class ClassroomController {
 			: this.classrooms.findAllByClassesContaining(c);
 	}
 	
-	@RequestMapping(value = "/buildingId/{buildingId}", method = RequestMethod.GET)
+	@GetMapping("/buildingId/{buildingId}")
 	public @ResponseBody Iterable<Classroom> getByBuilding(
 		@PathVariable("buildingId") int buildingId) {
 		return this.classrooms.findAllByBuilding_Id(buildingId);
 	}
 	
-	@RequestMapping(value = "/capacity/{capacity}", method = RequestMethod.GET)
+	@GetMapping("/capacity/{capacity}")
 	public @ResponseBody Iterable<Classroom> getByCapacity(
 		@PathVariable("capacity") int capacity) {
 		return this.classrooms.findAllByCapacityGreaterThanEqual(capacity);
 	}
 
-	@RequestMapping(value = "/typeId/{typeId}", method = RequestMethod.GET)
+	@GetMapping("/typeId/{typeId}")
 	public @ResponseBody Iterable<Classroom> getByType(
 			@PathVariable("typeId") int typeId) {
 		ClassroomType type = this.classroomTypes.findOne(typeId);
@@ -95,27 +95,40 @@ public class ClassroomController {
 				: this.classrooms.findAllByType_Id(typeId);
 	}
 	
-	@RequestMapping(
-		value = "/available/buildingId/{buildingId}" +
-			"/typeId/{typeId}/day/{day}/number/{number}",
-		method = RequestMethod.GET)
+	@GetMapping(
+		"/available/buildingId/{buildingId}/typeId/{typeId}" +
+		"/day/{day}/number/{number}/frequency/{frequency}")
 	public @ResponseBody Iterable<Classroom> getAvailable(
 		@PathVariable("buildingId") int buildingId,
 		@PathVariable("typeId") int typeId,
 		@PathVariable("day") int day,
-		@PathVariable("number") int number) {
+		@PathVariable("number") int number,
+		@PathVariable("frequency") String frequencyName) {
 		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
 		
 		Semester currentSemester =
 			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
 		
+		Class.Frequency frequency =
+			Class.Frequency.valueOf(frequencyName.toUpperCase());
+		
 		int currentYear = currentSemester == Semester.FIRST
 			? calendar.get(Calendar.YEAR)
 			: calendar.get(Calendar.YEAR) - 1;
 		
-		List<Class> potentialClasses =
-			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
-				DayOfWeek.of(day), number, currentYear, currentSemester);
+		Class.Frequency weekly = Class.Frequency.WEEKLY;
+		
+		List<Class> potentialClasses = frequency == weekly
+			? this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
+				DayOfWeek.of(day), number, currentYear, currentSemester)
+			: this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
+				DayOfWeek.of(day), number, frequency, currentYear, currentSemester);
+		
+		if (frequency != weekly) {
+			potentialClasses.addAll(
+				this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
+					DayOfWeek.of(day), number, weekly, currentYear, currentSemester));
+		}
 		
 		ClassroomType type = this.classroomTypes.findOne(typeId);
 		
@@ -135,7 +148,7 @@ public class ClassroomController {
 			.collect(Collectors.toList());
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(
 		@RequestBody Classroom classroom)
 		throws URISyntaxException {
@@ -145,7 +158,7 @@ public class ClassroomController {
 			new URI("/classrooms/" + classroom.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Classroom classroom) {
@@ -159,7 +172,7 @@ public class ClassroomController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.classrooms.exists(id)) {
 			return ResponseEntity.notFound().build();

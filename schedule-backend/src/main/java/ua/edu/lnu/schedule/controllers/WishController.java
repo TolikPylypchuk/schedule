@@ -23,12 +23,12 @@ public class WishController {
 		this.wishes = wishes;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Wish> getAll() {
 		return this.wishes.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Wish getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		Wish wish = this.wishes.findOne(id);
@@ -41,15 +41,13 @@ public class WishController {
 		return wish;
 	}
 	
-	@RequestMapping(value = "/lecturerId/{lecturerId}", method = RequestMethod.GET)
+	@GetMapping("/lecturerId/{lecturerId}")
 	public @ResponseBody Iterable<Wish> getByLecturer(
 		@PathVariable("lecturerId") int lecturerId) {
 		return this.wishes.findAllByLecturer_Id(lecturerId);
 	}
 	
-	@RequestMapping(
-		value = "/lecturerId/{lecturerId}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/lecturerId/{lecturerId}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Wish> getByLecturerYearSemester(
 		@PathVariable("lecturerId") int lecturerId,
 		@PathVariable("year") int year,
@@ -58,7 +56,7 @@ public class WishController {
 			lecturerId, year, Semester.fromNumber(semester));
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Wish wish)
 		throws URISyntaxException {
 		this.wishes.save(wish);
@@ -66,7 +64,7 @@ public class WishController {
 		return ResponseEntity.created(new URI("/wishes/" + wish.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Wish group) {
@@ -80,7 +78,7 @@ public class WishController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.wishes.exists(id)) {
 			return ResponseEntity.notFound().build();

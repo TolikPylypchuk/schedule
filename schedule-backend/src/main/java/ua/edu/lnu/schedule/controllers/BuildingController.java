@@ -20,17 +20,17 @@ public class BuildingController {
 		this.buildings = buildings;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Building> getAll() {
 		return this.buildings.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Building getById(@PathVariable("id") int id) {
 		return this.buildings.findOne(id);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(
 		@RequestBody Building building)
 		throws URISyntaxException {
@@ -40,7 +40,7 @@ public class BuildingController {
 			new URI("/buildings/" + building.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Building building) {
@@ -54,7 +54,7 @@ public class BuildingController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.buildings.exists(id)) {
 			ResponseEntity.notFound().build();

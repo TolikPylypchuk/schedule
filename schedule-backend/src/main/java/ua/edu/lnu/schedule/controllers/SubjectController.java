@@ -45,12 +45,12 @@ public class SubjectController {
 		this.lecturers = lecturers;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Subject> getAll() {
 		return this.subjects.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Subject getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		Subject subject = this.subjects.findOne(id);
@@ -63,7 +63,7 @@ public class SubjectController {
 		return subject;
 	}
 	
-	@RequestMapping(value = "/planId/{planId}", method = RequestMethod.GET)
+	@GetMapping("/planId/{planId}")
 	public @ResponseBody Subject getByPlan(
 		@PathVariable("planId") int planId, HttpServletResponse response) {
 		Plan plan = this.plans.findOne(planId);
@@ -76,7 +76,7 @@ public class SubjectController {
 		return this.subjects.findByPlansContaining(plan);
 	}
 	
-	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	@GetMapping("/classId/{classId}")
 	public @ResponseBody Subject getByClass(
 		@PathVariable("classId") int classId, HttpServletResponse response) {
 		Class c = this.classes.findOne(classId);
@@ -89,7 +89,7 @@ public class SubjectController {
 		return this.subjects.findByClassesContaining(c);
 	}
 	
-	@RequestMapping(value = "/lecturerId/{lecturerId}", method = RequestMethod.GET)
+	@GetMapping("/lecturerId/{lecturerId}")
 	public @ResponseBody Iterable<Subject> getByLecturer(
 		@PathVariable("lecturerId") int lecturerId, HttpServletResponse response) {
 		User lecturer = this.lecturers.findOne(lecturerId);
@@ -106,7 +106,7 @@ public class SubjectController {
 		return this.subjects.findAllByLecturersContaining(lecturer);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Subject subject)
 		throws URISyntaxException {
 		this.subjects.save(subject);
@@ -115,7 +115,7 @@ public class SubjectController {
 			new URI("/subjects/" + subject.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Subject subject) {
@@ -129,7 +129,7 @@ public class SubjectController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.subjects.exists(id)) {
 			return ResponseEntity.notFound().build();

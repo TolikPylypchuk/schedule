@@ -8,8 +8,9 @@ import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials, getGroupsAsString,
 	getCurrentGroupName, getLecturersAsString,
-	getDayOfWeekNumber, getClassroomsAsString
-} from "../../common/models/functions";
+	getDayOfWeekNumber, getClassroomsAsString,
+	compareLecturersByName, getFrequencyAsEnumString
+} from '../../common/models/functions';
 import { AuthService } from "../../auth/services/auth.service";
 
 @Component({
@@ -132,7 +133,8 @@ export class ClassModalComponent implements OnInit {
 			this.currentEditor.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((groups: models.Group[]) =>
 				this.availableGroups = groups.concat(this.currentClass.groups)
 					.sort((g1: models.Group, g2: models.Group) =>
@@ -142,10 +144,13 @@ export class ClassModalComponent implements OnInit {
 			this.currentEditor.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((lecturers: models.User[]) =>
-				this.availableLecturers = lecturers.filter(
-					l => l.id !== this.contextLecturer.id));
+				this.availableLecturers = lecturers
+					.concat(this.currentClass.lecturers)
+					.filter(l => l.id !== this.contextLecturer.id)
+					.sort(compareLecturersByName));
 	}
 
 	resetGroupsAndLecturers(): void {
@@ -162,7 +167,8 @@ export class ClassModalComponent implements OnInit {
 			this.currentEditor.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((groups: models.Group[]) =>
 				this.availableGroups = groups);
 
@@ -170,7 +176,8 @@ export class ClassModalComponent implements OnInit {
 			this.currentEditor.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((lecturers: models.User[]) =>
 				this.availableLecturers = lecturers.filter(
 					l => l.id !== this.contextLecturer.id));
@@ -188,11 +195,15 @@ export class ClassModalComponent implements OnInit {
 				building.id,
 				this.currentClass.classroomType.id,
 				getDayOfWeekNumber(this.currentClass.dayOfWeek),
-				this.currentClass.number)
+				this.currentClass.number,
+				getFrequencyAsEnumString(this.currentClass.frequency))
 				.subscribe((classrooms: models.Classroom[]) =>
 					this.availableClassrooms.push({
 						building: building,
 						classrooms: classrooms
+							.concat(this.currentClass.classrooms.filter(
+								c => c.building.id === building.id))
+							.sort((c1, c2) => c1.number.localeCompare(c2.number))
 					}));
 		}
 	}
@@ -210,13 +221,19 @@ export class ClassModalComponent implements OnInit {
 				building.id,
 				this.currentClass.classroomType.id,
 				getDayOfWeekNumber(this.currentClass.dayOfWeek),
-				this.currentClass.number)
+				this.currentClass.number,
+				getFrequencyAsEnumString(this.currentClass.frequency))
 				.subscribe((classrooms: models.Classroom[]) =>
 					this.availableClassrooms.push({
 						building: building,
 						classrooms: classrooms
 					}));
 		}
+	}
+
+	reset(): void {
+		this.resetClassrooms();
+		this.resetGroupsAndLecturers();
 	}
 
 	classroomChecked(classroom: models.Classroom): void {
@@ -226,6 +243,10 @@ export class ClassModalComponent implements OnInit {
 		} else {
 			this.currentClass.classrooms.push(classroom);
 		}
+	}
+
+	isClassroomChecked(classroom: models.Classroom): boolean {
+		return this.currentClass.classrooms.find(c => c.id === classroom.id) as any;
 	}
 
 	groupChecked(group: models.Group): void {
@@ -248,6 +269,10 @@ export class ClassModalComponent implements OnInit {
 		} else {
 			this.currentClass.lecturers.push(lecturer);
 		}
+	}
+
+	isLecturerChecked(lecturer: models.User): boolean {
+		return this.currentClass.lecturers.find(l => l.id === lecturer.id) as any;
 	}
 
 	getTotalNumberOfStudents(): number {

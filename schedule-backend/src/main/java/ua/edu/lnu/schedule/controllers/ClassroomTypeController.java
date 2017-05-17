@@ -38,12 +38,12 @@ public class ClassroomTypeController {
 		this.classroomTypes = classroomTypes;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<ClassroomType> getAll() {
 		return this.classroomTypes.findAll();
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody ClassroomType getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		ClassroomType classroomType = this.classroomTypes.findOne(id);
@@ -56,7 +56,7 @@ public class ClassroomTypeController {
 		return classroomType;
 	}
 
-	@RequestMapping(value = "/classroomId/{classroomId}", method = RequestMethod.GET)
+	@GetMapping("/classroomId/{classroomId}")
 	public @ResponseBody ClassroomType getByClassroom(
 		@PathVariable("classroomId") int classroomId, HttpServletResponse response) {
 		Classroom c = this.classrooms.findOne(classroomId);
@@ -69,7 +69,7 @@ public class ClassroomTypeController {
 		return this.classroomTypes.findByClassroomsContaining(c);
     }
 
-	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	@GetMapping("/classId/{classId}")
 	public @ResponseBody ClassroomType getByClass(
 		@PathVariable("classId") int classId, HttpServletResponse response) {
 		Class c = this.classes.findOne(classId);
@@ -82,7 +82,7 @@ public class ClassroomTypeController {
 		return this.classroomTypes.findByClassesContaining(c);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(
 		@RequestBody ClassroomType classroomType)
 		throws URISyntaxException {
@@ -92,7 +92,7 @@ public class ClassroomTypeController {
 			new URI("/classroomTypes/" + classroomType.getId())).build();
     }
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody ClassroomType classroomType) {
@@ -106,7 +106,7 @@ public class ClassroomTypeController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.classroomTypes.exists(id)) {
 			return ResponseEntity.notFound().build();

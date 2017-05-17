@@ -23,12 +23,12 @@ public class PlanController {
 		this.plans = plans;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Plan> getAll() {
 		return this.plans.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Plan getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		Plan plan = this.plans.findOne(id);
@@ -41,15 +41,13 @@ public class PlanController {
 		return plan;
 	}
 	
-	@RequestMapping(value = "/groupId/{groupId}", method = RequestMethod.GET)
+	@GetMapping("/groupId/{groupId}")
 	public @ResponseBody Iterable<Plan> getByGroup(
 		@PathVariable("groupId") int groupId) {
 		return this.plans.findAllByGroup_Id(groupId);
 	}
 	
-	@RequestMapping(
-		value = "/groupId/{groupId}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/groupId/{groupId}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Plan> getByGroupYearSemester(
 		@PathVariable("groupId") int groupId,
 		@PathVariable("year") int year,
@@ -58,15 +56,13 @@ public class PlanController {
 			groupId, year, Semester.fromNumber(semester));
 	}
 	
-	@RequestMapping(value = "/subjectId/{subjectId}", method = RequestMethod.GET)
+	@GetMapping("/subjectId/{subjectId}")
 	public @ResponseBody Iterable<Plan> getBySubject(
 		@PathVariable("subjectId") int subjectId) {
 		return this.plans.findAllBySubject_Id(subjectId);
 	}
 	
-	@RequestMapping(
-		value = "/subjectId/{subjectId}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/subjectId/{subjectId}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Plan> getBySubjectYearSemester(
 		@PathVariable("subjectId") int subjectId,
 		@PathVariable("year") int year,
@@ -75,7 +71,7 @@ public class PlanController {
 			subjectId, year, Semester.fromNumber(semester));
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Plan plan)
 		throws URISyntaxException {
 		this.plans.save(plan);
@@ -84,7 +80,7 @@ public class PlanController {
 			new URI("/plans/" + plan.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Plan plan) {
@@ -98,7 +94,7 @@ public class PlanController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.plans.exists(id)) {
 			return ResponseEntity.notFound().build();

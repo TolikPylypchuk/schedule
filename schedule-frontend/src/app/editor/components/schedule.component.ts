@@ -120,7 +120,7 @@ export class ScheduleComponent implements OnInit {
 		lecturer: models.User,
 		day: number,
 		num: number,
-		frequency: string): models.Class {
+		frequency: string): models.Class | undefined {
 		let classes = this.lecturersClasses.get(lecturer.id);
 		return classes.find(
 			c => getDayOfWeekNumber(c.dayOfWeek) === day &&
@@ -148,6 +148,10 @@ export class ScheduleComponent implements OnInit {
 				? "По чисельнику"
 				: "По знаменнику";
 
+		const reverseFrequencyName = frequency == ClassFrequency.NUMERATOR
+			? "По знаменнику"
+			: "По чисельнику";
+
 		const currentClass = this.getClass(lecturer, day, num, frequencyName);
 		modal.currentClass = {
 			id: currentClass.id,
@@ -161,10 +165,12 @@ export class ScheduleComponent implements OnInit {
 			subject: currentClass.subject,
 			classrooms: currentClass.classrooms.filter(() => true),
 			groups: currentClass.groups.filter(() => true),
-			lecturers: currentClass.lecturers.filter(() => true)
+			lecturers: currentClass.lecturers.filter(() => true),
 		};
 
 		modal.isEditing = true;
+		modal.frequencySet = currentClass.frequency !== "Щотижня" &&
+			this.getClass(lecturer, day, num, reverseFrequencyName) as any;
 
 		modalRef.result.then(
 			(changedClass: models.Class | number) => {
@@ -197,7 +203,7 @@ export class ScheduleComponent implements OnInit {
 			ClassModalComponent, { size: "lg" });
 		const modal = modalRef.componentInstance as ClassModalComponent;
 		modal.currentClass.frequency = frequency == ClassFrequency.NONE
-			? null
+			? "Щотижня"
 			: frequency == ClassFrequency.NUMERATOR
 				? "По чисельнику"
 				: "По знаменнику";

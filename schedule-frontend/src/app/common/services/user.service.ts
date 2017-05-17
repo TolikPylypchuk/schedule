@@ -109,10 +109,11 @@ export class UserService {
 		facultyId: number,
 		subjectId: number,
 		day: number,
-		num: number): Observable<User[]> {
+		num: number,
+		frequency: string): Observable<User[]> {
 		return this.http.get(
 			`${this.usersUrl}/role/lecturer/available/facultyId/${facultyId}` +
-			`/subjectId/${subjectId}/day/${day}/number/${num}`)
+			`/subjectId/${subjectId}/day/${day}/number/${num}/frequency/${frequency}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
