@@ -111,17 +111,16 @@ export class ClassService {
 			.catch(handleError);
 	}
 
-	updateClass(c: Class): Observable<Response> {
+	updateClass(id: number): Observable<Response> {
 		return this.http.put(
-			`${this.classesUrl}/${c.id}`,
-			JSON.stringify(c),
+			`${this.classesUrl}/${id}`,
 			{ headers: getHeaders() })
 			.catch(handleError);
 	}
 
-	deleteClass(c: Class): Observable<Response> {
+	deleteClass(id: number): Observable<Response> {
 		return this.http.delete(
-			`${this.classesUrl}/${c.id}`,
+			`${this.classesUrl}/${id}`,
 			{ headers: getHeaders() })
 			.catch(handleError);
 	}
