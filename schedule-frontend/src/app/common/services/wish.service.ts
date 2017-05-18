@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Wish } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class WishService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getWish(id: number): Observable<Wish> {
@@ -28,7 +31,9 @@ export class WishService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getWishesByLecturer(lecturerId: number): Observable<Wish[]> {
@@ -36,7 +41,9 @@ export class WishService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getWishesByLecturerAndYearAndSemester(
@@ -46,29 +53,44 @@ export class WishService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Wish[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addWish(wish: Wish): Observable<Response> {
-		return this.http.post(
+	addWish(wish: Wish): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.wishesUrl,
 			JSON.stringify(wish),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			wish.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updateWish(wish: Wish): Observable<Response> {
+	updateWish(wish: Wish): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.wishesUrl}/${wish.id}`,
 			JSON.stringify(wish),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteWish(wish: Wish): Observable<Response> {
+	deleteWish(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
-			`${this.wishesUrl}/${wish.id}`,
+			`${this.wishesUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

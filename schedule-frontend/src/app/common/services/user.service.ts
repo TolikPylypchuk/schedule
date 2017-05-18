@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { User } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getLecturers(): Observable<User[]> {
@@ -28,7 +31,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getEditors(): Observable<User[]> {
@@ -36,7 +41,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getAdmins(): Observable<User[]> {
@@ -44,7 +51,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getUser(id: number): Observable<User> {
@@ -52,7 +61,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getUsersByFaculty(facultyId: number): Observable<User[]> {
@@ -60,7 +71,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getLecturersByFaculty(facultyId: number): Observable<User[]> {
@@ -69,7 +82,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getEditorsByFaculty(facultyId: number): Observable<User[]> {
@@ -78,7 +93,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getLecturersBySubject(subjectId: number): Observable<User[]> {
@@ -86,7 +103,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getLecturersByClass(classId: number): Observable<User[]> {
@@ -94,7 +113,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getLecturerByWish(wishId: number): Observable<User> {
@@ -102,7 +123,9 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getAvailableLecturers(
@@ -117,31 +140,46 @@ export class UserService {
 			.map(response =>
 				response.status === 200
 					? response.json() as User[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addUser(user: User, roles: string): Observable<Response> {
-		return this.http.post(
+	addUser(user: User, roles: string): ConnectableObservable<Response> {
+		const result = this.http.post(
 			`${this.usersUrl}?roles=${roles}`,
 			JSON.stringify(user),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			user.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	addUserToRole(user: User, role: string): Observable<Response> {
+	addUserToRole(user: User, role: string): ConnectableObservable<Response> {
 		return this.http.post(
 			`${this.usersUrl}/${user.id}/roles/add/${role}`,
 			{ },
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	removeUserFromRole(user: User, role: string): Observable<Response> {
+	removeUserFromRole(user: User, role: string): ConnectableObservable<Response> {
 		return this.http.post(
 			`${this.usersUrl}/${user.id}/roles/remove/${role}`,
 			{ },
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
 	updateUser(user: User): Observable<Response> {
@@ -152,9 +190,9 @@ export class UserService {
 			.catch(handleError);
 	}
 
-	deleteUser(user: User): Observable<Response> {
+	deleteUser(id: number): Observable<Response> {
 		return this.http.delete(
-			`${this.usersUrl}/${user.id}`,
+			`${this.usersUrl}/${id}`,
 			{ headers: getHeaders() })
 			.catch(handleError);
 	}

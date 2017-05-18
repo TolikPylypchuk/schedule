@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Classroom } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroom(id: number): Observable<Classroom> {
@@ -28,7 +31,9 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomsByClass(classId: number): Observable<Classroom[]> {
@@ -36,7 +41,9 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomsByBuilding(buildingId: number): Observable<Classroom[]> {
@@ -44,7 +51,9 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomsByCapacity(capacity: number): Observable<Classroom[]> {
@@ -52,7 +61,9 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomsByType(typeId: number): Observable<Classroom[]> {
@@ -60,7 +71,9 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getAvailableClassrooms(
@@ -75,29 +88,44 @@ export class ClassroomService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addClassroom(classroom: Classroom): Observable<Response> {
-		return this.http.post(
+	addClassroom(classroom: Classroom): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.classroomsUrl,
 			JSON.stringify(classroom),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			classroom.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updateClassroom(classroom: Classroom): Observable<Response> {
+	updateClassroom(classroom: Classroom): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.classroomsUrl}/${classroom.id}`,
 			JSON.stringify(classroom),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteClassroom(classroom: Classroom): Observable<Response> {
+	deleteClassroom(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
-			`${this.classroomsUrl}/${classroom.id}`,
+			`${this.classroomsUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

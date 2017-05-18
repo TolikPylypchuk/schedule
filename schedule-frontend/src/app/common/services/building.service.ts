@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Building } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -17,42 +18,57 @@ export class BuildingService {
 
 	getBuildings(): Observable<Building[]> {
 		return this.http.get(this.buildingsUrl)
-						.map(response =>
-							response.status === 200
-								? response.json() as Building[]
-								: null)
-						.catch(handleError);
+			.map(response =>
+				response.status === 200
+					? response.json() as Building[]
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getBuilding(id: number): Observable<Building> {
 		return this.http.get(`${this.buildingsUrl}/${id}`)
-						.map(response =>
-							response.status === 200
-								? response.json() as Building
-								: null)
-						.catch(handleError);
+			.map(response =>
+				response.status === 200
+					? response.json() as Building
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addBuilding(building: Building): Observable<Response> {
-		return this.http.post(
+	addBuilding(building: Building): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.buildingsUrl,
 			JSON.stringify(building),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			building.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updateBuilding(building: Building): Observable<Response> {
+	updateBuilding(building: Building): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.buildingsUrl}/${building.id}`,
 			JSON.stringify(building),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteBuilding(building: Building): Observable<Response> {
+	deleteBuilding(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
-			`${this.buildingsUrl}/${building.id}`,
+			`${this.buildingsUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { ClassroomType } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class ClassroomTypeService {
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomType(id: number): Observable<ClassroomType> {
@@ -28,7 +31,9 @@ export class ClassroomTypeService {
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomTypeByClassroom(classroomId: number): Observable<ClassroomType> {
@@ -36,7 +41,9 @@ export class ClassroomTypeService {
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassroomTypesBySubject(subjectId: number): Observable<ClassroomType> {
@@ -44,29 +51,44 @@ export class ClassroomTypeService {
 			.map(response =>
 				response.status === 200
 					? response.json() as ClassroomType
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addClassroomType(classroomType: ClassroomType): Observable<Response> {
-		return this.http.post(
+	addClassroomType(classroomType: ClassroomType): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.classroomTypesUrl,
 			JSON.stringify(classroomType),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			classroomType.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updateClassroomType(classroomType: ClassroomType): Observable<Response> {
+	updateClassroomType(classroomType: ClassroomType): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.classroomTypesUrl}/${classroomType.id}`,
 			JSON.stringify(classroomType),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteClassroomType(classroomType: ClassroomType): Observable<Response> {
+	deleteClassroomType(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
-			`${this.classroomTypesUrl}/${classroomType.id}`,
+			`${this.classroomTypesUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

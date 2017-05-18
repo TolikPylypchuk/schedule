@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Plan } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getPlan(id: number): Observable<Plan> {
@@ -28,7 +31,9 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getPlansByGroup(groupId: number): Observable<Plan[]> {
@@ -36,7 +41,9 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getPlansByGroupAndYearAndSemester(
@@ -46,7 +53,9 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getPlansBySubject(subjectId: number): Observable<Plan[]> {
@@ -54,7 +63,9 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getPlansBySubjectAndYearAndSemester(
@@ -64,29 +75,44 @@ export class PlanService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Plan[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addPlan(plan: Plan): Observable<Response> {
-		return this.http.post(
+	addPlan(plan: Plan): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.plansUrl,
 			JSON.stringify(plan),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			plan.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updatePlan(plan: Plan): Observable<Response> {
+	updatePlan(plan: Plan): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.plansUrl}/${plan.id}`,
 			JSON.stringify(plan),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deletePlan(plan: Plan): Observable<Response> {
+	deletePlan(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
-			`${this.plansUrl}/${plan.id}`,
+			`${this.plansUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

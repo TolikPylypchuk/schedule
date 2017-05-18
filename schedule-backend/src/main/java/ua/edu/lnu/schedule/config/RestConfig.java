@@ -23,6 +23,7 @@ public class RestConfig {
 		config.setAllowCredentials(true);
 		config.addAllowedOrigin(CorsConfiguration.ALL);
 		config.addAllowedHeader(CorsConfiguration.ALL);
+		config.addExposedHeader("Location");
 		config.addAllowedMethod("OPTIONS");
 		config.addAllowedMethod("GET");
 		config.addAllowedMethod("POST");

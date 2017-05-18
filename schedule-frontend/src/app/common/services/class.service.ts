@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Class } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClass(id: number): Observable<Class> {
@@ -28,7 +31,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByGroup(groupId: number): Observable<Class[]> {
@@ -36,7 +41,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByGroupAndYearAndSemester(
@@ -46,7 +53,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByClassroom(classroomId: number): Observable<Class[]> {
@@ -54,7 +63,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByClassroomAndYearAndSemester(
@@ -64,7 +75,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByLecturer(lecturerId: number): Observable<Class[]> {
@@ -72,7 +85,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByLecturerAndYearAndSemester(
@@ -82,7 +97,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByDayOfWeek(day: number): Observable<Class[]> {
@@ -90,7 +107,9 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getClassesByDayOfWeekAndYearAndSemester(
@@ -100,28 +119,44 @@ export class ClassService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addClass(c: Class): Observable<Response> {
-		return this.http.post(
+	addClass(c: Class): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.classesUrl,
 			JSON.stringify(c),
-			{ headers: getHeaders() })
-			.catch(handleError);
+			{headers: getHeaders()})
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			c.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updateClass(id: number): Observable<Response> {
+	updateClass(c: Class): ConnectableObservable<Response> {
 		return this.http.put(
-			`${this.classesUrl}/${id}`,
+			`${this.classesUrl}/${c.id}`,
+			JSON.stringify(c),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteClass(id: number): Observable<Response> {
+	deleteClass(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
 			`${this.classesUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

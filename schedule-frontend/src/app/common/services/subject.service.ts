@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Subject } from "../models/models";
 import { handleError, getHeaders } from "../functions";
@@ -20,7 +21,9 @@ export class SubjectService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getSubject(id: number): Observable<Subject> {
@@ -28,7 +31,9 @@ export class SubjectService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getSubjectByPlan(planId: number): Observable<Subject> {
@@ -36,7 +41,9 @@ export class SubjectService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getSubjectByClass(classId: number): Observable<Subject> {
@@ -44,7 +51,9 @@ export class SubjectService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
 	getSubjectsByLecturer(lecturerId: number): Observable<Subject[]> {
@@ -52,29 +61,44 @@ export class SubjectService {
 			.map(response =>
 				response.status === 200
 					? response.json() as Subject[]
-					: null);
+					: null)
+			.catch(handleError)
+			.first();
 	}
 
-	addSubject(subject: Subject): Observable<Response> {
-		return this.http.post(
+	addSubject(subject: Subject): ConnectableObservable<Response> {
+		const result = this.http.post(
 			this.subjectsUrl,
 			JSON.stringify(subject),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
+
+		result.subscribe((response: Response) => {
+			const location = response.headers.get("Location");
+			subject.id = +location.substr(location.lastIndexOf("/") + 1);
+		});
+
+		return result;
 	}
 
-	updateSubject(subject: Subject): Observable<Response> {
+	updateSubject(subject: Subject): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.subjectsUrl}/${subject.id}`,
 			JSON.stringify(subject),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteSubject(subject: Subject): Observable<Response> {
+	deleteSubject(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
-			`${this.subjectsUrl}/${subject.id}`,
+			`${this.subjectsUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

@@ -301,6 +301,8 @@ export class ClassModalComponent implements OnInit {
 			() => this.errorText =
 				"Під час створення пари сталася помилка. " +
 				"Спробуйте ще раз.");
+
+		action.connect();
 	}
 
 	isClassValid(): boolean {
@@ -310,12 +312,15 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	deleteClass(): void {
-		this.classService.deleteClass(this.currentClass)
-			.subscribe(
-				() => this.activeModal.close(this.currentClass.id),
-				() => this.errorText =
-					"Під час видалення пари сталася помилка. " +
-					"Спробуйте ще раз.");
+		const result = this.classService.deleteClass(this.currentClass.id);
+
+		result.subscribe(
+			() => this.activeModal.close(this.currentClass.id),
+			() => this.errorText =
+				"Під час видалення пари сталася помилка. " +
+				"Спробуйте ще раз.");
+
+		result.connect();
 	}
 
 	getCurrentGroupName = getCurrentGroupName;
