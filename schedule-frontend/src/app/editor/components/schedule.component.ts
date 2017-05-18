@@ -153,6 +153,7 @@ export class ScheduleComponent implements OnInit {
 	getLecturerInitials = getLecturerInitials;
 	getClassStart = getClassStart;
 	getClassEnd = getClassEnd;
+	getDayOfWeekName = getDayOfWeekName;
 
 	floor = Math.floor;
 
