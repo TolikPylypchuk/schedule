@@ -67,10 +67,11 @@ export class ClassroomService {
 		buildingId: number,
 		typeId: number,
 		day: number,
-		num: number): Observable<Classroom[]> {
+		num: number,
+		frequency: string): Observable<Classroom[]> {
 		return this.http.get(
 			`${this.classroomsUrl}/available/buildingId/${buildingId}` +
-			`/typeId/${typeId}/day/${day}/number/${num}`)
+			`/typeId/${typeId}/day/${day}/number/${num}/frequency/${frequency}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Classroom[]

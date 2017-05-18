@@ -16,7 +16,7 @@ export function getHeaders(): Headers {
 	return getAuthToken()
 		? new Headers({
 			"Content-Type": "application/json",
-			"Authentication": `Bearer ${getAuthToken()}`
+			"Authorization": `Bearer ${getAuthToken()}`
 		})
 		: new Headers({
 			"Content-Type": "application/json"
@@ -29,7 +29,7 @@ export function handleError(error: Response | any): ErrorObservable {
 	if (error instanceof Response) {
 		const body = error.json() || "";
 		const err = body.error || JSON.stringify(body);
-		message = `${error.status} - ${error.statusText || ""} ${err}`;
+		message = `${error.status} - ${err}`;
 	} else {
 		message = error.message ? error.message : error.toString();
 	}

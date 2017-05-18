@@ -20,17 +20,17 @@ public class FacultyController {
 		this.faculties = faculties;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Faculty> getAll() {
 		return this.faculties.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Faculty getById(@PathVariable("id") int id) {
 		return this.faculties.findOne(id);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Faculty faculty)
 		throws URISyntaxException {
 		this.faculties.save(faculty);
@@ -39,7 +39,7 @@ public class FacultyController {
 			new URI("/faculties" + faculty.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Faculty faculty) {
@@ -53,7 +53,7 @@ public class FacultyController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.faculties.exists(id)) {
 			return ResponseEntity.notFound().build();

@@ -8,13 +8,10 @@ import {
 	getCurrentYear, getCurrentSemester,
 	getLecturerInitials, getGroupsAsString,
 	getCurrentGroupName, getLecturersAsString,
-	getDayOfWeekNumber, getClassroomsAsString
-} from "../../common/models/functions";
+	getDayOfWeekNumber, getClassroomsAsString,
+	compareLecturersByName, getFrequencyAsEnumString
+} from '../../common/models/functions';
 import { AuthService } from "../../auth/services/auth.service";
-
-interface ClassInfo extends models.Class {
-	building: models.Building;
-}
 
 @Component({
 	selector: "schedule-editor-class-modal",
@@ -35,7 +32,7 @@ export class ClassModalComponent implements OnInit {
 
 	currentEditor: models.User = null;
 
-	currentClass: ClassInfo = {
+	currentClass: models.Class = {
 		number: 0,
 		frequency: null,
 		dayOfWeek: null,
@@ -46,18 +43,23 @@ export class ClassModalComponent implements OnInit {
 		subject: null,
 		classrooms: [],
 		groups: [],
-		lecturers: [],
-		building: null
+		lecturers: []
 	};
 
 	contextLecturer: models.User;
-	buildings: models.Building[] = [];
+	availableBuildings: models.Building[] = [];
 	subjects: models.Subject[] = [];
 	classroomTypes: models.ClassroomType[] = [];
-	availableClassrooms: models.Classroom[] = [];
+	availableClassrooms: {
+		building: models.Building;
+		classrooms: models.Classroom[];
+	}[] = [];
 	availableGroups: models.Group[] = [];
 	availableLecturers: models.User[] = [];
 	frequencySet: boolean;
+	isEditing: boolean;
+	error = true;
+	errorText: string = null;
 
 	constructor(
 		activeModal: NgbActiveModal,
@@ -85,33 +87,88 @@ export class ClassModalComponent implements OnInit {
 	ngOnInit(): void {
 		this.subjectService.getSubjectsByLecturer(
 			this.currentClass.lecturers[0].id)
-			.subscribe((subjects: models.Subject[]) => this.subjects = subjects);
+			.subscribe((subjects: models.Subject[]) => {
+				this.subjects = subjects;
 
-		this.buildingService.getBuildings()
-			.subscribe((buildings: models.Building[]) => this.buildings = buildings);
+				if (this.isEditing) {
+					this.currentClass.subject = subjects.find(
+						s => s.id === this.currentClass.subject.id);
+
+					this.setGroupsAndLecturers();
+				}
+			});
 
 		this.classroomTypeService.getClassroomTypes()
-			.subscribe((types: models.ClassroomType[]) => this.classroomTypes = types);
+			.subscribe((types: models.ClassroomType[]) => {
+				this.classroomTypes = types;
+
+				if (this.isEditing) {
+					this.currentClass.classroomType = types.find(
+						t => t.id === this.currentClass.classroomType.id);
+				}
+
+				this.buildingService.getBuildings()
+					.subscribe((buildings: models.Building[]) => {
+						this.availableBuildings = buildings;
+
+						if (this.isEditing) {
+							this.setClassrooms();
+						}
+					});
+			});
 
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => this.currentEditor = user);
 	}
 
-	resetGroupsAndLecturers(): void {
+	setGroupsAndLecturers(): void {
+		this.availableGroups = [];
+		this.availableLecturers = [];
+
 		if (!this.currentClass.subject) {
 			return;
 		}
-
-		this.currentClass.groups = [];
-		this.currentClass.lecturers = [ this.contextLecturer ];
-		this.availableGroups = [];
-		this.availableLecturers = [];
 
 		this.groupService.getAvailableGroups(
 			this.currentEditor.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
+			.subscribe((groups: models.Group[]) =>
+				this.availableGroups = groups.concat(this.currentClass.groups)
+					.sort((g1: models.Group, g2: models.Group) =>
+						getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2))));
+
+		this.userService.getAvailableLecturers(
+			this.currentEditor.faculty.id,
+			this.currentClass.subject.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
+			.subscribe((lecturers: models.User[]) =>
+				this.availableLecturers = lecturers
+					.concat(this.currentClass.lecturers)
+					.filter(l => l.id !== this.contextLecturer.id)
+					.sort(compareLecturersByName));
+	}
+
+	resetGroupsAndLecturers(): void {
+		this.currentClass.groups = [];
+		this.currentClass.lecturers = [ this.contextLecturer ];
+		this.availableGroups = [];
+		this.availableLecturers = [];
+
+		if (!this.currentClass.subject) {
+			return;
+		}
+
+		this.groupService.getAvailableGroups(
+			this.currentEditor.faculty.id,
+			this.currentClass.subject.id,
+			getDayOfWeekNumber(this.currentClass.dayOfWeek),
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((groups: models.Group[]) =>
 				this.availableGroups = groups);
 
@@ -119,36 +176,77 @@ export class ClassModalComponent implements OnInit {
 			this.currentEditor.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
+			this.currentClass.number,
+			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((lecturers: models.User[]) =>
 				this.availableLecturers = lecturers.filter(
 					l => l.id !== this.contextLecturer.id));
+	}
+
+	setClassrooms(): void {
+		this.availableClassrooms = [];
+
+		if (!this.currentClass.classroomType) {
+			return;
+		}
+
+		for (let building of this.availableBuildings) {
+			this.classroomService.getAvailableClassrooms(
+				building.id,
+				this.currentClass.classroomType.id,
+				getDayOfWeekNumber(this.currentClass.dayOfWeek),
+				this.currentClass.number,
+				getFrequencyAsEnumString(this.currentClass.frequency))
+				.subscribe((classrooms: models.Classroom[]) =>
+					this.availableClassrooms.push({
+						building: building,
+						classrooms: classrooms
+							.concat(this.currentClass.classrooms.filter(
+								c => c.building.id === building.id))
+							.sort((c1, c2) => c1.number.localeCompare(c2.number))
+					}));
+		}
 	}
 
 	resetClassrooms(): void {
 		this.currentClass.classrooms = [];
 		this.availableClassrooms = [];
 
-		if (!this.currentClass.classroomType || !this.currentClass.building) {
+		if (!this.currentClass.classroomType) {
 			return;
 		}
 
-		this.classroomService.getAvailableClassrooms(
-			this.currentClass.building.id,
-			this.currentClass.classroomType.id,
-			getDayOfWeekNumber(this.currentClass.dayOfWeek),
-			this.currentClass.number)
-			.subscribe((classrooms: models.Classroom[]) =>
-				this.availableClassrooms = classrooms);
+		for (let building of this.availableBuildings) {
+			this.classroomService.getAvailableClassrooms(
+				building.id,
+				this.currentClass.classroomType.id,
+				getDayOfWeekNumber(this.currentClass.dayOfWeek),
+				this.currentClass.number,
+				getFrequencyAsEnumString(this.currentClass.frequency))
+				.subscribe((classrooms: models.Classroom[]) =>
+					this.availableClassrooms.push({
+						building: building,
+						classrooms: classrooms
+					}));
+		}
+	}
+
+	reset(): void {
+		this.resetClassrooms();
+		this.resetGroupsAndLecturers();
 	}
 
 	classroomChecked(classroom: models.Classroom): void {
 		if (this.currentClass.classrooms.includes(classroom)) {
 			this.currentClass.classrooms = this.currentClass.classrooms.filter(
-				g => g.id !== classroom.id);
+				c => c.id !== classroom.id);
 		} else {
 			this.currentClass.classrooms.push(classroom);
 		}
+	}
+
+	isClassroomChecked(classroom: models.Classroom): boolean {
+		return this.currentClass.classrooms.find(c => c.id === classroom.id) as any;
 	}
 
 	groupChecked(group: models.Group): void {
@@ -160,6 +258,10 @@ export class ClassModalComponent implements OnInit {
 		}
 	}
 
+	isGroupChecked(group: models.Group): boolean {
+		return this.currentClass.groups.find(g => g.id === group.id) as any;
+	}
+
 	lecturerChecked(lecturer: models.User): void {
 		if (this.currentClass.lecturers.includes(lecturer)) {
 			this.currentClass.lecturers = this.currentClass.lecturers.filter(
@@ -167,6 +269,10 @@ export class ClassModalComponent implements OnInit {
 		} else {
 			this.currentClass.lecturers.push(lecturer);
 		}
+	}
+
+	isLecturerChecked(lecturer: models.User): boolean {
+		return this.currentClass.lecturers.find(l => l.id === lecturer.id) as any;
 	}
 
 	getTotalNumberOfStudents(): number {
@@ -180,9 +286,36 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	submit(): void {
-		this.classService.addClass(this.currentClass)
-			.subscribe((response) =>
-				this.activeModal.close(response));
+		if (!this.isClassValid()) {
+			this.errorText = "Заповніть усі поля.";
+			this.error = false;
+			return;
+		}
+
+		const action = this.isEditing
+			? this.classService.updateClass(this.currentClass)
+			: this.classService.addClass(this.currentClass);
+
+		action.subscribe(
+			() => this.activeModal.close(this.currentClass),
+			() => this.errorText =
+				"Під час створення пари сталася помилка. " +
+				"Спробуйте ще раз.");
+	}
+
+	isClassValid(): boolean {
+		return this.currentClass.classrooms.length !== 0 &&
+				this.currentClass.groups.length !== 0 &&
+				this.currentClass.frequency !== null;
+	}
+
+	deleteClass(): void {
+		this.classService.deleteClass(this.currentClass)
+			.subscribe(
+				() => this.activeModal.close(this.currentClass.id),
+				() => this.errorText =
+					"Під час видалення пари сталася помилка. " +
+					"Спробуйте ще раз.");
 	}
 
 	getCurrentGroupName = getCurrentGroupName;

@@ -46,12 +46,12 @@ public class ClassController {
 		this.users = users;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Class> getAll() {
 		return this.classes.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Class getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		Class c = this.classes.findOne(id);
@@ -64,7 +64,7 @@ public class ClassController {
 		return c;
 	}
 	
-	@RequestMapping(value = "/groupId/{groupId}", method = RequestMethod.GET)
+	@GetMapping("/groupId/{groupId}")
 	public @ResponseBody Iterable<Class> getByGroup(
 		@PathVariable("groupId") int groupId) {
 		Group group = this.groups.findOne(groupId);
@@ -75,9 +75,7 @@ public class ClassController {
 		
 	}
 	
-	@RequestMapping(
-		value = "/groupId/{groupId}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/groupId/{groupId}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Class> getByGroupYearSemester(
 		@PathVariable("groupId") int groupId,
 		@PathVariable("year") int year,
@@ -91,7 +89,7 @@ public class ClassController {
 		
 	}
 	
-	@RequestMapping(value = "/classroomId/{classroomId}", method = RequestMethod.GET)
+	@GetMapping("/classroomId/{classroomId}")
 	public @ResponseBody Iterable<Class> getByClassroom(
 		@PathVariable("classroomId") int classroomId) {
 		Classroom classroom = this.classrooms.findOne(classroomId);
@@ -102,9 +100,7 @@ public class ClassController {
 		
 	}
 	
-	@RequestMapping(
-		value = "/classroomId/{classroomId}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/classroomId/{classroomId}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Class> getByClassroomYearSemester(
 		@PathVariable("classroomId") int classroomId,
 		@PathVariable("year") int year,
@@ -118,7 +114,7 @@ public class ClassController {
 		
 	}
 	
-	@RequestMapping(value = "/lecturerId/{lecturerId}", method = RequestMethod.GET)
+	@GetMapping("/lecturerId/{lecturerId}")
 	public @ResponseBody Iterable<Class> getByLecturer(
 		@PathVariable("lecturerId") int lecturerId) {
 		User lecturer = this.users.findOne(lecturerId);
@@ -132,9 +128,7 @@ public class ClassController {
 		
 	}
 	
-	@RequestMapping(
-		value = "/lecturerId/{lecturerId}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/lecturerId/{lecturerId}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Class> getByLecturerYearSemester(
 		@PathVariable("lecturerId") int lecturerId,
 		@PathVariable("year") int year,
@@ -144,21 +138,20 @@ public class ClassController {
 		return lecturer == null ||
 				lecturer.getAuthorities()
 						.stream()
-						.noneMatch(authority -> authority.getName() == Authority.Name.ROLE_LECTURER)
+						.noneMatch(authority ->
+							authority.getName() == Authority.Name.ROLE_LECTURER)
 			? new ArrayList<>()
 			: this.classes.findAllByLecturersContainingAndYearAndSemester(
 				lecturer, year, Semester.fromNumber(semester));
 		
 	}
 	
-	@RequestMapping(value = "/day/{day}", method = RequestMethod.GET)
+	@GetMapping("/day/{day}")
 	public @ResponseBody Iterable<Class> getByDay(@PathVariable("day") int day) {
 		return this.classes.findAllByDayOfWeek(DayOfWeek.of(day));
 	}
 	
-	@RequestMapping(
-		value = "/day/{day}/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/day/{day}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Class> getByDayYearSemester(
 		@PathVariable("day") int day,
 		@PathVariable("year") int year,
@@ -167,9 +160,7 @@ public class ClassController {
 			DayOfWeek.of(day), year, Semester.fromNumber(semester));
 	}
 	
-	@RequestMapping(
-		value = "/year/{year}/semester/{semester}",
-		method = RequestMethod.GET)
+	@GetMapping("/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Class> getByYearSemester(
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
@@ -177,7 +168,7 @@ public class ClassController {
 			year, Semester.fromNumber(semester));
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Class c)
 		throws URISyntaxException {
 		this.classes.save(c);
@@ -185,7 +176,7 @@ public class ClassController {
 			new URI("/classes/" + c.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Class c) {
@@ -199,7 +190,7 @@ public class ClassController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.classes.exists(id)) {
 			return ResponseEntity.notFound().build();

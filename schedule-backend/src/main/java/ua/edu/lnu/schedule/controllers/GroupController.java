@@ -40,12 +40,12 @@ public class GroupController {
 		this.plans = plans;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<Group> getAll() {
 		return this.groups.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody Group getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		Group group = this.groups.findOne(id);
@@ -58,14 +58,14 @@ public class GroupController {
 		return group;
 	}
 	
-	@RequestMapping(value = "/year/{year}", method = RequestMethod.GET)
+	@GetMapping("/year/{year}")
 	public @ResponseBody Iterable<Group> getByYear(
 		@PathVariable("year") int year) {
 		return this.groups.findAllByYear(year);
 		
 	}
 	
-	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	@GetMapping("/classId/{classId}")
 	public @ResponseBody Iterable<Group> getByClass(
 		@PathVariable("classId") int classId) {
 		Class c = this.classes.findOne(classId);
@@ -76,24 +76,20 @@ public class GroupController {
 		
 	}
 	
-	@RequestMapping(value = "/facultyId/{facultyId}", method = RequestMethod.GET)
+	@GetMapping("/facultyId/{facultyId}")
 	public @ResponseBody Iterable<Group> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
 		return this.groups.findAllByFaculty_Id(facultyId);
 	}
 	
-	@RequestMapping(
-		value = "/facultyId/{facultyId}/year/{year}",
-		method = RequestMethod.GET)
+	@GetMapping("/facultyId/{facultyId}/year/{year}")
 	public @ResponseBody Iterable<Group> getByFacultyAndYear(
 		@PathVariable("facultyId") int facultyId,
 		@PathVariable("year") int year) {
 		return this.groups.findAllByFaculty_IdAndYear(facultyId, year);
 	}
 	
-	@RequestMapping(
-		value = "/facultyId/{facultyId}/since/{year}",
-		method = RequestMethod.GET)
+	@GetMapping("/facultyId/{facultyId}/since/{year}")
 	public @ResponseBody Iterable<Group> getByFacultyAndYearSince(
 		@PathVariable("facultyId") int facultyId,
 		@PathVariable("year") int year) {
@@ -101,7 +97,7 @@ public class GroupController {
 			facultyId, year);
 	}
 	
-	@RequestMapping(value = "/planId/{planId}", method = RequestMethod.GET)
+	@GetMapping("/planId/{planId}")
 	public @ResponseBody Group getByPlan(
 		@PathVariable("planId") int planId, HttpServletResponse response) {
 		Plan plan = this.plans.findOne(planId);
@@ -114,19 +110,22 @@ public class GroupController {
 		return this.groups.findByPlansContaining(plan);
 	}
 	
-	@RequestMapping(
-		value = "/available/facultyId/{facultyId}" +
-			"/subjectId/{subjectId}/day/{day}/number/{number}",
-		method = RequestMethod.GET)
+	@GetMapping(
+		"/available/facultyId/{facultyId}/subjectId/{subjectId}" +
+		"/day/{day}/number/{number}/frequency/{frequency}")
 	public @ResponseBody Iterable<Group> getAvailable(
 		@PathVariable("facultyId") int facultyId,
 		@PathVariable("subjectId") int subjectId,
 		@PathVariable("day") int day,
-		@PathVariable("number") int number) {
+		@PathVariable("number") int number,
+		@PathVariable("frequency") String frequencyName) {
 		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
 		
 		Semester currentSemester =
 			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
+		
+		Class.Frequency frequency =
+			Class.Frequency.valueOf(frequencyName.toUpperCase());
 		
 		int currentYear = currentSemester == Semester.FIRST
 			? calendar.get(Calendar.YEAR)
@@ -135,9 +134,19 @@ public class GroupController {
 		List<Plan> plans = this.plans.findAllBySubject_IdAndYearAndSemester(
 			subjectId, currentYear, currentSemester);
 		
-		List<Class> potentialClasses =
-			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
-				DayOfWeek.of(day), number, currentYear, currentSemester);
+		Class.Frequency weekly = Class.Frequency.WEEKLY;
+		
+		List<Class> potentialClasses = frequency == weekly
+			? this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
+				DayOfWeek.of(day), number, currentYear, currentSemester)
+			: this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
+				DayOfWeek.of(day), number, frequency, currentYear, currentSemester);
+		
+		if (frequency != weekly) {
+			potentialClasses.addAll(
+				this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
+					DayOfWeek.of(day), number, weekly, currentYear, currentSemester));
+		}
 		
 		return this.groups.findAllByFaculty_Id(facultyId).stream()
 			.filter(group -> plans.stream()
@@ -148,7 +157,7 @@ public class GroupController {
 			.collect(Collectors.toList());
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Group group)
 		throws URISyntaxException {
 		this.groups.save(group);
@@ -157,7 +166,7 @@ public class GroupController {
 			new URI("/groups/" + group.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Group group) {
@@ -171,7 +180,7 @@ public class GroupController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.groups.exists(id)) {
 			return ResponseEntity.notFound().build();

@@ -176,6 +176,24 @@ export function getDayOfWeekName(day: number): string {
 	return name;
 }
 
+export function getFrequencyAsEnumString(frequency: string) {
+	let result = "";
+
+	switch (frequency.toLowerCase()) {
+		case "щотижня":
+			result = "weekly";
+			break;
+		case "по чисельнику":
+			result = "numerator";
+			break;
+		case "по знаменнику":
+			result = "denominator";
+			break;
+	}
+
+	return result;
+}
+
 export function getClassroomsAsString(classrooms: Classroom[]): string {
 	return classrooms
 		? classrooms.reduce(

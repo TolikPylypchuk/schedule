@@ -84,7 +84,7 @@ public class Plan implements Serializable {
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "group", nullable = false)
+	@JoinColumn(name = "`group`", nullable = false)
 	public Group getGroup() {
 		return this.group;
 	}

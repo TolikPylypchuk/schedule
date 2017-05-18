@@ -63,12 +63,12 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public @ResponseBody Iterable<User> getAll() {
 		return this.users.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public @ResponseBody User getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
 		User user = this.users.findOne(id);
@@ -81,12 +81,12 @@ public class UserController {
 		return user;
 	}
 	
-	@RequestMapping(value = "/current", method = RequestMethod.GET)
+	@GetMapping("/current")
 	public @ResponseBody User getCurrentUser(Principal p) {
 		return this.users.findByUsername(p.getName());
 	}
 	
-	@RequestMapping(value = "/role/{role}", method = RequestMethod.GET)
+	@GetMapping("/role/{role}")
 	public @ResponseBody Iterable<User> getByRole(
 		@PathVariable("role") String role) {
 		Authority authority = this.authorities.findByName(
@@ -97,15 +97,13 @@ public class UserController {
 			: this.users.findAllByAuthoritiesContaining(authority);
 	}
 	
-	@RequestMapping(value = "/facultyId/{facultyId}", method = RequestMethod.GET)
+	@GetMapping("/facultyId/{facultyId}")
 	public @ResponseBody Iterable<User> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
 		return this.users.findAllByFaculty_Id(facultyId);
 	}
 	
-	@RequestMapping(
-		value = "/role/{role}/facultyId/{facultyId}",
-		method = RequestMethod.GET)
+	@GetMapping("/role/{role}/facultyId/{facultyId}")
 	public @ResponseBody Iterable<User> getByRoleAndFaculty(
 		@PathVariable("role") String role,
 		@PathVariable("facultyId") int facultyId) {
@@ -120,7 +118,7 @@ public class UserController {
 					this.userService.getAuthorityName(role)));
 	}
 	
-	@RequestMapping(value = "/subjectId/{subjectId}", method = RequestMethod.GET)
+	@GetMapping("/subjectId/{subjectId}")
 	public @ResponseBody Iterable<User> getBySubject(
 		@PathVariable("subjectId") int subjectId) {
 		Subject subject = this.subjects.findOne(subjectId);
@@ -130,7 +128,7 @@ public class UserController {
 			: this.users.findAllBySubjectsContaining(subject);
 	}
 	
-	@RequestMapping(value = "/classId/{classId}", method = RequestMethod.GET)
+	@GetMapping("/classId/{classId}")
 	public @ResponseBody Iterable<User> getByClass(
 		@PathVariable("classId") int classId) {
 		Class c = this.classes.findOne(classId);
@@ -140,7 +138,53 @@ public class UserController {
 			: this.users.findAllByClassesContaining(c);
 	}
 	
-	@RequestMapping(value = "/wishId/{wishId}", method = RequestMethod.GET)
+	@GetMapping(
+		"/role/lecturer/available/facultyId/{facultyId}/subjectId/{subjectId}" +
+		"/day/{day}/number/{number}/frequency/{frequency}")
+	public @ResponseBody Iterable<User> getAvailable(
+		@PathVariable("facultyId") int facultyId,
+		@PathVariable("subjectId") int subjectId,
+		@PathVariable("day") int day,
+		@PathVariable("number") int number,
+		@PathVariable("frequency") String frequencyName) {
+		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
+		
+		Semester currentSemester =
+			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
+		
+		Class.Frequency frequency =
+			Class.Frequency.valueOf(frequencyName.toUpperCase());
+		
+		int currentYear = currentSemester == Semester.FIRST
+			? calendar.get(Calendar.YEAR)
+			: calendar.get(Calendar.YEAR) - 1;
+		Class.Frequency weekly = Class.Frequency.WEEKLY;
+		
+		List<Class> potentialClasses = frequency == weekly
+			? this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
+				DayOfWeek.of(day), number, currentYear, currentSemester)
+			: this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
+				DayOfWeek.of(day), number, frequency, currentYear, currentSemester);
+		
+		if (frequency != weekly) {
+			potentialClasses.addAll(
+				this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
+					DayOfWeek.of(day), number, weekly, currentYear, currentSemester));
+		}
+		
+		Subject subject = this.subjects.findOne(subjectId);
+		
+		return subject == null
+			? new ArrayList<>()
+			: this.users.findAllByFaculty_IdAndSubjectsContaining(facultyId, subject)
+			.stream()
+			.filter(lecturer -> potentialClasses.stream()
+				.flatMap(c -> c.getLecturers().stream())
+				.noneMatch(l -> Objects.equals(l.getId(), lecturer.getId())))
+			.collect(Collectors.toList());
+	}
+	
+	@GetMapping("/wishId/{wishId}")
 	public @ResponseBody User getByWish(
 		@PathVariable("wishId") int wishId, HttpServletResponse response) {
 		Wish wish = this.wishes.findOne(wishId);
@@ -153,41 +197,7 @@ public class UserController {
 		return this.users.findByWishesContaining(wish);
 	}
 	
-	@RequestMapping(
-		value = "/role/lecturer/available/facultyId/{facultyId}" +
-			"/subjectId/{subjectId}/day/{day}/number/{number}",
-		method = RequestMethod.GET)
-	public @ResponseBody Iterable<User> getAvailable(
-		@PathVariable("facultyId") int facultyId,
-		@PathVariable("subjectId") int subjectId,
-		@PathVariable("day") int day,
-		@PathVariable("number") int number) {
-		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
-		
-		Semester currentSemester =
-			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
-		
-		int currentYear = currentSemester == Semester.FIRST
-			? calendar.get(Calendar.YEAR)
-			: calendar.get(Calendar.YEAR) - 1;
-		
-		List<Class> potentialClasses =
-			this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
-				DayOfWeek.of(day), number, currentYear, currentSemester);
-		
-		Subject subject = this.subjects.findOne(subjectId);
-		
-		return subject == null
-			? new ArrayList<>()
-			: this.users.findAllByFaculty_IdAndSubjectsContaining(facultyId, subject)
-				.stream()
-				.filter(lecturer -> potentialClasses.stream()
-					.flatMap(c -> c.getLecturers().stream())
-					.noneMatch(l -> Objects.equals(l.getId(), lecturer.getId())))
-				.collect(Collectors.toList());
-	}
-	
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> post(
 		@RequestBody User user,
 		@RequestParam("roles") String rolesParam)
@@ -214,7 +224,7 @@ public class UserController {
 		return ResponseEntity.created(new URI("/users/" + user.getId())).build();
 	}
 	
-	@RequestMapping(value = "/{id}/roles/add/{role}", method = RequestMethod.POST)
+	@PostMapping("/{id}/roles/add/{role}")
 	public ResponseEntity<?> addUserToRole(
 		@PathVariable("id") int id,
 		@PathVariable("role") String role) {
@@ -230,7 +240,7 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}/roles/remove/{role}", method = RequestMethod.POST)
+	@PostMapping("/{id}/roles/remove/{role}")
 	public ResponseEntity<?> removeUserFromRole(
 		@PathVariable("id") int id,
 		@PathVariable("role") String role) {
@@ -246,7 +256,7 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/current/changePassword", method = RequestMethod.POST)
+	@PostMapping("/current/changePassword")
 	public ResponseEntity<?> changePassword(
 		@RequestBody ChangePasswordModel model,
 		Authentication authentication) {
@@ -261,7 +271,7 @@ public class UserController {
 			: ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody User user,
@@ -293,7 +303,7 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/current", method = RequestMethod.PUT)
+	@PutMapping("/current")
 	public ResponseEntity<?> putCurrent(
 		@RequestBody ChangePasswordModel model,
 		Principal p) {
@@ -316,7 +326,7 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
 		if (!this.users.exists(id)) {
 			return ResponseEntity.notFound().build();
