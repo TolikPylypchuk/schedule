@@ -62,6 +62,7 @@ export class AuthService {
 							response.status === 200
 								? response.json() as User
 								: null)
+						.catch(handleError)
 						.subscribe((user: User) => {
 							this.currentUserSource.next(user);
 							this.router.navigate(
@@ -73,7 +74,8 @@ export class AuthService {
 				}
 
 				return false;
-			});
+			})
+			.catch(handleError);
 	}
 
 	logout(): void {
