@@ -5,7 +5,7 @@ import { ErrorObservable } from "rxjs/Observable/ErrorObservable";
 declare const localStorage;
 
 export function getAuthToken(): string {
-	const token = JSON.parse(localStorage.getItem("authToken"));
+	const token = JSON.parse(localStorage.getItem("scheduleAuthToken"));
 	return token ? token : null;
 }
 

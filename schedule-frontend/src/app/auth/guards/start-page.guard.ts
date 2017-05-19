@@ -30,16 +30,18 @@ export class StartPageGuard implements CanActivate {
 		return this.authService.getCurrentUser()
 			.map((user: User) => {
 				if (!user) {
-					return true;
+					this.router.navigate([ "/schedule" ]);
+					return false;
 				}
 
-				const navigateUrl = user.authorities.find(r => r.name === "ROLE_ADMIN")
+				const navigateUrl = user.authorities.find(
+					r => r.name === "ROLE_ADMIN")
 					? "/admin"
 					: user.authorities.find(r => r.name === "ROLE_EDITOR")
 						? "/editor"
 						: user.authorities.find(r => r.name === "ROLE_LECTURER")
 							? "/lecturer"
-							: null;
+							: "/schedule";
 
 				if (navigateUrl) {
 					this.router.navigate([ navigateUrl ]);

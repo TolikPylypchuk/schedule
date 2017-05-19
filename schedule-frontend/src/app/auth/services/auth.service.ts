@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http, Headers, Response } from "@angular/http";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { ReplaySubject } from "rxjs/ReplaySubject";
 
 import { User } from "../../common/models/models";
 import { handleError } from "../../common/functions";
@@ -19,14 +19,32 @@ export class AuthService {
 	private http: Http;
 	private router: Router;
 
-	private currentUserSource = new BehaviorSubject<User>(null);
+	private currentUserSource = new ReplaySubject<User>();
 
 	private loggedIn = false;
 	private returnUrl: string = null;
 
 	constructor(http: Http, router: Router) {
 		this.http = http;
-		this.router = router
+		this.router = router;
+
+		const token = this.getToken();
+
+		if (token) {
+			this.loggedIn = true;
+			this.http.get(
+				this.currentUserUrl,
+				{
+					headers: this.getHeaders()
+				})
+				.map(response =>
+					response.status === 200
+						? response.json() as User
+						: null)
+				.catch(handleError)
+				.first()
+				.subscribe((user: User) => this.currentUserSource.next(user));
+		}
 	}
 
 	getCurrentUser(): Observable<User> {
@@ -42,6 +60,10 @@ export class AuthService {
 	}
 
 	login(model: LoginModel): Observable<boolean> {
+		if (this.loggedIn) {
+			return Observable.of(null);
+		}
+
 		return this.http.post(
 			this.authUrl,
 			JSON.stringify(model),
@@ -50,7 +72,7 @@ export class AuthService {
 				const token = response.json() && response.json().token;
 
 				if (token) {
-					localStorage.setItem("authToken", token);
+					localStorage.setItem("scheduleAuthToken", token);
 					this.loggedIn = true;
 
 					this.http.get(
@@ -75,11 +97,12 @@ export class AuthService {
 
 				return false;
 			})
-			.catch(handleError);
+			.catch(handleError)
+			.first();
 	}
 
 	logout(): void {
-		localStorage.removeItem("authToken");
+		localStorage.removeItem("scheduleAuthToken");
 		this.currentUserSource.next(null);
 		this.loggedIn = false;
 		this.router.navigate([ "" ]);
@@ -90,7 +113,7 @@ export class AuthService {
 	}
 
 	getToken(): string {
-		const token = localStorage.getItem("authToken");
+		const token = localStorage.getItem("scheduleAuthToken");
 		return token ? token : null;
 	}
 
