@@ -4,8 +4,8 @@ import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 
-import { User } from "../../common/models/models";
 import { handleError } from "../../common/functions";
+import { User } from "../../common/models/models";
 
 import { LoginModel } from "../models/models";
 
@@ -103,7 +103,7 @@ export class AuthService {
 
 	logout(): void {
 		localStorage.removeItem("scheduleAuthToken");
-		this.currentUserSource.next(null);
+		this.currentUserSource = new ReplaySubject<User>();
 		this.loggedIn = false;
 		this.router.navigate([ "" ]);
 	}

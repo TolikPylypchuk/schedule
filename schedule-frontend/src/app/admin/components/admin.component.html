@@ -21,6 +21,11 @@
 			<li class="nav-item">
 				<a class="nav-link" href="#">Архів</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link" routerLink="/admin/additional" routerLinkActive="active">
+					Додаткові налаштування
+				</a>
+			</li>
 		</ul>
 		<ul class="navbar-nav mx-3">
 			<li class="nav-item dropdown">
@@ -30,7 +35,7 @@
 					{{ currentUserInitials() | async }}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right">
-					<a class="dropdown-item" (click)="logout()">
+					<a class="dropdown-item" routerLink="/logout">
 						Вийти
 					</a>
 				</div>
