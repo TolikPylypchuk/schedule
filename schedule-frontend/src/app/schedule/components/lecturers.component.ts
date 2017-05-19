@@ -7,7 +7,7 @@ import {
 	UserService, FacultyService
 } from "../../common/services/services";
 
-import { compareLecturersByName } from "../../common/models/functions";
+import { compareUsersByName } from "../../common/models/functions";
 
 @Component({
 	selector: "schedule-lecturers",
@@ -40,7 +40,7 @@ export class LecturersComponent implements OnInit {
 				for (let faculty of faculties) {
 					this.userService.getLecturersByFaculty(faculty.id)
 						.subscribe((lecturers: User[]) => {
-							lecturers.sort(compareLecturersByName);
+							lecturers.sort(compareUsersByName);
 							this.lecturers.set(faculty.id, lecturers);
 						});
 				}

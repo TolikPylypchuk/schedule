@@ -10,7 +10,7 @@ import * as services from "../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester, getUserInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
-	compareLecturersByName, getDayOfWeekName
+	compareUsersByName, getDayOfWeekName
 } from "../../common/models/functions";
 export enum ClassFrequency {
 	NONE,
@@ -75,7 +75,7 @@ export class ScheduleComponent implements OnInit {
 
 				this.userService.getLecturersByFaculty(user.faculty.id)
 					.subscribe((lecturers: models.User[]) => {
-						this.lecturers = lecturers.sort(compareLecturersByName);
+						this.lecturers = lecturers.sort(compareUsersByName);
 
 						for (let lecturer of lecturers) {
 							this.classService.getClassesByLecturerAndYearAndSemester(

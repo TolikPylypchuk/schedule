@@ -5,18 +5,98 @@
 			<button class="btn btn-primary m-3">
 				Додати факультет
 			</button>
+
+			<div *ngFor="let faculty of faculties">
+				<div class="dropdown-divider m-0"></div>
+				<div class="clearfix px-3 py-2 m-0">
+					<div class="row">
+						<div class="col-8 align-items-center">
+							{{ faculty.name }}
+						</div>
+						<div class="col-4 btn-group align-items-center">
+							<button class="btn btn-sm btn-success">
+								<i class="fa fa-edit" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-sm btn-danger">
+								<i class="fa fa-remove" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
+
 		<div class="col-md text-center">
 			<h2 class="h2">Аудиторії</h2>
 			<button class="btn btn-primary m-3">
 				Додати корпус
 			</button>
+
+			<div id="buildings" role="tablist" aria-multiselectable="true">
+				<div class="card" *ngFor="let building of buildings">
+					<div class="card-header" role="tab" id="{{ building.id }}">
+						<h6 class="m-0">
+							<a data-toggle="collapse" data-parent="#faculties"
+							   href="#building{{ building.id }}" aria-expanded="false"
+							   [attr.aria-controls]="'building' + building.id">
+								{{ building.name }}
+							</a>
+						</h6>
+					</div>
+
+					<div id="building{{ building.id }}" class="collapse"
+					     role="tabpanel" [attr.aria-labelledby]="building.id">
+						<div class="my-1">
+							<button class="btn btn-sm btn-primary">Додати</button>
+						</div>
+						<div *ngFor="let classroom of classrooms.get(building.id)">
+							<div class="dropdown-divider m-0"></div>
+							<div class="clearfix px-3 py-2 m-0">
+								<div class="row">
+									<div class="col-8 align-items-center">
+										{{ classroom.number }}
+									</div>
+									<div class="col-4 btn-group align-items-center">
+										<button class="btn btn-sm btn-success">
+											<i class="fa fa-edit" aria-hidden="true"></i>
+										</button>
+										<button class="btn btn-sm btn-danger">
+											<i class="fa fa-remove" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
+
 		<div class="col-md text-center">
 			<h2 class="h2">Типи аудиторій</h2>
 			<button class="btn btn-primary m-3">
 				Додати тип
 			</button>
+			<div *ngFor="let type of classroomTypes">
+				<div *ngIf="type.type !== 'Будь-яка'">
+					<div class="dropdown-divider m-0"></div>
+					<div class="clearfix px-3 py-2 m-0">
+						<div class="row">
+							<div class="col-8 align-items-center">
+								{{ type.type }}
+							</div>
+							<div class="col-4 btn-group align-items-center">
+								<button class="btn btn-sm btn-success">
+									<i class="fa fa-edit" aria-hidden="true"></i>
+								</button>
+								<button class="btn btn-sm btn-danger">
+									<i class="fa fa-remove" aria-hidden="true"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

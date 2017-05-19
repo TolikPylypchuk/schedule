@@ -202,9 +202,9 @@ export function getClassroomsAsString(classrooms: Classroom[]): string {
 		: "";
 }
 
-export function getLecturersAsString(lecturers: User[]): string {
-	return lecturers
-		? lecturers.reduce(
+export function getUsersAsString(users: User[]): string {
+	return users
+		? users.reduce(
 			(result: string, lecturer: User) =>
 				`${result}, ${getUserInitials(lecturer)}`,
 			"").substr(2)
@@ -220,16 +220,16 @@ export function getGroupsAsString(groups: Group[]): string {
 		: "";
 }
 
-export function compareLecturersByName(l1: User, l2: User) {
-	let result = l1.lastName.localeCompare(l2.lastName);
+export function compareUsersByName(u1: User, u2: User) {
+	let result = u1.lastName.localeCompare(u2.lastName);
 
 	if (result === 0)
 	{
-		result = l1.firstName.localeCompare(l2.firstName);
+		result = u1.firstName.localeCompare(u2.firstName);
 
 		if (result === 0)
 		{
-			result = l1.middleName.localeCompare(l2.middleName);
+			result = u1.middleName.localeCompare(u2.middleName);
 		}
 	}
 

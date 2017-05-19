@@ -7,9 +7,9 @@ import * as services from "../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester,
 	getUserInitials, getGroupsAsString,
-	getCurrentGroupName, getLecturersAsString,
+	getCurrentGroupName, getUsersAsString,
 	getDayOfWeekNumber, getClassroomsAsString,
-	compareLecturersByName, getFrequencyAsEnumString
+	compareUsersByName, getFrequencyAsEnumString
 } from '../../common/models/functions';
 import { AuthService } from "../../auth/services/auth.service";
 
@@ -150,7 +150,7 @@ export class ClassModalComponent implements OnInit {
 				this.availableLecturers = lecturers
 					.concat(this.currentClass.lecturers)
 					.filter(l => l.id !== this.contextLecturer.id)
-					.sort(compareLecturersByName));
+					.sort(compareUsersByName));
 	}
 
 	resetGroupsAndLecturers(): void {
@@ -326,6 +326,6 @@ export class ClassModalComponent implements OnInit {
 	getCurrentGroupName = getCurrentGroupName;
 	getClassroomsAsString = getClassroomsAsString;
 	getGroupsAsString = getGroupsAsString;
-	getLecturersAsString = getLecturersAsString;
+	getLecturersAsString = getUsersAsString;
 	getLecturerInitials = getUserInitials;
 }

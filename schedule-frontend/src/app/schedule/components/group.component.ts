@@ -13,7 +13,7 @@ import {
 	getCurrentGroupName,
 	getClassStart, getClassEnd,
 	getDayOfWeekNumber,
-	getLecturersAsString, getClassroomsAsString
+	getUsersAsString, getClassroomsAsString
 } from "../../common/models/functions";
 
 interface ClassInfo {
@@ -98,7 +98,7 @@ export class GroupComponent implements OnInit {
 							subject: c.subject.name,
 							type: c.type,
 							classrooms: getClassroomsAsString(classrooms),
-							lecturers: getLecturersAsString(lecturers)
+							lecturers: getUsersAsString(lecturers)
 						};
 					}));
 			}
