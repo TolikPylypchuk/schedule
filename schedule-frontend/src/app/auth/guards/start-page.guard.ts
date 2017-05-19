@@ -10,7 +10,7 @@ import { AuthService } from "../services/auth.service";
 import { User } from "../../common/models/models";
 
 @Injectable()
-export class UserRoleGuard implements CanActivate {
+export class StartPageGuard implements CanActivate {
 	private router: Router;
 	private authService: AuthService;
 
@@ -23,7 +23,8 @@ export class UserRoleGuard implements CanActivate {
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot): Observable<boolean> {
 		if (!this.authService.isLoggedIn()) {
-			return Observable.of(true);
+			this.router.navigate([ "/schedule" ]);
+			return Observable.of(false);
 		}
 
 		return this.authService.getCurrentUser()

@@ -23,9 +23,14 @@
 			</li>
 		</ul>
 		<ul class="navbar-nav mx-3">
-			<li class="nav-item">
-				<a class="nav-link" href="#">{{ userActionText() }}</a>
+			<li *ngIf="!isLoggedIn(); else loggedIn" class="nav-item">
+				<a class="nav-link" routerLink="/login">Вхід</a>
 			</li>
+			<ng-template #loggedIn>
+				<li class="nav-item">
+					<a class="nav-link" (click)="logout()">Вихід</a>
+				</li>
+			</ng-template>
 		</ul>
 	</div>
 </nav>

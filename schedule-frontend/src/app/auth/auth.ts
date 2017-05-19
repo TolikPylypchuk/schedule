@@ -6,10 +6,11 @@ import { LoginComponent } from "./components/login.component";
 import { AuthService } from "./services/auth.service";
 
 import { AuthGuard } from "./guards/auth.guard";
+import { NotAuthGuard } from "./guards/not-auth.guard";
 import { LecturerGuard } from "./guards/lecturer.guard";
 import { EditorGuard } from "./guards/editor.guard";
 import { AdminGuard } from "./guards/admin.guard";
-import { UserRoleGuard } from "./guards/user-role.guard";
+import { StartPageGuard } from "./guards/start-page.guard";
 
 export {
 	AuthModule,
@@ -20,8 +21,9 @@ export {
 	AuthService,
 
 	AuthGuard,
+	NotAuthGuard,
 	LecturerGuard,
 	EditorGuard,
 	AdminGuard,
-	UserRoleGuard
+	StartPageGuard
 }

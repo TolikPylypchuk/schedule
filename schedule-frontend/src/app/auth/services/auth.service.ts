@@ -7,6 +7,8 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { User } from "../../common/models/models";
 import { handleError } from "../../common/functions";
 
+import { LoginModel } from "../models/models";
+
 declare const localStorage;
 
 @Injectable()
@@ -17,25 +19,9 @@ export class AuthService {
 	private http: Http;
 	private router: Router;
 
-	private currentUserSource = new BehaviorSubject<User>({
-		id: 16,
-		firstName: "Анастасія",
-		middleName: "Василівна",
-		lastName: "Коломоєць",
-		position: null,
-		faculty: {
-			"id": 1,
-			"name": "Факультет прикладної математики та інформатики"
-		},
-		authorities: [
-			{
-				"id": 2,
-				"name": "ROLE_EDITOR"
-			}
-		]
-	});
+	private currentUserSource = new BehaviorSubject<User>(null);
 
-	private loggedIn = true;
+	private loggedIn = false;
 	private returnUrl: string = null;
 
 	constructor(http: Http, router: Router) {
@@ -55,10 +41,10 @@ export class AuthService {
 		this.returnUrl = returnUrl;
 	}
 
-	login(username: string, password: string): Observable<boolean> {
+	login(model: LoginModel): Observable<boolean> {
 		return this.http.post(
 			this.authUrl,
-			JSON.stringify({ username: username, password: password }),
+			JSON.stringify(model),
 			{ headers: this.getHeaders() })
 			.map((response: Response) => {
 				const token = response.json() && response.json().token;
@@ -67,14 +53,19 @@ export class AuthService {
 					localStorage.setItem("authToken", token);
 					this.loggedIn = true;
 
-					this.http.get(this.currentUserUrl)
+					this.http.get(
+						this.currentUserUrl,
+						{
+							headers: this.getHeaders()
+						})
 						.map(response =>
 							response.status === 200
 								? response.json() as User
 								: null)
 						.subscribe((user: User) => {
 							this.currentUserSource.next(user);
-							this.router.navigate([ this.getReturnUrl() ]);
+							this.router.navigate(
+								[ this.returnUrl ? this.returnUrl : "" ]);
 							this.setReturnUrl("");
 						});
 
@@ -82,33 +73,30 @@ export class AuthService {
 				}
 
 				return false;
-			})
-			.catch(handleError);
+			});
 	}
 
 	logout(): void {
 		localStorage.removeItem("authToken");
 		this.currentUserSource.next(null);
 		this.loggedIn = false;
+		this.router.navigate([ "" ]);
 	}
 
 	isLoggedIn(): boolean {
-		return true; //this.loggedIn;
+		return this.loggedIn;
 	}
 
 	getToken(): string {
-		/*
-		const token = JSON.parse(localStorage.getItem("authToken"));
+		const token = localStorage.getItem("authToken");
 		return token ? token : null;
-		*/
-		return "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJrb2xvbW9ldHMuYW5hc3Rhc2lhIiwiYXVkaWVuY2UiOiJ3ZWIiLCJjcmVhdGVkIjoxNDk0OTI1NTQzMTQ2LCJleHAiOjE0OTU1MzAzNDN9.XEhp0s1mT5DRw3c5iFJCsI7qJBTAkxzT67bL574UWbJyamzVNipUBjpgbeSV5BuRmgBrYkSfeAoU_ZD5LjuGyQ";
 	}
 
 	getHeaders(): Headers {
 		return this.isLoggedIn()
 			? new Headers({
 				"Content-Type": "application/json",
-				"Authentication": `Bearer ${this.getToken()}`
+				"Authorization": `Bearer ${this.getToken()}`
 			})
 			: new Headers({ "Content-Type": "application/json" });
 	}

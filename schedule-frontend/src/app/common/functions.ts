@@ -5,11 +5,8 @@ import { ErrorObservable } from "rxjs/Observable/ErrorObservable";
 declare const localStorage;
 
 export function getAuthToken(): string {
-	/*
-	 const token = JSON.parse(localStorage.getItem("authToken"));
-	 return token ? token : null;
-	 */
-	return "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJrb2xvbW9ldHMuYW5hc3Rhc2lhIiwiYXVkaWVuY2UiOiJ3ZWIiLCJjcmVhdGVkIjoxNDk0OTI1NTQzMTQ2LCJleHAiOjE0OTU1MzAzNDN9.XEhp0s1mT5DRw3c5iFJCsI7qJBTAkxzT67bL574UWbJyamzVNipUBjpgbeSV5BuRmgBrYkSfeAoU_ZD5LjuGyQ";
+	const token = JSON.parse(localStorage.getItem("authToken"));
+	return token ? token : null;
 }
 
 export function getHeaders(): Headers {

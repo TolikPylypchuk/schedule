@@ -5,6 +5,7 @@ import { HttpModule } from "@angular/http";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { AppComponent } from "./app.component";
+import { StartPageComponent } from "./start-page.component";
 
 import { AuthModule } from "./auth/auth";
 import { ScheduleModule } from "./schedule/schedule";
@@ -17,7 +18,8 @@ import * as services from "./common/services/services";
 
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
+		StartPageComponent
 	],
 	imports: [
 		BrowserModule,

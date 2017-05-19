@@ -1,14 +1,16 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { UserRoleGuard } from "./auth/auth";
+import { StartPageGuard } from "./auth/auth";
+
+import { StartPageComponent } from "./start-page.component";
 
 const routes: Routes = [
 	{
 		path: "",
-		redirectTo: "schedule",
 		pathMatch: "full",
-		canActivate: [ UserRoleGuard ]
+		component: StartPageComponent,
+		canActivate: [ StartPageGuard ]
 	}
 ];
 

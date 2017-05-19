@@ -13,7 +13,11 @@ export class ScheduleComponent {
 		this.authService = authService;
 	}
 
-	userActionText(): string {
-		return this.authService.isLoggedIn() ? "Вихід" : "Вхід";
+	isLoggedIn(): boolean {
+		return this.authService.isLoggedIn();
+	}
+
+	logout(): void {
+		this.authService.logout();
 	}
 }

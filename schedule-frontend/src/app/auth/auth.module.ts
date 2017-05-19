@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 
@@ -7,10 +8,11 @@ import { LoginComponent } from "./components/login.component";
 import { AuthService } from "./services/auth.service";
 
 import { AuthGuard } from "./guards/auth.guard";
+import { NotAuthGuard } from "./guards/not-auth.guard";
 import { LecturerGuard } from "./guards/lecturer.guard";
 import { EditorGuard } from "./guards/editor.guard";
 import { AdminGuard } from "./guards/admin.guard";
-import { UserRoleGuard } from "./guards/user-role.guard";
+import { StartPageGuard } from "./guards/start-page.guard";
 
 import { RoutesModule } from "./routes.module";
 
@@ -19,6 +21,7 @@ import { RoutesModule } from "./routes.module";
 		LoginComponent
 	],
 	imports: [
+		BrowserModule,
 		FormsModule,
 		HttpModule,
 		RoutesModule
@@ -27,10 +30,11 @@ import { RoutesModule } from "./routes.module";
 		AuthService,
 
 		AuthGuard,
+		NotAuthGuard,
 		LecturerGuard,
 		EditorGuard,
 		AdminGuard,
-		UserRoleGuard
+		StartPageGuard
 	]
 })
 export class AuthModule { }
