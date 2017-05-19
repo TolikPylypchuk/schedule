@@ -139,7 +139,7 @@ public class UserController {
 	}
 	
 	@GetMapping(
-		"/role/lecturer/available/facultyId/{facultyId}/subjectId/{subjectId}" +
+		"/available/facultyId/{facultyId}/subjectId/{subjectId}" +
 		"/day/{day}/number/{number}/frequency/{frequency}")
 	public @ResponseBody Iterable<User> getAvailable(
 		@PathVariable("facultyId") int facultyId,
