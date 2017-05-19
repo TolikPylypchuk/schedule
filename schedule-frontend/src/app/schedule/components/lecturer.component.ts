@@ -10,7 +10,7 @@ import {
 
 import {
 	getCurrentYear, getCurrentSemester,
-	getLecturerInitials,
+	getUserInitials,
 	getClassStart, getClassEnd,
 	getDayOfWeekNumber,
 	getGroupsAsString, getClassroomsAsString
@@ -69,7 +69,7 @@ export class LecturerComponent implements OnInit {
 		this.route.params
 			.switchMap((params: Params) => this.userService.getUser(+params["id"]))
 			.subscribe((lecturer: User) => {
-				this.currentLecturer = getLecturerInitials(lecturer);
+				this.currentLecturer = getUserInitials(lecturer);
 
 				this.classService.getClassesByLecturerAndYearAndSemester(
 					lecturer.id, currentYear, semester)

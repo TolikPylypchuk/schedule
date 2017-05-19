@@ -1,4 +1,7 @@
 import { Component } from "@angular/core";
+import { Observable } from "rxjs/Observable";
+
+import { getUserInitials } from "../../common/models/functions";
 
 import { AuthService } from "../../auth/services/auth.service";
 
@@ -13,11 +16,13 @@ export class ScheduleComponent {
 		this.authService = authService;
 	}
 
-	isLoggedIn(): boolean {
-		return this.authService.isLoggedIn();
+	currentUserInitials(): Observable<string> {
+		return this.authService.getCurrentUser()
+			.map(user => getUserInitials(user))
+			.first();
 	}
 
-	logout(): void {
-		this.authService.logout();
+	isLoggedIn(): boolean {
+		return this.authService.isLoggedIn();
 	}
 }

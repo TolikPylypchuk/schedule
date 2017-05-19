@@ -6,7 +6,7 @@ import * as services from "../../common/services/services";
 
 import {
 	getCurrentYear, getCurrentSemester,
-	getLecturerInitials, getGroupsAsString,
+	getUserInitials, getGroupsAsString,
 	getCurrentGroupName, getLecturersAsString,
 	getDayOfWeekNumber, getClassroomsAsString,
 	compareLecturersByName, getFrequencyAsEnumString
@@ -327,5 +327,5 @@ export class ClassModalComponent implements OnInit {
 	getClassroomsAsString = getClassroomsAsString;
 	getGroupsAsString = getGroupsAsString;
 	getLecturersAsString = getLecturersAsString;
-	getLecturerInitials = getLecturerInitials;
+	getLecturerInitials = getUserInitials;
 }

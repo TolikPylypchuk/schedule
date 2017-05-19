@@ -26,8 +26,17 @@
 			<li class="nav-item">
 				<a class="nav-link" href="#">Залишити побажання</a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Вихід</a>
+			<li class="nav-item dropdown">
+				<a id="dropdownItem" class="nav-link dropdown-toggle"
+				   data-toggle="dropdown" role="button"
+				   aria-haspopup="true" aria-expanded="false">
+					{{ currentUserInitials() | async }}
+				</a>
+				<div class="dropdown-menu dropdown-menu-right">
+					<a class="dropdown-item" routerLink="/logout">
+						Вийти
+					</a>
+				</div>
 			</li>
 		</ul>
 	</div>

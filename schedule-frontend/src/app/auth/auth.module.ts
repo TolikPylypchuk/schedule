@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 
 import { LoginComponent } from "./components/login.component";
+import { LogoutComponent } from "./components/logout.component";
 
 import { AuthService } from "./services/auth.service";
 
@@ -18,7 +19,8 @@ import { RoutesModule } from "./routes.module";
 
 @NgModule({
 	declarations: [
-		LoginComponent
+		LoginComponent,
+		LogoutComponent
 	],
 	imports: [
 		BrowserModule,

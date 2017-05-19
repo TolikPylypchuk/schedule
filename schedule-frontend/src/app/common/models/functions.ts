@@ -117,9 +117,9 @@ export function getClassEnd(num: number): string {
 	return result;
 }
 
-export function getLecturerInitials(lecturer: User): string {
-	return lecturer
-		? `${lecturer.lastName} ${lecturer.firstName[0]}.\xA0${lecturer.middleName[0]}.`
+export function getUserInitials(user: User): string {
+	return user
+		? `${user.lastName} ${user.firstName[0]}.\xA0${user.middleName[0]}.`
 		: "";
 }
 
@@ -206,7 +206,7 @@ export function getLecturersAsString(lecturers: User[]): string {
 	return lecturers
 		? lecturers.reduce(
 			(result: string, lecturer: User) =>
-				`${result}, ${getLecturerInitials(lecturer)}`,
+				`${result}, ${getUserInitials(lecturer)}`,
 			"").substr(2)
 		: "";
 }

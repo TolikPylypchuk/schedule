@@ -2,6 +2,7 @@ import { AuthModule } from "./auth.module";
 import { RoutesModule } from "./routes.module";
 
 import { LoginComponent } from "./components/login.component";
+import { LogoutComponent } from "./components/logout.component";
 
 import { AuthService } from "./services/auth.service";
 
@@ -17,6 +18,7 @@ export {
 	RoutesModule,
 
 	LoginComponent,
+	LogoutComponent,
 
 	AuthService,
 

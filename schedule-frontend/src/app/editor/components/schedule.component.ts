@@ -8,7 +8,7 @@ import { AuthService } from "../../auth/auth";
 import * as models from "../../common/models/models";
 import * as services from "../../common/services/services";
 import {
-	getCurrentYear, getCurrentSemester, getLecturerInitials,
+	getCurrentYear, getCurrentSemester, getUserInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareLecturersByName, getDayOfWeekName
 } from "../../common/models/functions";
@@ -219,7 +219,7 @@ export class ScheduleComponent implements OnInit {
 			() => { });
 	}
 
-	getLecturerInitials = getLecturerInitials;
+	getLecturerInitials = getUserInitials;
 	getClassStart = getClassStart;
 	getClassEnd = getClassEnd;
 	getDayOfWeekName = getDayOfWeekName;
