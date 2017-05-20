@@ -31,7 +31,8 @@
 
 		<div class="col-md text-center mb-3">
 			<h2 class="h2">Аудиторії</h2>
-			<button class="btn btn-primary m-3">
+			<button class="btn btn-primary m-3"
+			        (click)="addBuildingClicked()">
 				Додати корпус
 			</button>
 
@@ -49,8 +50,18 @@
 
 					<div id="building{{ building.id }}" class="collapse"
 					     role="tabpanel" [attr.aria-labelledby]="building.id">
-						<div class="my-1">
-							<button class="btn btn-sm btn-primary">Додати</button>
+						<div class="btn-group my-1">
+							<button class="btn btn-sm btn-primary">
+								Додати
+							</button>
+							<button class="btn btn-sm btn-success"
+							        (click)="editBuildingClicked(building)">
+								Редагувати
+							</button>
+							<button class="btn btn-sm btn-danger"
+							        (click)="deleteBuildingClicked(building.id)">
+								Видалити
+							</button>
 						</div>
 						<div *ngFor="let classroom of classrooms.get(building.id)">
 							<div class="dropdown-divider m-0"></div>

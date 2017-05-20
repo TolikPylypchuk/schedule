@@ -10,7 +10,7 @@
 	</div>
 
 	<div class="modal-body">
-		<p *ngIf="!error" class="text-danger text-center">
+		<p *ngIf="error" class="text-danger text-center">
 			{{ errorText }}
 		</p>
 
@@ -19,7 +19,7 @@
 				Назва
 			</label>
 			<input id="facultyName" name="name" [(ngModel)]="faculty.name"
-			       class="form-control" required />
+			       class="form-control" required (change)="change()" />
 		</div>
 	</div>
 

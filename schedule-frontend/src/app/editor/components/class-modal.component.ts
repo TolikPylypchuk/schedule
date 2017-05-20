@@ -58,7 +58,7 @@ export class ClassModalComponent implements OnInit {
 	availableLecturers: models.User[] = [];
 	frequencySet: boolean;
 	isEditing: boolean;
-	error = true;
+	error = false;
 	errorText: string = null;
 
 	constructor(
@@ -288,7 +288,7 @@ export class ClassModalComponent implements OnInit {
 	submit(): void {
 		if (!this.isClassValid()) {
 			this.errorText = "Заповніть усі поля.";
-			this.error = false;
+			this.error = true;
 			return;
 		}
 
