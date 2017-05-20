@@ -11,6 +11,7 @@ import { AdminComponent } from "./components/admin.component";
 import { HomeComponent } from "./components/home.component";
 import { AdditionalComponent } from "./components/additional.component";
 import { BuildingModalComponent } from "./components/building-modal.component";
+import { ClassroomModalComponent } from "./components/classroom-modal.component";
 import { ClassroomTypeModalComponent } from "./components/classroom-type-modal.component";
 import { FacultyModalComponent } from "./components/faculty-modal.component";
 
@@ -20,6 +21,7 @@ import { FacultyModalComponent } from "./components/faculty-modal.component";
 		HomeComponent,
 		AdditionalComponent,
 		BuildingModalComponent,
+		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
 		FacultyModalComponent
 	],
@@ -33,6 +35,7 @@ import { FacultyModalComponent } from "./components/faculty-modal.component";
 	],
 	entryComponents: [
 		BuildingModalComponent,
+		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
 		FacultyModalComponent
 	]

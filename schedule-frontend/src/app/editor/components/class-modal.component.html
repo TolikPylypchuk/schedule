@@ -47,7 +47,7 @@
 						        required name="subject"
 						        [(ngModel)]="currentClass.subject"
 						        (change)="resetGroupsAndLecturers()">
-							<option selected [value]="null">
+							<option *ngIf="!isEditing" selected [value]="null">
 								Виберіть предмет
 							</option>
 							<option *ngFor="let subject of subjects"
@@ -63,7 +63,7 @@
 						<select class="form-control" id="classTypeSelect"
 						        required name="type"
 						        [(ngModel)]="currentClass.type">
-							<option selected [value]="null">
+							<option *ngIf="!isEditing" selected [value]="null">
 								Виберіть тип пари
 							</option>
 							<option *ngFor="let type of [ 'Лекція', 'Практична', 'Лабораторна' ]">
@@ -81,7 +81,7 @@
 						        required name="classroomType"
 						        [(ngModel)]="currentClass.classroomType"
 						        (change)="resetClassrooms()">
-							<option selected [value]="null">
+							<option *ngIf="!isEditing" selected [value]="null">
 								Виберіть тип аудиторії
 							</option>
 							<option *ngFor="let type of classroomTypes"

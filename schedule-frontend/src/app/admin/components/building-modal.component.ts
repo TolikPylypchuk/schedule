@@ -23,9 +23,9 @@ export class BuildingModalComponent {
 	error = false;
 	errorText = "";
 
-	constructor(activeModal: NgbActiveModal, facultyService: BuildingService) {
+	constructor(activeModal: NgbActiveModal, buildingService: BuildingService) {
 		this.activeModal = activeModal;
-		this.buildingService = facultyService;
+		this.buildingService = buildingService;
 	}
 
 	change(): void {

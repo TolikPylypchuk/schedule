@@ -51,7 +51,8 @@
 					<div id="building{{ building.id }}" class="collapse"
 					     role="tabpanel" [attr.aria-labelledby]="building.id">
 						<div class="btn-group my-1">
-							<button class="btn btn-sm btn-primary">
+							<button class="btn btn-sm btn-primary"
+							        (click)="addClassroomClicked(building)">
 								Додати
 							</button>
 							<button class="btn btn-sm btn-success"
@@ -71,10 +72,12 @@
 										{{ classroom.number }}
 									</div>
 									<div class="col-4 btn-group align-items-center">
-										<button class="btn btn-sm btn-success">
+										<button class="btn btn-sm btn-success"
+										        (click)="editClassroomClicked(classroom)">
 											<i class="fa fa-edit" aria-hidden="true"></i>
 										</button>
-										<button class="btn btn-sm btn-danger">
+										<button class="btn btn-sm btn-danger"
+										        (click)="deleteClassroomClicked(classroom)">
 											<i class="fa fa-remove" aria-hidden="true"></i>
 										</button>
 									</div>

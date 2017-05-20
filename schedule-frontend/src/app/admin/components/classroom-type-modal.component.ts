@@ -23,9 +23,9 @@ export class ClassroomTypeModalComponent {
 
 	constructor(
 		activeModal: NgbActiveModal,
-		facultyService: ClassroomTypeService) {
+		classroomTypeService: ClassroomTypeService) {
 		this.activeModal = activeModal;
-		this.classroomTypeService = facultyService;
+		this.classroomTypeService = classroomTypeService;
 	}
 
 	change(): void {

@@ -10,6 +10,7 @@ import {
 } from "../../common/services/services";
 
 import { BuildingModalComponent } from "./building-modal.component";
+import { ClassroomModalComponent } from "./classroom-modal.component";
 import { ClassroomTypeModalComponent } from "./classroom-type-modal.component";
 import { FacultyModalComponent } from "./faculty-modal.component";
 
@@ -148,6 +149,60 @@ export class AdditionalComponent implements OnInit {
 				this.buildings = this.buildings.filter(b => b.id !== id);
 				this.classrooms.delete(id);
 			},
+			() => { });
+
+		action.connect();
+	}
+
+	addClassroomClicked(building: Building): void {
+		const modalRef = this.modalService.open(ClassroomModalComponent);
+		const modal = modalRef.componentInstance as ClassroomModalComponent;
+
+		modal.classroom.building = building;
+		modal.classroomTypes = this.classroomTypes.filter(
+			t => t.type !== "Будь-яка");
+
+		modalRef.result.then(
+			(classroom: Classroom) => {
+				this.classrooms.get(building.id).push(classroom);
+				this.classrooms.get(building.id).sort(
+					(c1, c2) => c1.number.localeCompare(c2.number));
+			},
+			() => { });
+	}
+
+	editClassroomClicked(classroom: Classroom): void {
+		const modalRef = this.modalService.open(ClassroomModalComponent);
+		const modal = modalRef.componentInstance as ClassroomModalComponent;
+
+		modal.isEditing = true;
+		modal.classroomTypes = this.classroomTypes.filter(
+			t => t.type !== "Будь-яка");
+
+		modal.classroom = {
+			building: classroom.building,
+			id: classroom.id,
+			number: classroom.number,
+			type: classroom.type,
+			capacity: classroom.capacity
+		};
+
+		modalRef.result.then(
+			(updatedClassroom: Classroom) => {
+				classroom.number = updatedClassroom.number;
+				classroom.type = updatedClassroom.type;
+				classroom.capacity = updatedClassroom.capacity;
+			},
+			() => { });
+	}
+
+	deleteClassroomClicked(classroom: Classroom): void {
+		const action = this.classroomService.deleteClassroom(classroom.id);
+		action.subscribe(
+			() => this.classrooms.set(
+				classroom.building.id,
+				this.classrooms.get(classroom.building.id).filter(
+					c => c.id !== classroom.id)),
 			() => { });
 
 		action.connect();
