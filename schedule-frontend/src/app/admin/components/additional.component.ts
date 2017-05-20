@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import {
 	Building, Faculty, Classroom, ClassroomType
@@ -8,11 +9,15 @@ import {
 	BuildingService, FacultyService, ClassroomService, ClassroomTypeService
 } from "../../common/services/services";
 
+import { FacultyModalComponent } from "./faculty-modal.component";
+
 @Component({
 	selector: "schedule-admin-home",
 	templateUrl: "./additional.component.html"
 })
 export class AdditionalComponent implements OnInit {
+	private modalService: NgbModal;
+
 	private buildingService: BuildingService;
 	private classroomService: ClassroomService;
 	private classroomTypeService: ClassroomTypeService;
@@ -24,10 +29,13 @@ export class AdditionalComponent implements OnInit {
 	classroomTypes: ClassroomType[] = [];
 
 	constructor(
+		modalService: NgbModal,
 		buildingService: BuildingService,
 		classroomService: ClassroomService,
 		classroomTypeService: ClassroomTypeService,
 		facultyService: FacultyService) {
+		this.modalService = modalService;
+
 		this.buildingService = buildingService;
 		this.classroomService = classroomService;
 		this.classroomTypeService = classroomTypeService;
@@ -58,5 +66,41 @@ export class AdditionalComponent implements OnInit {
 										(c1, c2) => c1.number.localeCompare(c2.number))))
 					}
 				});
+	}
+
+	addFacultyClicked(): void {
+		const modalRef = this.modalService.open(FacultyModalComponent);
+
+		modalRef.result.then(
+			(faculty: Faculty) => {
+				this.faculties.push(faculty);
+				this.faculties.sort(
+					(f1, f2) => f1.name.localeCompare(f2.name));
+			},
+			() => { });
+	}
+
+	editFacultyClicked(faculty: Faculty): void {
+		const modalRef = this.modalService.open(FacultyModalComponent);
+		const modal = modalRef.componentInstance as FacultyModalComponent;
+
+		modal.isEditing = true;
+		modal.faculty = {
+			id: faculty.id,
+			name: faculty.name
+		};
+
+		modalRef.result.then(
+			(updatedFaculty: Faculty) => faculty.name = updatedFaculty.name,
+			() => { });
+	}
+
+	deleteFacultyClicked(id: number): void {
+		const action = this.facultyService.deleteFaculty(id);
+		action.subscribe(
+			() => this.faculties = this.faculties.filter(f => f.id !== id),
+			() => { });
+
+		action.connect();
 	}
 }

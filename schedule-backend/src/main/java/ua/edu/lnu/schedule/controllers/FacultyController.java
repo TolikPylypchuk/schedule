@@ -36,7 +36,7 @@ public class FacultyController {
 		this.faculties.save(faculty);
 		
 		return ResponseEntity.created(
-			new URI("/faculties" + faculty.getId())).build();
+			new URI("/faculties/" + faculty.getId())).build();
 	}
 	
 	@PutMapping("/{id}")

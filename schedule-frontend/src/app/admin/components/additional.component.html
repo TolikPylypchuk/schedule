@@ -1,8 +1,9 @@
 <div class="container">
 	<div class="row">
-		<div class="col-md text-center">
+		<div class="col-md text-center mb-3">
 			<h2 class="h2">Факультети</h2>
-			<button class="btn btn-primary m-3">
+			<button class="btn btn-primary m-3"
+			        (click)="addFacultyClicked()">
 				Додати факультет
 			</button>
 
@@ -14,10 +15,12 @@
 							{{ faculty.name }}
 						</div>
 						<div class="col-4 btn-group align-items-center">
-							<button class="btn btn-sm btn-success">
+							<button class="btn btn-sm btn-success"
+							        (click)="editFacultyClicked(faculty)">
 								<i class="fa fa-edit" aria-hidden="true"></i>
 							</button>
-							<button class="btn btn-sm btn-danger">
+							<button class="btn btn-sm btn-danger"
+							        (click)="deleteFacultyClicked(faculty.id)">
 								<i class="fa fa-remove" aria-hidden="true"></i>
 							</button>
 						</div>
@@ -26,7 +29,7 @@
 			</div>
 		</div>
 
-		<div class="col-md text-center">
+		<div class="col-md text-center mb-3">
 			<h2 class="h2">Аудиторії</h2>
 			<button class="btn btn-primary m-3">
 				Додати корпус
@@ -72,7 +75,7 @@
 			</div>
 		</div>
 
-		<div class="col-md text-center">
+		<div class="col-md text-center mb-3">
 			<h2 class="h2">Типи аудиторій</h2>
 			<button class="btn btn-primary m-3">
 				Додати тип
