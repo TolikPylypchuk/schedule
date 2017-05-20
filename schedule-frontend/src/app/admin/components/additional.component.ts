@@ -1,15 +1,16 @@
 import { Component, OnInit } from "@angular/core";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import {
 	Building, Faculty, Classroom, ClassroomType
-} from '../../common/models/models';
+} from "../../common/models/models";
 
 import {
 	BuildingService, FacultyService, ClassroomService, ClassroomTypeService
 } from "../../common/services/services";
 
-import { BuildingModalComponent } from './building-modal.component';
+import { BuildingModalComponent } from "./building-modal.component";
+import { ClassroomTypeModalComponent } from "./classroom-type-modal.component";
 import { FacultyModalComponent } from "./faculty-modal.component";
 
 @Component({
@@ -51,7 +52,8 @@ export class AdditionalComponent implements OnInit {
 
 		this.classroomTypeService.getClassroomTypes()
 			.subscribe((types: ClassroomType[]) =>
-				this.classroomTypes = types);
+				this.classroomTypes = types.sort(
+					(t1, t2) => t1.type.localeCompare(t2.type)));
 
 		this.buildingService.getBuildings()
 			.subscribe((buildings: Building[]) => {
@@ -146,6 +148,42 @@ export class AdditionalComponent implements OnInit {
 				this.buildings = this.buildings.filter(b => b.id !== id);
 				this.classrooms.delete(id);
 			},
+			() => { });
+
+		action.connect();
+	}
+
+	addClassroomTypeClicked(): void {
+		const modalRef = this.modalService.open(ClassroomTypeModalComponent);
+
+		modalRef.result.then(
+			(type: ClassroomType) => {
+				this.classroomTypes.push(type);
+				this.classroomTypes.sort(
+					(t1, t2) => t1.type.localeCompare(t2.type));
+			},
+			() => { });
+	}
+
+	editClassroomTypeClicked(classroomType: ClassroomType): void {
+		const modalRef = this.modalService.open(ClassroomTypeModalComponent);
+		const modal = modalRef.componentInstance as ClassroomTypeModalComponent;
+
+		modal.isEditing = true;
+		modal.classroomType = {
+			id: classroomType.id,
+			type: classroomType.type
+		};
+
+		modalRef.result.then(
+			(updatedType: ClassroomType) => classroomType.type = updatedType.type,
+			() => { });
+	}
+
+	deleteClassroomTypeClicked(id: number): void {
+		const action = this.classroomTypeService.deleteClassroomType(id);
+		action.subscribe(
+			() => this.classroomTypes = this.classroomTypes.filter(t => t.id !== id),
 			() => { });
 
 		action.connect();

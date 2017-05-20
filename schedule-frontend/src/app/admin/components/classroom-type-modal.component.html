@@ -1,7 +1,7 @@
 <form (ngSubmit)="submit()" #classForm="ngForm">
 	<div class="modal-header">
 		<h4 class="modal-title">
-			{{ isEditing ? "Редагувати" : "Додати" }} факультет
+			{{ isEditing ? "Редагувати" : "Додати" }} тип аудиторій
 		</h4>
 		<button type="button" class="close" aria-label="Close"
 		        (click)="activeModal.dismiss('')">
@@ -15,10 +15,10 @@
 		</p>
 
 		<div class="form-group">
-			<label for="facultyName" class="form-control-label">
-				Назва
+			<label for="classroomType" class="form-control-label">
+				Тип
 			</label>
-			<input id="facultyName" name="name" [(ngModel)]="faculty.name"
+			<input id="classroomType" name="name" [(ngModel)]="classroomType.type"
 			       class="form-control" required (change)="change()" />
 		</div>
 	</div>

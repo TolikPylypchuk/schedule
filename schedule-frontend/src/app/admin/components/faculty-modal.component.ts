@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { Response } from "@angular/http";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { Faculty } from "../../common/models/models";
@@ -44,8 +43,7 @@ export class FacultyModalComponent {
 			: this.facultyService.addFaculty(this.faculty);
 
 		action.subscribe(
-			(response: Response) =>
-				this.activeModal.close(this.faculty),
+			() => this.activeModal.close(this.faculty),
 			() => {
 				this.error = true;
 				this.errorText = "Не вдалося зберегти.";
