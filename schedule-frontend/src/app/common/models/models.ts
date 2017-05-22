@@ -75,11 +75,12 @@ export interface User extends EntityBase {
 }
 
 export interface Wish extends EntityBase {
+	dayOfWeek: string;
 	startTime: string;
 	endTime: string;
-	isSuitable: boolean;
+	suitable: boolean;
 	comment: string;
 	year: number;
-	semester: string;
+	semester: number;
 	lecturer: User;
 }

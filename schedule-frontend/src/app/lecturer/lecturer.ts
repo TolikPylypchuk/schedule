@@ -4,7 +4,7 @@ import { RoutesModule } from "./routes.module";
 import { LecturerComponent } from "./components/lecturer.component";
 import { HomeComponent } from "./components/home.component";
 import { WishesComponent } from "./components/wishes.component";
-import { WishComponent } from "./components/wish-modal.component";
+import { WishModalComponent } from "./components/wish-modal.component";
 
 export {
 	LecturerModule,
@@ -13,5 +13,5 @@ export {
 	LecturerComponent,
 	HomeComponent,
 	WishesComponent,
-	WishComponent
+	WishModalComponent
 }

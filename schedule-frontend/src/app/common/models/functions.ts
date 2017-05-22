@@ -63,10 +63,10 @@ export function getClassStart(num: number): string {
 			result = "16:40";
 			break;
 		case 7:
-			result = "18:10";
+			result = "18:05";
 			break;
 		case 8:
-			result = "19:40";
+			result = "19:35";
 			break;
 		case 9:
 			result = "21:00";
@@ -104,10 +104,10 @@ export function getClassEnd(num: number): string {
 			result = "18:00";
 			break;
 		case 7:
-			result = "19:30";
+			result = "19:35";
 			break;
 		case 8:
-			result = "20:50";
+			result = "20:55";
 			break;
 		case 9:
 			result = "22:20";
@@ -237,8 +237,8 @@ export function compareUsersByName(u1: User, u2: User) {
 }
 
 export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[] {
-	return xs.reduce((rv, x) => {
-		(rv[x[key]] = rv[x[key]] || []).push(x);
-		return rv;
+	return xs.reduce((prev, item) => {
+		(prev[item[key]] = prev[item[key]] || []).push(item);
+		return prev;
 	}, { } as any);
 }

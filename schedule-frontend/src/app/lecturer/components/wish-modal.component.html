@@ -1,0 +1,98 @@
+<form (ngSubmit)="submit()" #classForm="ngForm">
+	<div class="modal-header">
+		<h4 class="modal-title">
+			Побажання на {{ currentWish.dayOfWeek.toLocaleLowerCase() }}
+		</h4>
+		<button type="button" class="close" aria-label="Close"
+		        (click)="activeModal.dismiss('')">
+			<i class="fa fa-remove" aria-hidden="true"></i>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		<div class="container">
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group">
+						<label for="startTime" class="form-control-label">
+							Початок
+						</label>
+						<select id="startTime" name="startTime" [(ngModel)]="currentWish.startTime"
+						        class="form-control">
+							<option [ngValue]="null">Початок дня</option>
+							<option value="08:30:00">8:30</option>
+							<option value="10:10:00">10:10</option>
+							<option value="11:50:00">11:50</option>
+							<option value="13:30:00">13:30</option>
+							<option value="15:05:00">15:05</option>
+							<option value="16:40:00">16:40</option>
+							<option value="18:10:00">18:10</option>
+							<option value="19:40:00">19:40</option>
+							<option value="21:10:00">21:10</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-6">
+					<label for="endTime" class="form-control-label">
+						Кінець
+					</label>
+					<select id="endTime" name="endTime" [(ngModel)]="currentWish.endTime"
+					        class="form-control">
+						<option [ngValue]="null">Кінець дня</option>
+						<option value="09:50:00">9:50</option>
+						<option value="11:30:00">11:30</option>
+						<option value="13:10:00">13:10</option>
+						<option value="14:50:00">14:50</option>
+						<option value="16:25:00">16:25</option>
+						<option value="18:00:00">18:00</option>
+						<option value="19:30:00">19:30</option>
+						<option value="21:00:00">21:00</option>
+						<option value="22:30:00">22:30</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col text-center">
+					<span>Підходить:</span>
+					<div class="form-check form-check-inline">
+						<label for="suitable" class="form-check-label">
+							<input id="suitable" type="radio" name="isSuitable"
+							       [(ngModel)]="currentWish.suitable"
+							       class="form-check-input" required [value]="true" checked />
+							Так
+						</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<label for="unsuitable" class="form-check-label">
+							<input id="unsuitable" type="radio" name="isSuitable"
+							       [(ngModel)]="currentWish.suitable"
+							       class="form-check-input" required [value]="false" />
+							Ні
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<label for="comment" class="form-control-label">
+						Коментар
+					</label>
+					<textarea id="comment" name="comment"
+					       class="form-control"
+					       [(ngModel)]="currentWish.comment">
+					</textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-success">
+			OK
+		</button>
+		<button type="button" class="btn btn-secondary"
+		        (click)="activeModal.dismiss('')">
+			Скасувати
+		</button>
+	</div>
+</form>

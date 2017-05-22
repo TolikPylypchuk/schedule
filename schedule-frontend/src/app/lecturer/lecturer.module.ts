@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
+import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 
@@ -9,24 +10,25 @@ import { AuthModule } from "../auth/auth";
 import { LecturerComponent } from "./components/lecturer.component";
 import { HomeComponent } from "./components/home.component";
 import { WishesComponent } from "./components/wishes.component";
-import { WishComponent } from "./components/wish-modal.component";
+import { WishModalComponent } from "./components/wish-modal.component";
 
 @NgModule({
 	declarations: [
 		LecturerComponent,
 		HomeComponent,
 		WishesComponent,
-		WishComponent
+		WishModalComponent
 	],
 	imports: [
 		BrowserModule,
+		FormsModule,
 		HttpModule,
 		NgbModalModule,
 		AuthModule,
 		RoutesModule
 	],
 	entryComponents: [
-		WishComponent
+		WishModalComponent
 	]
 })
 export class LecturerModule { }
