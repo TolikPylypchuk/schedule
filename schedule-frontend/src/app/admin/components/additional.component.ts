@@ -2,11 +2,12 @@ import { Component, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import {
-	Building, Faculty, Classroom, ClassroomType
+	Building, Faculty, Classroom, ClassroomType, Subject
 } from "../../common/models/models";
 
 import {
-	BuildingService, FacultyService, ClassroomService, ClassroomTypeService
+	BuildingService, FacultyService, ClassroomService,
+	ClassroomTypeService, SubjectService
 } from "../../common/services/services";
 
 import { BuildingModalComponent } from "./building-modal.component";
@@ -25,11 +26,13 @@ export class AdditionalComponent implements OnInit {
 	private classroomService: ClassroomService;
 	private classroomTypeService: ClassroomTypeService;
 	private facultyService: FacultyService;
+	private subjectService: SubjectService;
 
 	faculties: Faculty[] = [];
 	buildings: Building[] = [];
 	classrooms: Map<number, Classroom[]> = new Map();
 	classroomTypes: ClassroomType[] = [];
+	subjects: Subject[];
 
 	constructor(
 		modalService: NgbModal,
@@ -70,6 +73,11 @@ export class AdditionalComponent implements OnInit {
 										(c1, c2) => c1.number.localeCompare(c2.number))))
 					}
 				});
+
+		this.subjectService.getSubjects()
+			.subscribe((subjects: Subject[]) => {
+				this.subjects = subjects;
+			});
 	}
 
 	addFacultyClicked(): void {

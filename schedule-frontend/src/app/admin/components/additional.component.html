@@ -118,5 +118,29 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="col-md text-center">
+			<button class="btn btn-primary m-3">
+				Додати
+			</button>
+			<div *ngFor="let subject of subjects">
+				<div class="dropdown-divider m-0"></div>
+				<div class="clearfix px-3 py-2 m-0">
+					<div class="row">
+						<div class="col-8 align-items-center">
+							{{ subject.name }}
+						</div>
+						<div class="col-4 btn-group align-items-center">
+							<button class="btn btn-sm btn-success">
+								<i class="fa fa-edit" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-sm btn-danger">
+								<i class="fa fa-remove" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

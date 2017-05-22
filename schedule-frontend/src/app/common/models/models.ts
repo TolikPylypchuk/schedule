@@ -49,7 +49,7 @@ export interface Plan extends EntityBase {
 	numPractice: number;
 	numLabs: number;
 	year: number;
-	semester: string;
+	semester: number;
 	subject: Subject;
 	group: Group;
 }

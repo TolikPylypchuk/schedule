@@ -1,0 +1,75 @@
+<form (ngSubmit)="submit()" #classForm="ngForm">
+	<div class="modal-header">
+		<h4 class="modal-title">
+			{{ isEditing ? "Редагувати" : "Додати" }} навчальний план
+		</h4>
+		<button type="button" class="close" aria-label="Close"
+		        (click)="activeModal.dismiss('')">
+			<i class="fa fa-remove" aria-hidden="true"></i>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		<p *ngIf="error" class="text-danger text-center">
+			{{ errorText }}
+		</p>
+
+		<div class="container">
+			<div class="row">
+				<div class="col mb-2">
+					<label for="subject" class="form-control-label">
+						Предмет
+					</label>
+					<select class="form-control" id="subject"
+					        required name="subject"
+					        [(ngModel)]="plan.subject"
+					        (change)="change()">
+						<option *ngIf="!isEditing" selected [value]="null">
+							Виберіть предмет
+						</option>
+						<option *ngFor="let subject of subjects"
+						        [ngValue]="subject">
+							{{ subject.name }}
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-4">
+					<label for="numLectures" class="form-control-label">
+						К-ть лекцій
+					</label>
+					<input id="numLectures" type="number" name="numLectures"
+					       [(ngModel)]="plan.numLectures"
+					       class="form-control" required (change)="change()" />
+				</div>
+				<div class="col-4">
+					<label for="numPractice" class="form-control-label">
+						К-ть практичних
+					</label>
+					<input id="numPractice" type="number" name="numPractice"
+					       [(ngModel)]="plan.numPractice"
+					       class="form-control" required (change)="change()" />
+				</div>
+				<div class="col-4">
+					<label for="numLabs" class="form-control-label">
+						К-ть лаб.
+					</label>
+					<input id="numLabs" type="number" name="numLabs"
+					       [(ngModel)]="plan.numLabs"
+					       class="form-control" required (change)="change()" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-success">
+			OK
+		</button>
+		<button type="button" class="btn btn-secondary"
+		        (click)="activeModal.dismiss('')">
+			Скасувати
+		</button>
+	</div>
+</form>

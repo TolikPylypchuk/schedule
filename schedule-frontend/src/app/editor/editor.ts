@@ -5,6 +5,8 @@ import { EditorComponent } from "./components/editor.component";
 import { HomeComponent } from "./components/home.component";
 import { ScheduleComponent } from "./components/schedule.component";
 import { ClassModalComponent } from "./components/class-modal.component";
+import { GroupModalComponent } from "./components/group-modal.component";
+import { PlanModalComponent } from "./components/plan-modal.component";
 
 export {
 	EditorModule,
@@ -13,5 +15,7 @@ export {
 	EditorComponent,
 	HomeComponent,
 	ScheduleComponent,
-	ClassModalComponent
+	ClassModalComponent,
+	GroupModalComponent,
+	PlanModalComponent
 }
