@@ -48,7 +48,7 @@ export class AuthService {
 	}
 
 	getCurrentUser(): Observable<User> {
-		return this.currentUserSource.asObservable();
+		return this.currentUserSource.asObservable().first();
 	}
 
 	getReturnUrl(): string {
@@ -110,6 +110,23 @@ export class AuthService {
 
 	isLoggedIn(): boolean {
 		return this.loggedIn;
+	}
+
+	isAdmin(): Observable<boolean> {
+		return this.isInRole("ROLE_ADMIN");
+	}
+
+	isEditor(): Observable<boolean> {
+		return this.isInRole("ROLE_EDITOR");
+	}
+
+	isLecturer(): Observable<boolean> {
+		return this.isInRole("ROLE_LECTURER");
+	}
+
+	isInRole(role: string): Observable<boolean> {
+		return this.getCurrentUser().map(
+			(user: User) => user.authorities.find(a => a.name === role) as any);
 	}
 
 	getToken(): string {

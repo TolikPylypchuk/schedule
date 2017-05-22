@@ -2,12 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
-import { Class, Classroom, Group, User } from "../../common/models/models";
-
-import {
-	ClassService, ClassroomService, GroupService, UserService
-} from "../../common/services/services";
-
 import {
 	getCurrentYear, getCurrentSemester,
 	getCurrentGroupName,
@@ -15,6 +9,12 @@ import {
 	getDayOfWeekNumber,
 	getUsersAsString, getClassroomsAsString
 } from "../../common/models/functions";
+
+import { Class, Classroom, Group, User } from "../../common/models/models";
+
+import {
+	ClassService, ClassroomService, GroupService, UserService
+} from "../../common/services/services";
 
 interface ClassInfo {
 	day: string;

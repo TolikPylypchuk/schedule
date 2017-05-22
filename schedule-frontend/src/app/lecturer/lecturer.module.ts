@@ -7,10 +7,16 @@ import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
 import { LecturerComponent } from "./components/lecturer.component";
+import { HomeComponent } from "./components/home.component";
+import { WishesComponent } from "./components/wishes.component";
+import { WishComponent } from "./components/wish-modal.component";
 
 @NgModule({
 	declarations: [
-		LecturerComponent
+		LecturerComponent,
+		HomeComponent,
+		WishesComponent,
+		WishComponent
 	],
 	imports: [
 		BrowserModule,
@@ -18,6 +24,9 @@ import { LecturerComponent } from "./components/lecturer.component";
 		NgbModalModule,
 		AuthModule,
 		RoutesModule
+	],
+	entryComponents: [
+		WishComponent
 	]
 })
 export class LecturerModule { }

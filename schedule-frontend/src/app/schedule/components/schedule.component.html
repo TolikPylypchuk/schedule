@@ -18,8 +18,21 @@
 					Викладачі
 				</a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Архів</a>
+			<li *ngIf="(isAdmin() && isLecturer()) || (isEditor() && isLecturer())"
+			    class="nav-item">
+				<a class="nav-link" routerLink="/lecturer" routerLinkActive="active">
+					Мій розклад
+				</a>
+			</li>
+			<li *ngIf="isAdmin()" class="nav-item">
+				<a class="nav-link" routerLink="/admin/additional" routerLinkActive="active">
+					Додаткові налаштування
+				</a>
+			</li>
+			<li *ngIf="isLecturer()" class="nav-item">
+				<a class="nav-link" routerLink="/lecturer/wishes" routerLinkActive="active">
+					Побажання
+				</a>
 			</li>
 		</ul>
 		<ul class="navbar-nav mx-3">

@@ -1,15 +1,15 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
+import {
+	getCurrentGroupCourse, getCurrentGroupName
+} from "../../common/models/functions";
+
 import { Faculty, Group } from "../../common/models/models";
 
 import {
 	GroupService, FacultyService
 } from "../../common/services/services";
-
-import {
-	getCurrentGroupCourse, getCurrentGroupName
-} from "../../common/models/functions";
 
 @Component({
 	selector: "schedule-groups",

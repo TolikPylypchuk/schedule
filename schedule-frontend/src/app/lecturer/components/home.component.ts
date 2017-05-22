@@ -1,20 +1,20 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Observable } from "rxjs/Observable";
-
-import { Class, Classroom, Group, User } from "../../common/models/models";
 
 import {
 	getCurrentYear, getCurrentSemester,
-	getUserInitials,
 	getClassStart, getClassEnd,
 	getDayOfWeekNumber,
 	getGroupsAsString, getClassroomsAsString
 } from "../../common/models/functions";
 
+import { Class, Classroom, Group, User } from "../../common/models/models";
+
 import {
 	ClassService, ClassroomService, GroupService, UserService
 } from "../../common/services/services";
+
+import { AuthService } from "../../auth/auth";
 
 interface ClassInfo {
 	day: string;
@@ -29,33 +29,28 @@ interface ClassInfo {
 }
 
 @Component({
-	selector: "schedule-lecturer",
-	templateUrl: "./lecturer.component.html"
+	selector: "schedule-lecturer-home",
+	templateUrl: "./home.component.html"
 })
-export class LecturerComponent implements OnInit {
-	private route: ActivatedRoute;
-	private router: Router;
-
+export class HomeComponent implements OnInit {
+	private authService: AuthService;
 	private classService: ClassService;
 	private classroomService: ClassroomService;
 	private groupService: GroupService;
 	private userService: UserService;
 
-	private currentLecturer: string;
+	private currentLecturer: User;
 	private classes: ClassInfo[] = [];
 
 	isLoaded = false;
 
 	constructor(
-		route: ActivatedRoute,
-		router: Router,
+		authService: AuthService,
 		classService: ClassService,
 		classroomService: ClassroomService,
 		groupService: GroupService,
 		userService: UserService) {
-		this.route = route;
-		this.router = router;
-
+		this.authService = authService;
 		this.classService = classService;
 		this.classroomService = classroomService;
 		this.groupService = groupService;
@@ -66,10 +61,9 @@ export class LecturerComponent implements OnInit {
 		const currentYear = getCurrentYear();
 		const semester = getCurrentSemester();
 
-		this.route.params
-			.switchMap((params: Params) => this.userService.getUser(+params["id"]))
+		this.authService.getCurrentUser()
 			.subscribe((lecturer: User) => {
-				this.currentLecturer = getUserInitials(lecturer);
+				this.currentLecturer = lecturer;
 
 				this.classService.getClassesByLecturerAndYearAndSemester(
 					lecturer.id, currentYear, semester)

@@ -18,7 +18,6 @@ export class LecturerComponent {
 
 	currentUserInitials(): Observable<string> {
 		return this.authService.getCurrentUser()
-			.map(user => getUserInitials(user))
-			.first();
+			.map(user => getUserInitials(user));
 	}
 }
