@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import {
 	getUserInitials, compareUsersByName
 } from "../../common/models/functions";
+
 import { Faculty, User } from "../../common/models/models";
 import { FacultyService, UserService } from "../../common/services/services";
 
@@ -24,26 +25,26 @@ export class HomeComponent implements OnInit {
 		this.userService = userService;
 	}
 
-	ngOnInit(): void {
-		this.facultyService.getFaculties()
-			.subscribe((faculties: Faculty[]) => {
-				this.faculties = faculties.sort(
-					(f1, f2) => f1.name.localeCompare(f2.name));
+		ngOnInit(): void {
+	this.facultyService.getFaculties()
+		.subscribe((faculties: Faculty[]) => {
+			this.faculties = faculties.sort(
+				(f1, f2) => f1.name.localeCompare(f2.name));
 
-				this.userService.getAdmins()
-					.subscribe((admins: User[]) => this.admins = admins);
+			this.userService.getAdmins()
+				.subscribe((admins: User[]) => this.admins = admins);
 
-				for (const faculty of faculties) {
-					this.userService.getLecturersByFaculty(faculty.id)
-						.subscribe((lecturers: User[]) =>
-							this.lecturers.set(
-								faculty.id, lecturers.sort(compareUsersByName)));
+			for (const faculty of faculties) {
+				this.userService.getLecturersByFaculty(faculty.id)
+					.subscribe((lecturers: User[]) =>
+						this.lecturers.set(
+							faculty.id, lecturers.sort(compareUsersByName)));
 
-					this.userService.getEditorsByFaculty(faculty.id)
-						.subscribe((editors: User[]) =>
-							this.editors.set(
-								faculty.id, editors.sort(compareUsersByName)));
-				}
+				this.userService.getEditorsByFaculty(faculty.id)
+					.subscribe((editors: User[]) =>
+						this.editors.set(
+							faculty.id, editors.sort(compareUsersByName)));
+			}
 			});
 	}
 

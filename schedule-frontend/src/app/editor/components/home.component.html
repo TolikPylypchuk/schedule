@@ -1,11 +1,12 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md text-center">
-			<h2 class="h2">Розклад</h2>
-			<button class="btn btn-primary m-3" (click)="navigateToSchedule()">
-				Редагувати розклад
-			</button>
+			<div class="btn btn-primary m-3" (click)="navigateToSchedule()">
+				<p class="h2 text-center">Розклад</p>
+			</div>
 		</div>
+	</div>
+	<div class="row">
 		<div class="col-md text-center">
 			<h2 class="h2">Групи</h2>
 		</div>
@@ -14,6 +15,98 @@
 		</div>
 		<div class="col-md text-center">
 			<h2 class="h2">Навчальні плани</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md text-center">
+			<button class="btn btn-primary m-3">
+				Додати
+			</button>
+				<div *ngFor="let group of groups">
+					<div class="dropdown-divider m-0"></div>
+					<div class="clearfix px-3 py-2 m-0">
+						<div class="row">
+							<div class="col-8 align-items-center">
+								{{ getCurrentGroupName(group) }}
+							</div>
+							<div class="col-4 btn-group align-items-center">
+								<button class="btn btn-sm btn-success">
+									<i class="fa fa-edit" aria-hidden="true"></i>
+								</button>
+								<button class="btn btn-sm btn-danger">
+									<i class="fa fa-remove" aria-hidden="true"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+
+		<div class="col-md text-center">
+			<button class="btn btn-primary m-3">
+				Додати
+			</button>
+			<div *ngFor="let subject of subjects">
+				<div class="dropdown-divider m-0"></div>
+				<div class="clearfix px-3 py-2 m-0">
+					<div class="row">
+						<div class="col-8 align-items-center">
+							{{ subject.name }}
+						</div>
+						<div class="col-4 btn-group align-items-center">
+							<button class="btn btn-sm btn-success">
+								<i class="fa fa-edit" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-sm btn-danger">
+								<i class="fa fa-remove" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md text-center">
+			<div class="mt-3">
+				<div id="plansGroup" role="tablist" aria-multiselectable="true">
+					<div class="card" *ngFor="let group of groups">
+						<div class="card-header" role="tab" id="plans{{ group.id }}">
+							<h6 class="m-0">
+								<a data-toggle="collapse"
+									 href="#plansGroup{{ group.id }}" aria-expanded="false"
+									 [attr.aria-controls]="'plansGroup' + group.id">
+									{{ getCurrentGroupName(group) }}
+								</a>
+							</h6>
+						</div>
+
+						<div id="plansGroup{{ group.id }}" class="collapse"
+								 role="tabpanel" [attr.aria-labelledby]="group.id">
+							<div class="my-1">
+								<button class="btn btn-sm btn-primary">Додати</button>
+							</div>
+							<div *ngFor="let plan of plans.get(group.id)">
+								<div class="dropdown-divider m-0"></div>
+								<div class="clearfix px-3 py-2 m-0">
+									<div class="row">
+										<div class="col-8 align-items-center">
+											{{ plan.subject.name }}
+										</div>
+										<div class="col-4 btn-group align-items-center">
+											<button class="btn btn-sm btn-success">
+												<i class="fa fa-edit" aria-hidden="true"></i>
+											</button>
+											<button class="btn btn-sm btn-danger">
+												<i class="fa fa-remove" aria-hidden="true"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
