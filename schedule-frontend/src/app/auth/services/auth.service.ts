@@ -22,6 +22,7 @@ export class AuthService {
 	private currentUserSource = new ReplaySubject<User>();
 
 	private loggedIn = false;
+	private loggingIn = false;
 	private returnUrl: string = null;
 
 	constructor(http: Http, router: Router) {
@@ -92,6 +93,7 @@ export class AuthService {
 							this.setReturnUrl("");
 						});
 
+					this.loggingIn = false;
 					return true;
 				}
 
@@ -110,6 +112,14 @@ export class AuthService {
 
 	isLoggedIn(): boolean {
 		return this.loggedIn;
+	}
+
+	isLoggingIn(): boolean {
+		return this.loggingIn;
+	}
+
+	setLoggingIn(value: boolean): void {
+		this.loggingIn = value;
 	}
 
 	isAdmin(): Observable<boolean> {

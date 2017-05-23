@@ -2,6 +2,8 @@ import { Component } from "@angular/core";
 
 @Component({
 	selector: "schedule-root",
-	template: "<router-outlet></router-outlet>"
+	template: `
+		<schedule-navigation></schedule-navigation>
+		<router-outlet></router-outlet>`
 })
 export class AppComponent { }

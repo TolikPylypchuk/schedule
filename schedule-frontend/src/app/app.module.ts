@@ -5,6 +5,7 @@ import { HttpModule } from "@angular/http";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { AppComponent } from "./app.component";
+import { NavigationComponent } from "./navigation.component";
 import { StartPageComponent } from "./start-page.component";
 
 import { AuthModule } from "./auth/auth";
@@ -19,6 +20,7 @@ import * as services from "./common/services/services";
 @NgModule({
 	declarations: [
 		AppComponent,
+		NavigationComponent,
 		StartPageComponent
 	],
 	imports: [

@@ -5,7 +5,7 @@ import { AdminComponent } from "./components/admin.component";
 import { HomeComponent } from "./components/home.component";
 import { AdditionalComponent } from "./components/additional.component";
 
-import { AuthGuard, AdminGuard } from '../auth/auth';
+import { AuthGuard, AdminGuard } from "../auth/auth";
 
 const routes: Routes = [
 	{

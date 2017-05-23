@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { AuthService } from "../services/auth.service";
@@ -8,7 +8,7 @@ import { LoginModel } from '../models/models';
 	selector: "schedule-login",
 	templateUrl: "./login.component.html"
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
 	model: LoginModel = {
 		username: "",
 		password: ""
@@ -22,6 +22,14 @@ export class LoginComponent {
 	constructor(router: Router, authService: AuthService) {
 		this.router = router;
 		this.authService = authService;
+	}
+
+	ngOnInit(): void {
+		this.authService.setLoggingIn(true);
+	}
+
+	ngOnDestroy(): void {
+		this.authService.setLoggingIn(false);
 	}
 
 	returnUrl(): string {

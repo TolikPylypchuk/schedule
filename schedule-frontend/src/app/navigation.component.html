@@ -1,0 +1,63 @@
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+	<button class="navbar-toggler navbar-toggler-right" type="button"
+	        data-toggle="collapse" data-target="#navbarSupportedContent"
+	        aria-controls="navbarSupportedContent" aria-expanded="false"
+	        aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<a class="navbar-brand" routerLink="">Тут буде логотип</a>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" routerLink="/schedule/groups" routerLinkActive="active">
+					Групи
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" routerLink="/schedule/lecturers" routerLinkActive="active">
+					Викладачі
+				</a>
+			</li>
+			<li *ngIf="isLecturer() | async"
+			    class="nav-item">
+				<a class="nav-link" routerLink="/lecturer" routerLinkActive="active">
+					Мій розклад
+				</a>
+			</li>
+			<li *ngIf="isLecturer() | async" class="nav-item">
+				<a class="nav-link" routerLink="/lecturer/wishes" routerLinkActive="active">
+					Побажання
+				</a>
+			</li>
+			<li *ngIf="isEditor() | async" class="nav-item">
+				<a class="nav-link" routerLink="/editor" routerLinkActive="active">
+					Факультет
+				</a>
+			</li>
+			<li *ngIf="isAdmin() | async" class="nav-item">
+				<a class="nav-link" routerLink="/admin/additional" routerLinkActive="active">
+					Додатково
+				</a>
+			</li>
+		</ul>
+		<ul *ngIf="!isLoggingIn()" class="navbar-nav mx-3">
+			<li *ngIf="!isLoggedIn(); else loggedIn" class="nav-item">
+				<a class="nav-link" routerLink="/login">Вхід</a>
+			</li>
+			<ng-template #loggedIn>
+				<li class="nav-item dropdown">
+					<a id="dropdownItem" class="nav-link dropdown-toggle"
+					   data-toggle="dropdown" role="button"
+					   aria-haspopup="true" aria-expanded="false">
+						{{ currentUserInitials() | async }}
+					</a>
+					<div class="dropdown-menu dropdown-menu-right">
+						<a class="dropdown-item" routerLink="/logout">
+							Вийти
+						</a>
+					</div>
+				</li>
+			</ng-template>
+		</ul>
+	</div>
+</nav>

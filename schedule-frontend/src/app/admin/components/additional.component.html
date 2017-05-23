@@ -39,23 +39,23 @@
 			<div id="buildings" role="tablist" aria-multiselectable="true">
 				<div class="card" *ngFor="let building of buildings">
 					<div class="card-header" role="tab" id="{{ building.id }}">
-						<span class="h6 col-1 m-0">
+						<span class="h6 col-9 m-0">
 							<a data-toggle="collapse" data-parent="#faculties"
 							   href="#building{{ building.id }}" aria-expanded="false"
 							   [attr.aria-controls]="'building' + building.id">
 								{{ building.name }}
 							</a>
 						</span>
-						<span class="btn-group col-2 my-1">
-						<button class="btn btn-sm btn-success"
-										(click)="editBuildingClicked(building)">
-							<i class="fa fa-edit" aria-hidden="true"></i>
-						</button>
-						<button class="btn btn-sm btn-danger"
-										(click)="deleteBuildingClicked(building.id)">
-							<i class="fa fa-remove" aria-hidden="true"></i>
-						</button>
-					</span>
+						<span class="btn-group col-3 my-1">
+							<button class="btn btn-sm btn-success"
+											(click)="editBuildingClicked(building)">
+								<i class="fa fa-edit" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-sm btn-danger"
+											(click)="deleteBuildingClicked(building.id)">
+								<i class="fa fa-remove" aria-hidden="true"></i>
+							</button>
+						</span>
 					</div>
 					<div id="building{{ building.id }}" class="collapse"
 					     role="tabpanel" [attr.aria-labelledby]="building.id">
@@ -118,8 +118,9 @@
 				</div>
 			</div>
 		</div>
-
+		
 		<div class="col-md text-center">
+			<h2 class="h2">Предмети</h2>
 			<button class="btn btn-primary m-3">
 				Додати
 			</button>

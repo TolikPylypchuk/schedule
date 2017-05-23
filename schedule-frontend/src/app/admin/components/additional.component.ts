@@ -39,13 +39,15 @@ export class AdditionalComponent implements OnInit {
 		buildingService: BuildingService,
 		classroomService: ClassroomService,
 		classroomTypeService: ClassroomTypeService,
-		facultyService: FacultyService) {
+		facultyService: FacultyService,
+		subjectService: SubjectService) {
 		this.modalService = modalService;
 
 		this.buildingService = buildingService;
 		this.classroomService = classroomService;
 		this.classroomTypeService = classroomTypeService;
 		this.facultyService = facultyService;
+		this.subjectService = subjectService;
 	}
 
 	ngOnInit(): void {
