@@ -1,7 +1,8 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { ScheduleComponent } from "./components/schedule.component";
+import { ScheduleComponent } from "./schedule.component";
+
 import { GroupsComponent } from "./components/groups.component";
 import { LecturersComponent } from "./components/lecturers.component";
 import { GroupComponent } from "./components/group.component";

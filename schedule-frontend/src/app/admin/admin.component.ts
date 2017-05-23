@@ -1,15 +1,20 @@
 import { Component } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 
-import { getUserInitials } from "../../common/models/functions";
+import { getUserInitials } from "../common/models/functions";
 
-import { AuthService } from "../../auth/services/auth.service";
+import { AuthService } from "../auth/services/auth.service";
 
 @Component({
-	selector: "schedule-editor-root",
-	templateUrl: "./editor.component.html"
+	selector: "schedule-admin-root",
+	template: `
+		<div class="p-3">
+			<router-outlet>
+			</router-outlet>
+		</div>
+	`
 })
-export class EditorComponent {
+export class AdminComponent {
 	private authService: AuthService;
 
 	constructor(authService: AuthService) {

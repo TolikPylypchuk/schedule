@@ -178,9 +178,5 @@ export class HomeComponent implements OnInit {
 		action.connect();
 	}
 
-	navigateToSchedule(): void {
-		this.router.navigate([ "/editor/schedule" ]);
-	}
-
 	getCurrentGroupName = getCurrentGroupName;
 }

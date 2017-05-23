@@ -1,7 +1,8 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { EditorComponent } from "./components/editor.component";
+import { EditorComponent } from "./editor.component";
+
 import { HomeComponent } from "./components/home.component";
 import { ScheduleComponent } from './components/schedule.component';
 

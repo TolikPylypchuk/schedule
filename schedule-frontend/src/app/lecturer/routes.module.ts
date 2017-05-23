@@ -1,7 +1,8 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { LecturerComponent } from "./components/lecturer.component";
+import { LecturerComponent } from "./lecturer.component";
+
 import { HomeComponent } from "./components/home.component";
 import { WishesComponent } from "./components/wishes.component";
 

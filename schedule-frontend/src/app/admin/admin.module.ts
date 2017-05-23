@@ -7,7 +7,8 @@ import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
-import { AdminComponent } from "./components/admin.component";
+import { AdminComponent } from "./admin.component";
+
 import { HomeComponent } from "./components/home.component";
 import { AdditionalComponent } from "./components/additional.component";
 import { BuildingModalComponent } from "./components/building-modal.component";

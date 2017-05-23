@@ -7,7 +7,8 @@ import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
-import { LecturerComponent } from "./components/lecturer.component";
+import { LecturerComponent } from "./lecturer.component";
+
 import { HomeComponent } from "./components/home.component";
 import { WishesComponent } from "./components/wishes.component";
 import { WishModalComponent } from "./components/wish-modal.component";

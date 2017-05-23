@@ -20,7 +20,8 @@
 			</li>
 			<li *ngIf="isLecturer() | async"
 			    class="nav-item">
-				<a class="nav-link" routerLink="/lecturer" routerLinkActive="active">
+				<a class="nav-link" routerLink="/lecturer" routerLinkActive="active"
+				   [routerLinkActiveOptions]="{exact: true}">
 					Мій розклад
 				</a>
 			</li>
@@ -30,8 +31,16 @@
 				</a>
 			</li>
 			<li *ngIf="isEditor() | async" class="nav-item">
-				<a class="nav-link" routerLink="/editor" routerLinkActive="active">
+				<a class="nav-link" routerLink="/editor" routerLinkActive="active"
+				   [routerLinkActiveOptions]="{exact: true}">
 					Факультет
+				</a>
+			</li>
+			<li *ngIf="isAdmin() | async"
+			    class="nav-item">
+				<a class="nav-link" routerLink="/admin" routerLinkActive="active"
+				   [routerLinkActiveOptions]="{exact: true}">
+					Налаштування
 				</a>
 			</li>
 			<li *ngIf="isAdmin() | async" class="nav-item">

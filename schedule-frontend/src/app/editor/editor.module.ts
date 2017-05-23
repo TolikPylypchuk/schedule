@@ -7,7 +7,8 @@ import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
 
-import { EditorComponent } from "./components/editor.component";
+import { EditorComponent } from "./editor.component";
+
 import { HomeComponent } from "./components/home.component";
 import { ScheduleComponent } from "./components/schedule.component";
 import { ClassModalComponent } from "./components/class-modal.component";

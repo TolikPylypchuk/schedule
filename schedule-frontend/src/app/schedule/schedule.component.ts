@@ -1,14 +1,19 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 
-import { getUserInitials } from "../../common/models/functions";
-import { User } from "../../common/models/models";
+import { getUserInitials } from "../common/models/functions";
+import { User } from "../common/models/models";
 
-import { AuthService } from "../../auth/services/auth.service";
+import { AuthService } from "../auth/services/auth.service";
 
 @Component({
 	selector: "schedule-schedule-root",
-	templateUrl: "./schedule.component.html"
+	template: `
+		<div class="p-3">
+			<router-outlet>
+			</router-outlet>
+		</div>
+	`
 })
 export class ScheduleComponent implements OnInit {
 	private authService: AuthService;
