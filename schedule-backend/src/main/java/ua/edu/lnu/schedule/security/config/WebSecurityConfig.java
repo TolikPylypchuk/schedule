@@ -128,11 +128,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.hasAuthority("ROLE_EDITOR")
 				
 				.antMatchers(HttpMethod.POST, "/subjects/**")
-					.hasAuthority("ROLE_EDITOR")
+					.hasAuthority("ROLE_ADMIN")
 				.antMatchers(HttpMethod.PUT, "/subjects/**")
-					.hasAuthority("ROLE_EDITOR")
+					.hasAuthority("ROLE_ADMIN")
 				.antMatchers(HttpMethod.DELETE, "/subjects/**")
-					.hasAuthority("ROLE_EDITOR")
+					.hasAuthority("ROLE_ADMIN")
 				
 				.antMatchers(HttpMethod.POST, "/wishes/**")
 					.hasAuthority("ROLE_LECTURER")
@@ -144,7 +144,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/users/**")
 					.hasAuthority("ROLE_ADMIN")
 				.antMatchers(HttpMethod.PUT, "/users/**")
-					.hasAuthority("ROLE_ADMIN")
+					.authenticated()
 				.antMatchers(HttpMethod.DELETE, "/users/**")
 					.hasAuthority("ROLE_ADMIN")
 				

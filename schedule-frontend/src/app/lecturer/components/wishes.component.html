@@ -35,15 +35,17 @@
 									<div class="col-md-9 col-6 text-left">
 										{{ wish.comment }}
 									</div>
-									<div class="col-md-1 col-2 btn-group text-center">
-										<button class="btn btn-sm btn-success"
-										        (click)="editWishClicked(wish)">
-											<i class="fa fa-edit" aria-hidden="true"></i>
-										</button>
-										<button class="btn btn-sm btn-danger"
-										        (click)="deleteWishClicked(wish.id, index + 1)">
-											<i class="fa fa-remove" aria-hidden="true"></i>
-										</button>
+									<div class="col-md-1 col-2 text-center">
+										<span class="btn-group">
+											<button class="btn btn-sm btn-success"
+											        (click)="editWishClicked(wish)">
+												<i class="fa fa-edit" aria-hidden="true"></i>
+											</button>
+											<button class="btn btn-sm btn-danger"
+											        (click)="deleteWishClicked(wish.id, index + 1)">
+												<i class="fa fa-remove" aria-hidden="true"></i>
+											</button>
+										</span>
 									</div>
 								</div>
 							</div>
