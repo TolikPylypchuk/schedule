@@ -39,20 +39,20 @@
 			<div id="buildings" role="tablist" aria-multiselectable="true">
 				<div class="card" *ngFor="let building of buildings">
 					<div class="card-header" role="tab" id="{{ building.id }}">
-						<span class="h6 col-9 m-0">
+						<span class="h6 m-0">
 							<a data-toggle="collapse" data-parent="#faculties"
 							   href="#building{{ building.id }}" aria-expanded="false"
 							   [attr.aria-controls]="'building' + building.id">
 								{{ building.name }}
 							</a>
 						</span>
-						<span class="btn-group col-3 my-1">
+						<span class="btn-group float-right my-1">
 							<button class="btn btn-sm btn-success"
-											(click)="editBuildingClicked(building)">
+							        (click)="editBuildingClicked(building)">
 								<i class="fa fa-edit" aria-hidden="true"></i>
 							</button>
 							<button class="btn btn-sm btn-danger"
-											(click)="deleteBuildingClicked(building.id)">
+							        (click)="deleteBuildingClicked(building.id)">
 								<i class="fa fa-remove" aria-hidden="true"></i>
 							</button>
 						</span>
