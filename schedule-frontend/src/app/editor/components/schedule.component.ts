@@ -42,6 +42,7 @@ export class ScheduleComponent implements OnInit {
 	currentUser: models.User;
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
+	lecturerWishes: Map<number, models.Wish[]> = new Map();
 
 	constructor(
 		modalService: NgbModal,
@@ -84,6 +85,13 @@ export class ScheduleComponent implements OnInit {
 								getCurrentSemester())
 								.subscribe((classes: models.Class[]) =>
 									this.lecturersClasses.set(lecturer.id, classes));
+							this.wishService.getWishesByLecturerAndYearAndSemester(
+								lecturer.id,
+								getCurrentYear(),
+								getCurrentSemester())
+								.subscribe((wishes: models.Wish[]) => {
+									this.lecturerWishes.set(lecturer.id, wishes)
+								});
 						}
 					});
 			});
@@ -198,7 +206,8 @@ export class ScheduleComponent implements OnInit {
 		frequency: ClassFrequency,
 		day: number,
 		num: number,
-		lecturer: models.User): void {
+		lecturer: models.User,
+		wish: models.Wish): void {
 		const modalRef = this.modalService.open(
 			ClassModalComponent, { size: "lg" });
 		const modal = modalRef.componentInstance as ClassModalComponent;
@@ -212,11 +221,25 @@ export class ScheduleComponent implements OnInit {
 		modal.currentClass.number = num;
 		modal.contextLecturer = lecturer;
 		modal.currentClass.lecturers = [ lecturer ];
+		modal.wish = wish;
 
 		modalRef.result.then(
 			(newClass: models.Class) =>
 				this.lecturersClasses.get(lecturer.id).push(newClass),
 			() => { });
+	}
+
+	getWish(lecturerId: number, day: number, classNum: number): models.Wish {
+		let wish: models.Wish = null;
+		let wishes = this.lecturerWishes.get(lecturerId);
+		if (wishes != null) {
+			wish = wishes.find(w => {
+				return getDayOfWeekNumber(w.dayOfWeek) == day
+				&& w.startTime.localeCompare(getClassStart(classNum) + ":00") <= 0
+				&& w.endTime.localeCompare(getClassEnd(classNum) + ":00") >= 0;
+			})
+		}
+		return wish;
 	}
 
 	getLecturerInitials = getUserInitials;

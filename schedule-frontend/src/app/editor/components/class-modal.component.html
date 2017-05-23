@@ -24,6 +24,19 @@
 				</div>
 			</div>
 			<div class="row">
+				<div *ngIf="wish != null" class="col text-center">
+					<p *ngIf="wish.suitable" class="text-success">
+						Час підходить
+					</p>
+					<p *ngIf="!wish.suitable" class="text-danger">
+						Час не підходить
+					</p>
+					<p *ngIf="wish.comment !== ''">
+						Коментар: {{ wish.comment }}
+					</p>
+				</div>
+			</div>
+			<div class="row">
 				<div class="col form-group text-center">
 					<div *ngFor="let f of [ 'Щотижня', 'По чисельнику', 'По знаменнику' ]"
 					     class="form-check form-check-inline">

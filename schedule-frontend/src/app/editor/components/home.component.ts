@@ -58,7 +58,10 @@ export class HomeComponent implements OnInit {
 				(g1, g2) => getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2)));
 
 			for (const group of groups) {
-				this.planSirvice.getPlansByGroup(group.id)
+				this.planSirvice.getPlansByGroupAndYearAndSemester(
+					group.id,
+					getCurrentYear(),
+					getCurrentSemester())
 					.subscribe((plans: Plan[]) => {
 						this.plans.set(
 							group.id,

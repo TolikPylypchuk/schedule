@@ -45,7 +45,7 @@ export function getClassStart(num: number): string {
 
 	switch (num) {
 		case 1:
-			result = "8:30";
+			result = "08:30";
 			break;
 		case 2:
 			result = "10:10";
@@ -86,7 +86,7 @@ export function getClassEnd(num: number): string {
 
 	switch (num) {
 		case 1:
-			result = "9:50";
+			result = "09:50";
 			break;
 		case 2:
 			result = "11:30";

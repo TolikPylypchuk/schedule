@@ -61,6 +61,8 @@ export class ClassModalComponent implements OnInit {
 	error = false;
 	errorText: string = null;
 
+	wish: models.Wish = null;
+
 	constructor(
 		activeModal: NgbActiveModal,
 		authService: AuthService,

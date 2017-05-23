@@ -19,7 +19,7 @@
 						</label>
 						<select id="startTime" name="startTime" [(ngModel)]="currentWish.startTime"
 						        class="form-control">
-							<option [ngValue]="null">Початок дня</option>
+							<option value="08:30:00">Початок дня</option>
 							<option value="08:30:00">8:30</option>
 							<option value="10:10:00">10:10</option>
 							<option value="11:50:00">11:50</option>
@@ -38,7 +38,7 @@
 					</label>
 					<select id="endTime" name="endTime" [(ngModel)]="currentWish.endTime"
 					        class="form-control">
-						<option [ngValue]="null">Кінець дня</option>
+						<option value="22:30:00">Кінець дня</option>
 						<option value="09:50:00">9:50</option>
 						<option value="11:30:00">11:30</option>
 						<option value="13:10:00">13:10</option>
