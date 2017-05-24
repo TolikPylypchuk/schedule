@@ -56,8 +56,15 @@ public class Subject implements Serializable {
 		this.classes = classes;
 	}
 	
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "subjects")
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "subject_user",
+		joinColumns = {
+			@JoinColumn(name = "subject", referencedColumnName = "id")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "`user`", referencedColumnName = "id")
+		})
 	public Set<User> getLecturers() {
 		return this.lecturers;
 	}

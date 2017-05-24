@@ -261,7 +261,7 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	isGroupChecked(group: models.Group): boolean {
-		return this.currentClass.groups.find(g => g.id === group.id) as any;
+		return !!this.currentClass.groups.find(g => g.id === group.id);
 	}
 
 	lecturerChecked(lecturer: models.User): void {
@@ -274,7 +274,7 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	isLecturerChecked(lecturer: models.User): boolean {
-		return this.currentClass.lecturers.find(l => l.id === lecturer.id) as any;
+		return !!this.currentClass.lecturers.find(l => l.id === lecturer.id);
 	}
 
 	getTotalNumberOfStudents(): number {

@@ -134,15 +134,7 @@ public class User implements Serializable {
 	}
 	
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-		name = "subject_user",
-		joinColumns = {
-			@JoinColumn(name = "`user`", referencedColumnName = "id")
-		},
-		inverseJoinColumns = {
-			@JoinColumn(name = "subject", referencedColumnName = "id")
-		})
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lecturers")
 	public Set<Subject> getSubjects() {
 		return subjects;
 	}

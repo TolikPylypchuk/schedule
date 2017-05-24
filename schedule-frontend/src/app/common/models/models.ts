@@ -60,6 +60,7 @@ export interface Role extends EntityBase {
 
 export interface Subject extends EntityBase {
 	name: string;
+	lecturers: User[];
 }
 
 export interface User extends EntityBase {

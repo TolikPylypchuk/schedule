@@ -14,6 +14,7 @@ import { BuildingModalComponent } from "./building-modal.component";
 import { ClassroomModalComponent } from "./classroom-modal.component";
 import { ClassroomTypeModalComponent } from "./classroom-type-modal.component";
 import { FacultyModalComponent } from "./faculty-modal.component";
+import { SubjectModalComponent } from "./subject-modal.component";
 
 @Component({
 	selector: "schedule-admin-home",
@@ -77,9 +78,9 @@ export class AdditionalComponent implements OnInit {
 				});
 
 		this.subjectService.getSubjects()
-			.subscribe((subjects: Subject[]) => {
-				this.subjects = subjects;
-			});
+			.subscribe((subjects: Subject[]) =>
+				this.subjects = subjects.sort(
+					(s1, s2) => s1.name.localeCompare(s2.name)));
 	}
 
 	addFacultyClicked(): void {
@@ -249,6 +250,46 @@ export class AdditionalComponent implements OnInit {
 		const action = this.classroomTypeService.deleteClassroomType(id);
 		action.subscribe(
 			() => this.classroomTypes = this.classroomTypes.filter(t => t.id !== id),
+			() => { });
+
+		action.connect();
+	}
+
+	addSubjectClicked(): void {
+		const modalRef = this.modalService.open(SubjectModalComponent);
+
+		modalRef.result.then(
+			(subject: Subject) => {
+				this.subjects.push(subject);
+				this.subjects.sort(
+					(s1, s2) => s1.name.localeCompare(s2.name));
+			},
+			() => { });
+	}
+
+	editSubjectClicked(subject: Subject): void {
+		const modalRef = this.modalService.open(SubjectModalComponent);
+		const modal = modalRef.componentInstance as SubjectModalComponent;
+
+		modal.isEditing = true;
+		modal.subject = {
+			id: subject.id,
+			name: subject.name,
+			lecturers: subject.lecturers
+		};
+
+		modalRef.result.then(
+			(updatedSubject: Subject) => {
+				subject.name = updatedSubject.name;
+				subject.lecturers = updatedSubject.lecturers;
+			},
+			() => { });
+	}
+
+	deleteSubjectClicked(id: number): void {
+		const action = this.subjectService.deleteSubject(id);
+		action.subscribe(
+			() => this.subjects = this.subjects.filter(s => s.id !== id),
 			() => { });
 
 		action.connect();

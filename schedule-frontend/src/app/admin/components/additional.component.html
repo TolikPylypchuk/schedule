@@ -121,7 +121,8 @@
 
 		<div class="col-md text-center">
 			<h2 class="h2">Предмети</h2>
-			<button class="btn btn-primary m-3">
+			<button class="btn btn-primary m-3"
+			        (click)="addSubjectClicked()">
 				Додати
 			</button>
 			<div *ngFor="let subject of subjects">
@@ -132,10 +133,12 @@
 							{{ subject.name }}
 						</div>
 						<div class="col-4 btn-group align-items-center">
-							<button class="btn btn-sm btn-success">
+							<button class="btn btn-sm btn-success"
+							        (click)="editSubjectClicked(subject)">
 								<i class="fa fa-edit" aria-hidden="true"></i>
 							</button>
-							<button class="btn btn-sm btn-danger">
+							<button class="btn btn-sm btn-danger"
+							        (click)="deleteSubjectClicked(subject.id)">
 								<i class="fa fa-remove" aria-hidden="true"></i>
 							</button>
 						</div>
