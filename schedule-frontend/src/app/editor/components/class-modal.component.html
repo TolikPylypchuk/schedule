@@ -55,7 +55,7 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="subjectSelect">Предмет:</label>
+						<label for="subjectSelect">Предмет</label>
 						<select class="form-control" id="subjectSelect"
 						        required name="subject"
 						        [(ngModel)]="currentClass.subject"
@@ -72,7 +72,7 @@
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="classTypeSelect">Тип пари:</label>
+						<label for="classTypeSelect">Тип пари</label>
 						<select class="form-control" id="classTypeSelect"
 						        required name="type"
 						        [(ngModel)]="currentClass.type">
@@ -89,7 +89,7 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						<label for="classroomTypeSelect">Тип аудиторії:</label>
+						<label for="classroomTypeSelect">Тип аудиторії</label>
 						<select class="form-control" id="classroomTypeSelect"
 						        required name="classroomType"
 						        [(ngModel)]="currentClass.classroomType"
@@ -105,7 +105,7 @@
 					</div>
 				</div>
 				<div class="col-md-4">
-					<div>Аудиторії:</div>
+					<div>Аудиторії</div>
 					<div>
 						{{ getClassroomsAsString(currentClass.classrooms) }}
 						<span *ngIf="getTotalCapacity() !== 0">
@@ -158,7 +158,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-4">
-					<div>Групи:</div>
+					<div>Групи</div>
 					<div>
 						{{ getGroupsAsString(currentClass.groups) }}
 						<span *ngIf="getTotalNumberOfStudents() !== 0">
@@ -189,7 +189,7 @@
 					</button>
 				</div>
 				<div class="col-md-4">
-					<div>Викладачі:</div>
+					<div>Викладачі</div>
 					<div>{{ getLecturersAsString(currentClass.lecturers) }}</div>
 					<div class="collapse mt-2" id="collapseLecturers">
 						<div *ngIf="availableLecturers.length === 0">

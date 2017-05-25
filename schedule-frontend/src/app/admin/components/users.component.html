@@ -1,5 +1,13 @@
 <div class="container">
 	<div class="row">
+		<div class="col text-center">
+			<button class="btn btn-lg btn-primary m-3"
+			        (click)="addUser()">
+				Додати користувача
+			</button>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-md text-center">
 			<h2 class="h2">Викладачі</h2>
 
@@ -18,9 +26,6 @@
 
 						<div id="lecturersFaculty{{ faculty.id }}" class="collapse"
 						     role="tabpanel" [attr.aria-labelledby]="faculty.id">
-							<div class="my-1">
-								<button class="btn btn-sm btn-primary">Додати</button>
-							</div>
 							<div *ngFor="let lecturer of lecturers.get(faculty.id)">
 								<div class="dropdown-divider m-0"></div>
 								<div class="clearfix px-3 py-2 m-0">
@@ -29,10 +34,12 @@
 											{{ getUserInitials(lecturer) }}
 										</div>
 										<div class="col-4 btn-group align-items-center">
-											<button class="btn btn-sm btn-success">
+											<button class="btn btn-sm btn-success"
+											        (click)="editUser(lecturer)">
 												<i class="fa fa-edit" aria-hidden="true"></i>
 											</button>
-											<button class="btn btn-sm btn-danger">
+											<button class="btn btn-sm btn-danger"
+											        (click)="deleteUser(lecturer)">
 												<i class="fa fa-remove" aria-hidden="true"></i>
 											</button>
 										</div>
@@ -63,9 +70,6 @@
 
 						<div id="editorsFaculty{{ faculty.id }}" class="collapse"
 						     role="tabpanel" [attr.aria-labelledby]="faculty.id">
-							<div class="my-1">
-								<button class="btn btn-sm btn-primary">Додати</button>
-							</div>
 							<div *ngFor="let editor of editors.get(faculty.id)">
 								<div class="dropdown-divider m-0"></div>
 								<div class="clearfix px-3 py-2 m-0">
@@ -74,10 +78,12 @@
 											{{ getUserInitials(editor) }}
 										</div>
 										<div class="col-4 btn-group align-items-center">
-											<button class="btn btn-sm btn-success">
+											<button class="btn btn-sm btn-success"
+											        (click)="editUser(editor)">
 												<i class="fa fa-edit" aria-hidden="true"></i>
 											</button>
-											<button class="btn btn-sm btn-danger">
+											<button class="btn btn-sm btn-danger"
+											        (click)="deleteUser(editor)">
 												<i class="fa fa-remove" aria-hidden="true"></i>
 											</button>
 										</div>
@@ -92,9 +98,6 @@
 
 		<div class="col-md text-center">
 			<h2 class="h2">Адміністратори</h2>
-			<button class="btn btn-primary m-3">
-				Додати
-			</button>
 			<div *ngFor="let admin of admins">
 				<div class="dropdown-divider m-0"></div>
 				<div class="clearfix px-3 py-2 m-0">
@@ -103,10 +106,13 @@
 							{{ getUserInitials(admin) }}
 						</div>
 						<div class="col-4 btn-group align-items-center">
-							<button class="btn btn-sm btn-success">
+							<button class="btn btn-sm btn-success"
+							        (click)="editUser(admin)">
 								<i class="fa fa-edit" aria-hidden="true"></i>
 							</button>
-							<button class="btn btn-sm btn-danger">
+							<button class="btn btn-sm btn-danger"
+							        [attr.disabled]="admin.id === currentAdmin.id ? true : null"
+							        (click)="deleteUser(admin)">
 								<i class="fa fa-remove" aria-hidden="true"></i>
 							</button>
 						</div>

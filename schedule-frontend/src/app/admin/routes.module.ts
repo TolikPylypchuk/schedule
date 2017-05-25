@@ -3,8 +3,8 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { AdminComponent } from "./admin.component";
 
-import { HomeComponent } from "./components/home.component";
-import { AdditionalComponent } from "./components/additional.component";
+import { UsersComponent } from "./components/users.component";
+import { SettingsComponent } from "./components/settings.component";
 
 import { AuthGuard, AdminGuard } from "../auth/auth";
 
@@ -13,8 +13,8 @@ const routes: Routes = [
 		path: "admin",
 		component: AdminComponent,
 		children: [
-			{ path: "additional", component: AdditionalComponent },
-			{ path: "", component: HomeComponent, pathMatch: "full" }
+			{ path: "settings", component: SettingsComponent },
+			{ path: "", component: UsersComponent, pathMatch: "full" }
 		],
 		canActivate: [ AuthGuard, AdminGuard ],
 		canActivateChild: [ AuthGuard, AdminGuard ]

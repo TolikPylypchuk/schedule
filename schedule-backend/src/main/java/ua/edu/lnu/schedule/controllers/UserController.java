@@ -199,26 +199,8 @@ public class UserController {
 	
 	@PostMapping
 	public ResponseEntity<?> post(
-		@RequestBody User user,
-		@RequestParam("roles") String rolesParam)
+		@RequestBody User user)
 		throws URISyntaxException {
-		String[] roles = rolesParam.split(",");
-		
-		if (!Arrays.stream(roles).allMatch(role -> {
-			role = role.toLowerCase();
-			return role.equals("admin") ||
-				   role.equals("editor") ||
-				   role.equals("lecturer");
-		})) {
-			return ResponseEntity.badRequest().build();
-		}
-		
-		user.setAuthorities(new HashSet<>());
-		
-		for (String role : roles) {
-			this.userService.addUserToRole(user, role);
-		}
-		
 		this.userService.save(user);
 		
 		return ResponseEntity.created(new URI("/users/" + user.getId())).build();

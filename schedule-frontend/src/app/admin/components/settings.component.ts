@@ -18,9 +18,9 @@ import { SubjectModalComponent } from "./subject-modal.component";
 
 @Component({
 	selector: "schedule-admin-home",
-	templateUrl: "./additional.component.html"
+	templateUrl: "./settings.component.html"
 })
-export class AdditionalComponent implements OnInit {
+export class SettingsComponent implements OnInit {
 	private modalService: NgbModal;
 
 	private buildingService: BuildingService;

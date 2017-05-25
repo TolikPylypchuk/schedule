@@ -1,5 +1,5 @@
 import {
-	Classroom, Group, User
+	Authority, Classroom, Group, User
 } from "./models";
 
 export function getCurrentYear(): number {
@@ -218,6 +218,24 @@ export function getGroupsAsString(groups: Group[]): string {
 				`${result}, ${getCurrentGroupName(group)}`,
 			"").substr(2)
 		: "";
+}
+
+export function getAuthorityName(authority: Authority): string {
+	let result = "";
+
+	switch (authority.name) {
+		case "ROLE_LECTURER":
+			result = "Викладач";
+			break;
+		case "ROLE_EDITOR":
+			result = "Редактор";
+			break;
+		case "ROLE_ADMIN":
+			result = "Адміністратор";
+			break;
+	}
+
+	return result;
 }
 
 export function compareUsersByName(u1: User, u2: User) {

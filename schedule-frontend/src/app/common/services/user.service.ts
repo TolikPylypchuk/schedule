@@ -145,9 +145,9 @@ export class UserService {
 			.first();
 	}
 
-	addUser(user: User, roles: string): ConnectableObservable<Response> {
+	addUser(user: User): ConnectableObservable<Response> {
 		const result = this.http.post(
-			`${this.usersUrl}?roles=${roles}`,
+			`${this.usersUrl}`,
 			JSON.stringify(user),
 			{ headers: getHeaders() })
 			.catch(handleError)
@@ -182,18 +182,22 @@ export class UserService {
 			.publish();
 	}
 
-	updateUser(user: User): Observable<Response> {
+	updateUser(user: User): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.usersUrl}/${user.id}`,
 			JSON.stringify(user),
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 
-	deleteUser(id: number): Observable<Response> {
+	deleteUser(id: number): ConnectableObservable<Response> {
 		return this.http.delete(
 			`${this.usersUrl}/${id}`,
 			{ headers: getHeaders() })
-			.catch(handleError);
+			.catch(handleError)
+			.first()
+			.publish();
 	}
 }

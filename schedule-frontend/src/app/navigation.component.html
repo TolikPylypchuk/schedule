@@ -42,12 +42,12 @@
 			    class="nav-item">
 				<a class="nav-link" routerLink="/admin" routerLinkActive="active"
 				   [routerLinkActiveOptions]="{exact: true}">
-					Налаштування
+					Користувачі
 				</a>
 			</li>
 			<li *ngIf="isAdmin() | async" class="nav-item">
-				<a class="nav-link" routerLink="/admin/additional" routerLinkActive="active">
-					Додатково
+				<a class="nav-link" routerLink="/admin/settings" routerLinkActive="active">
+					Налаштування
 				</a>
 			</li>
 		</ul>

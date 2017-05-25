@@ -37,13 +37,11 @@ public class User implements Serializable {
 		this.id = id;
 	}
 	
-	@JsonIgnore
 	@Column(name = "username", nullable = false, length = 50)
 	public String getUsername() {
 		return this.username;
 	}
 	
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setUsername(String username) {
 		this.username = username;
 	}

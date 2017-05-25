@@ -9,24 +9,26 @@ import { AuthModule } from "../auth/auth";
 
 import { AdminComponent } from "./admin.component";
 
-import { HomeComponent } from "./components/home.component";
-import { AdditionalComponent } from "./components/additional.component";
+import { UsersComponent } from "./components/users.component";
+import { SettingsComponent } from "./components/settings.component";
 import { BuildingModalComponent } from "./components/building-modal.component";
 import { ClassroomModalComponent } from "./components/classroom-modal.component";
 import { ClassroomTypeModalComponent } from "./components/classroom-type-modal.component";
 import { FacultyModalComponent } from "./components/faculty-modal.component";
 import { SubjectModalComponent } from "./components/subject-modal.component";
+import { UserModalComponent } from "./components/user-modal.component";
 
 @NgModule({
 	declarations: [
 		AdminComponent,
-		HomeComponent,
-		AdditionalComponent,
+		UsersComponent,
+		SettingsComponent,
 		BuildingModalComponent,
 		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
 		FacultyModalComponent,
-		SubjectModalComponent
+		SubjectModalComponent,
+		UserModalComponent
 	],
 	imports: [
 		BrowserModule,
@@ -41,7 +43,8 @@ import { SubjectModalComponent } from "./components/subject-modal.component";
 		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
 		FacultyModalComponent,
-		SubjectModalComponent
+		SubjectModalComponent,
+		UserModalComponent
 	]
 })
 export class AdminModule { }

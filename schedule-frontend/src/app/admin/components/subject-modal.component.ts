@@ -72,7 +72,7 @@ export class SubjectModalComponent implements OnInit {
 	lecturerChecked(lecturer: User): void {
 		if (!!this.subject.lecturers.find(l => l.id === lecturer.id)) {
 			this.subject.lecturers = this.subject.lecturers.filter(
-				c => c.id !== lecturer.id);
+				l => l.id !== lecturer.id);
 		} else {
 			this.subject.lecturers.push(lecturer);
 		}
