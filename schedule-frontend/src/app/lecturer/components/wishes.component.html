@@ -27,10 +27,10 @@
 								<div class="row py-2 align-content-center"
 								     [style.background-color]="wish.suitable ? '#CCFACC' : '#FACCCC'">
 									<div class="col-md-1 col-2 text-center">
-										{{ wish.startTime ? wish.startTime.substr(0, 5) : "Від початку" }}
+										{{ wish.startTime.substr(0, 5) }}
 									</div>
 									<div class="col-md-1 col-2 text-center">
-										{{ wish.endTime ? wish.endTime.substr(0, 5) : "До кінця" }}
+										{{ wish.endTime.substr(0, 5) }}
 									</div>
 									<div class="col-md-9 col-6 text-left">
 										{{ wish.comment }}

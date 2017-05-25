@@ -15,8 +15,8 @@ export class WishModalComponent {
 
 	currentWish: Wish = {
 		dayOfWeek: null,
-		startTime: null,
-		endTime: null,
+		startTime: "08:30:00",
+		endTime: "22:20:00",
 		suitable: true,
 		comment: null,
 		year: null,
@@ -25,6 +25,30 @@ export class WishModalComponent {
 	};
 
 	isEditing = false;
+
+	startTimes = [
+		"08:30",
+		"10:10",
+		"11:50",
+		"13:30",
+		"15:05",
+		"16:40",
+		"18:05",
+		"19:30",
+		"21:00"
+	];
+
+	endTimes = [
+		"09:50",
+		"11:30",
+		"13:10",
+		"14:50",
+		"16:25",
+		"18:00",
+		"19:35",
+		"20:55",
+		"22:20"
+	];
 
 	constructor(activeModal: NgbActiveModal, wishService: WishService) {
 		this.activeModal = activeModal;
