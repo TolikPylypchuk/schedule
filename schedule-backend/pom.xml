@@ -13,9 +13,10 @@
 	<description>Schedule for LNU Backend</description>
 	
 	<parent>
-		<groupId>ua.edu.lnu</groupId>
-		<artifactId>schedule</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.4.RELEASE</version>
+		<relativePath />
 	</parent>
 
 	<properties>
