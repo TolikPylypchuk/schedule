@@ -3,31 +3,31 @@
 
 <div class="d-flex align-content-stretch flex-nowrap">
 	<div>
-			<table class="table table-bordered table-striped table-sm">
-				<thead>
-				<tr>
-					<th class="text-center">День</th>
-				</tr>
-				<tr>
-					<th class="text-center">#&nbsp;пари</th>
-				</tr>
-				<tr>
-					<th class="text-center">Початок<br/>Кінець</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr *ngFor="let lecturer of lecturers">
-					<th>
-						<div class="btn btn-block btn-sm text-center">
-							{{ getLecturerInitials(lecturer) }}
-						</div>
-						<div class="btn btn-block btn-sm text-center" style="visibility: hidden">
-							яйко-сподівайко
-						</div>
-					</th>
-				</tr>
-				</tbody>
-			</table>
+		<table class="table table-bordered table-striped table-sm">
+			<thead>
+			<tr>
+				<th class="text-center">День</th>
+			</tr>
+			<tr>
+				<th class="text-center">#&nbsp;пари</th>
+			</tr>
+			<tr>
+				<th class="text-center">Початок<br/>Кінець</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr *ngFor="let lecturer of lecturers">
+				<th>
+					<div class="btn btn-block btn-sm text-center">
+						{{ getLecturerInitials(lecturer) }}
+					</div>
+					<div class="btn btn-block btn-sm text-center" style="visibility: hidden">
+						яйко-сподівайко
+					</div>
+				</th>
+			</tr>
+			</tbody>
+		</table>
 	</div>
 	<div class="table-responsive">
 		<table type="table" class="table table-bordered table-sm table-striped" id="header">

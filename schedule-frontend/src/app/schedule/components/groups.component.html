@@ -17,7 +17,7 @@
 
 					<div id="faculty{{ faculty.id }}" class="collapse"
 					     role="tabpanel" [attr.aria-labelledby]="faculty.id">
-						<div class="card card-block">
+						<div class="card card-body">
 							<div *ngFor="let course of [ 1, 2, 3, 4, 5, 6 ]" class="card">
 								<h6 class="m-2">
 									<a data-toggle="collapse" [attr.data-parent]="'#faculty'+faculty.id"

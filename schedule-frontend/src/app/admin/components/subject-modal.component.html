@@ -61,7 +61,7 @@
 								</div>
 								<div class="collapse" id="collapse{{ faculty.id }}"
 								     role="tabpanel" [attr.aria-labelledby]="faculty.id">
-									<div class="card-block">
+									<div class="card-body">
 										<div *ngIf="lecturers.get(faculty.id) && lecturers.get(faculty.id).length === 0">
 											<p>Немає викладачів.</p>
 										</div>
