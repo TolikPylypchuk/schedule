@@ -6,16 +6,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>schedule-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>schedule-backend</name>
 	<description>Schedule for LNU Backend</description>
 	
 	<parent>
-		<groupId>ua.edu.lnu</groupId>
-		<artifactId>schedule</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.6.RELEASE</version>
+		<relativePath />
 	</parent>
 
 	<properties>

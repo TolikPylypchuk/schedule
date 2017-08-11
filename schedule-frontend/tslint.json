@@ -12,7 +12,7 @@
 		"curly": true,
 		"eofline": true,
 		"forin": true,
-		"import-blacklist": [true, "rxjs"],
+		"import-blacklist": [ true, "rxjs" ],
 		"import-spacing": true,
 		"indent": [
 			true,
@@ -66,10 +66,11 @@
 		"prefer-const": true,
 		"quotemark": [
 			true,
-			"single"
+			"double"
 		],
 		"radix": true,
 		"semicolon": [
+			true,
 			"always"
 		],
 		"triple-equals": [
@@ -98,8 +99,8 @@
 			"check-type"
 		],
 
-		"directive-selector": [true, "attribute", "app", "camelCase"],
-		"component-selector": [true, "element", "app", "kebab-case"],
+		"directive-selector": [true, "attribute", "schedule", "camelCase"],
+		"component-selector": [true, "element", "schedule", "kebab-case"],
 		"use-input-property-decorator": true,
 		"use-output-property-decorator": true,
 		"use-host-property-decorator": true,
