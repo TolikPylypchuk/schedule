@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import ua.edu.lnu.schedule.models.Authority;
-import ua.edu.lnu.schedule.models.User;
+import ua.edu.lnu.schedule.dataaccess.models.Authority;
+import ua.edu.lnu.schedule.dataaccess.models.User;
 
 public final class JwtUserFactory {
 	

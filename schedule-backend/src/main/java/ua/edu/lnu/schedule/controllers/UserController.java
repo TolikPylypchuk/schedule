@@ -16,10 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.schedule.models.*;
-import ua.edu.lnu.schedule.models.Class;
-import ua.edu.lnu.schedule.models.viewmodels.ChangePasswordModel;
-import ua.edu.lnu.schedule.repositories.*;
+import ua.edu.lnu.schedule.dataaccess.models.Class;
+import ua.edu.lnu.schedule.dataaccess.models.*;
+import ua.edu.lnu.schedule.dataaccess.repositories.*;
+import ua.edu.lnu.schedule.dataaccess.viewmodels.ChangePasswordModel;
 import ua.edu.lnu.schedule.security.services.UserService;
 
 @RestController

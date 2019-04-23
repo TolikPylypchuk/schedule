@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.schedule.models.ClassroomType;
-import ua.edu.lnu.schedule.models.Classroom;
-import ua.edu.lnu.schedule.models.Class;
-import ua.edu.lnu.schedule.repositories.ClassRepository;
-import ua.edu.lnu.schedule.repositories.ClassroomRepository;
-import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;
+import ua.edu.lnu.schedule.dataaccess.models.ClassroomType;
+import ua.edu.lnu.schedule.dataaccess.models.Classroom;
+import ua.edu.lnu.schedule.dataaccess.models.Class;
+import ua.edu.lnu.schedule.dataaccess.repositories.ClassRepository;
+import ua.edu.lnu.schedule.dataaccess.repositories.ClassroomRepository;
+import ua.edu.lnu.schedule.dataaccess.repositories.ClassroomTypeRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -1,7 +1,7 @@
 package ua.edu.lnu.schedule.security.services;
 
-import ua.edu.lnu.schedule.models.Authority;
-import ua.edu.lnu.schedule.models.User;
+import ua.edu.lnu.schedule.dataaccess.models.Authority;
+import ua.edu.lnu.schedule.dataaccess.models.User;
 
 public interface UserService {
 	void save(User user);

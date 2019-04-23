@@ -1,11 +1,11 @@
-package ua.edu.lnu.schedule.repositories;
+package ua.edu.lnu.schedule.dataaccess.repositories;
 
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import ua.edu.lnu.schedule.models.*;
-import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.dataaccess.models.Class;
+import ua.edu.lnu.schedule.dataaccess.models.*;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
 	User findByUsername(String username);

@@ -1,4 +1,4 @@
-package ua.edu.lnu.schedule.models;
+package ua.edu.lnu.schedule.dataaccess.models;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -15,8 +15,8 @@ public class Group implements Serializable {
 	private int year;
 	private int numStudents;
 	
-	private Faculty faculty;
-	
+	private Department department;
+
 	private Set<Class> classes;
 	private Set<Plan> plans;
 	
@@ -58,13 +58,13 @@ public class Group implements Serializable {
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "faculty", nullable = false)
-	public Faculty getFaculty() {
-		return this.faculty;
+	@JoinColumn(name = "department", nullable = false)
+	public Department getDepartment() {
+		return this.department;
 	}
 	
-	public void setFaculty(Faculty faculty) {
-		this.faculty = faculty;
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 	
 	@JsonIgnore
@@ -77,7 +77,7 @@ public class Group implements Serializable {
 		this.classes = classes;
 	}
 	
-	@JsonIgnore
+/*	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
 	public Set<Plan> getPlans() {
 		return this.plans;
@@ -85,5 +85,5 @@ public class Group implements Serializable {
 	
 	public void setPlans(Set<Plan> plans) {
 		this.plans = plans;
-	}
+	}*/
 }

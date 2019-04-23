@@ -1,4 +1,4 @@
-package ua.edu.lnu.schedule.models;
+package ua.edu.lnu.schedule.dataaccess.models;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,7 +21,7 @@ public class User implements Serializable {
 	private String position;
 	private Date lastPasswordReset;
 	
-	private Faculty faculty;
+	private Department department;
 	private Set<Authority> authorities;
 	private Set<Subject> subjects;
 	private Set<Class> classes;
@@ -105,13 +105,13 @@ public class User implements Serializable {
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "faculty", nullable = false)
-	public Faculty getFaculty() {
-		return this.faculty;
+	@JoinColumn(name = "department", nullable = false)
+	public Department getDepartment() {
+		return this.department;
 	}
 	
-	public void setFaculty(Faculty faculty) {
-		this.faculty = faculty;
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 	
 	@ManyToMany(fetch = FetchType.EAGER)

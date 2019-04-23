@@ -1,4 +1,4 @@
-package ua.edu.lnu.schedule.models;
+package ua.edu.lnu.schedule.dataaccess.models;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -13,7 +13,7 @@ public class Faculty implements Serializable {
 	private Integer id;
 	private String name;
 	
-	private Set<Group> groups;
+	private Set<Department> departments;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +36,12 @@ public class Faculty implements Serializable {
 	
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
-	public Set<Group> getGroups() {
-		return this.groups;
+	public Set<Department> getGroups() {
+		return this.departments;
 	}
 	
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
+	public void setGroups(Set<Department> departments) {
+		this.departments = departments;
 	}
 	
 }

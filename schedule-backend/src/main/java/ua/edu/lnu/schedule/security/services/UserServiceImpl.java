@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ua.edu.lnu.schedule.models.Authority;
-import ua.edu.lnu.schedule.models.User;
-import ua.edu.lnu.schedule.repositories.AuthorityRepository;
-import ua.edu.lnu.schedule.repositories.UserRepository;
+import ua.edu.lnu.schedule.dataaccess.models.Authority;
+import ua.edu.lnu.schedule.dataaccess.models.User;
+import ua.edu.lnu.schedule.dataaccess.repositories.AuthorityRepository;
+import ua.edu.lnu.schedule.dataaccess.repositories.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {

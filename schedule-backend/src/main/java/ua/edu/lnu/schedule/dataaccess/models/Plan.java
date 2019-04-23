@@ -1,4 +1,4 @@
-package ua.edu.lnu.schedule.models;
+package ua.edu.lnu.schedule.dataaccess.models;
 
 import java.io.Serializable;
 
@@ -12,10 +12,11 @@ public class Plan implements Serializable {
 	private int numPractice;
 	private int numLabs;
 	private int year;
+	private int course;
 	private Semester semester;
 	
 	private Subject subject;
-	private Group group;
+	private Department department;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,12 +85,12 @@ public class Plan implements Serializable {
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "`group`", nullable = false)
-	public Group getGroup() {
-		return this.group;
+	@JoinColumn(name = "department", nullable = false)
+	public Department getDepartment() {
+		return this.department;
 	}
 	
-	public void setGroup(Group group) {
-		this.group = group;
+	public void setGroup(Department department) {
+		this.department = department;
 	}
 }

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.schedule.models.Faculty;
-import ua.edu.lnu.schedule.repositories.FacultyRepository;
+import ua.edu.lnu.schedule.dataaccess.models.Faculty;
+import ua.edu.lnu.schedule.dataaccess.repositories.FacultyRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;

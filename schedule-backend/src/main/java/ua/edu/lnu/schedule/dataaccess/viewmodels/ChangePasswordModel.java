@@ -1,4 +1,4 @@
-package ua.edu.lnu.schedule.models.viewmodels;
+package ua.edu.lnu.schedule.dataaccess.viewmodels;
 
 public class ChangePasswordModel {
 	private String oldPassword;

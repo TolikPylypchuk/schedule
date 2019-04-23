@@ -1,12 +1,12 @@
-package ua.edu.lnu.schedule.repositories;
+package ua.edu.lnu.schedule.dataaccess.repositories;
 
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import ua.edu.lnu.schedule.models.Class;
-import ua.edu.lnu.schedule.models.Group;
-import ua.edu.lnu.schedule.models.Plan;
+import ua.edu.lnu.schedule.dataaccess.models.Group;
+import ua.edu.lnu.schedule.dataaccess.models.Class;
+import ua.edu.lnu.schedule.dataaccess.models.Plan;
 
 public interface GroupRepository extends CrudRepository<Group, Integer> {
 	List<Group> findAllByYear(int year);

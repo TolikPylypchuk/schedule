@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.schedule.models.Plan;
-import ua.edu.lnu.schedule.models.Semester;
-import ua.edu.lnu.schedule.repositories.PlanRepository;
+import ua.edu.lnu.schedule.dataaccess.models.Plan;
+import ua.edu.lnu.schedule.dataaccess.models.Semester;
+import ua.edu.lnu.schedule.dataaccess.repositories.PlanRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,9 +41,15 @@ public class PlanController {
 		return plan;
 	}
 	
+	@GetMapping("/departmentId/{departmentId}")
+	public @ResponseBody Iterable<Plan> getByDepartment(
+		@PathVariable("departmentId") int departmentId) {
+		return this.plans.findAllByDepartment_Id(departmentId);
+	}
+
 	@GetMapping("/groupId/{groupId}")
 	public @ResponseBody Iterable<Plan> getByGroup(
-		@PathVariable("groupId") int groupId) {
+			@PathVariable("groupId") int groupId) {
 		return this.plans.findAllByGroup_Id(groupId);
 	}
 	
