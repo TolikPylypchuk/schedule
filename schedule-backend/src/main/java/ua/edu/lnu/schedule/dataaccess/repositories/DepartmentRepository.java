@@ -1,7 +1,13 @@
 package ua.edu.lnu.schedule.dataaccess.repositories;
 
-import org.springframework.data.repository.CrudRepository;
-import ua.edu.lnu.schedule.dataaccess.models.Faculty;
+import java.util.List;
 
-public interface DepartmentRepository extends CrudRepository<Faculty, Integer> {
+import org.springframework.data.repository.CrudRepository;
+
+import ua.edu.lnu.schedule.dataaccess.models.Department;
+import ua.edu.lnu.schedule.dataaccess.models.Group;
+
+public interface DepartmentRepository extends CrudRepository<Department, Integer> {
+	List<Department> findAllByFaculty_Id(Integer id);
+	
 }

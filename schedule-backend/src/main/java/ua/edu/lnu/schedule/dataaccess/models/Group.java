@@ -15,6 +15,7 @@ public class Group implements Serializable {
 	private int year;
 	private int numStudents;
 	
+	private Faculty faculty;
 	private Department department;
 
 	private Set<Class> classes;
@@ -57,16 +58,6 @@ public class Group implements Serializable {
 		this.numStudents = numStudents;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "department", nullable = false)
-	public Department getDepartment() {
-		return this.department;
-	}
-	
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
-	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "groups")
 	public Set<Class> getClasses() {
@@ -76,6 +67,28 @@ public class Group implements Serializable {
 	public void setClasses(Set<Class> classes) {
 		this.classes = classes;
 	}
+	
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "faculty", nullable = false)
+	public Faculty getFaculty() {
+		return this.faculty;
+	}
+	
+	public void setFaculty(Faculty faculty) {
+		this.faculty = faculty;
+	}
+	
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "department", nullable = false)
+	public Department getDepartment() {
+		return this.department;
+	}
+	
+	public void setDepartment(Department department) {
+		this.department = department;
+	}	
 	
 /*	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "group")

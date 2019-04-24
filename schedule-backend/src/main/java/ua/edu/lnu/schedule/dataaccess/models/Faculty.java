@@ -13,7 +13,10 @@ public class Faculty implements Serializable {
 	private Integer id;
 	private String name;
 	
-	private Set<Department> departments;
+	private Set<Department> departments;	
+	/*private Set<Group> groups;*/
+
+	private Set<Building> buildings;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,14 +37,43 @@ public class Faculty implements Serializable {
 		this.name = name;
 	}
 	
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
-	public Set<Department> getGroups() {
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "faculty", nullable = false)
+	public Set<Department> getDepartments() {
 		return this.departments;
 	}
 	
-	public void setGroups(Set<Department> departments) {
-		this.departments = departments;
+/*	@OneToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "faculty_department_group",
+			joinColumns = {
+				@JoinColumn(name = "faculty", referencedColumnName = "id")
+			},
+			inverseJoinColumns = {
+				@JoinColumn(name = "group", referencedColumnName = "id")
+			})
+	public Set<Group> getGroups() {
+		return this.groups;
 	}
 	
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
+	}*/	
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "faculty_building",
+			joinColumns = {
+				@JoinColumn(name = "faculty", referencedColumnName = "id")
+			},
+			inverseJoinColumns = {
+				@JoinColumn(name = "building", referencedColumnName = "id")
+			})
+	public Set<Building> getBuildings() {
+		return this.buildings;
+	}
+	
+	public void setBuildings(Set<Building> buildings) {
+		this.buildings = buildings;
+	}	
 }

@@ -12,7 +12,9 @@ public class Department implements Serializable {
 	private Integer id;
 	private String name;
 	
+	private Faculty faculty;
 	private Set<Group> groups;
+	private Set<Plan> plans;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +36,18 @@ public class Department implements Serializable {
 	}
 	
 	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "faculty", nullable = false)
+	public Faculty getFaculty() {
+		return this.faculty;
+	}
+	
+	public void setFaculty(Faculty faculty) {
+		this.faculty = faculty;
+	}	
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "deapartments")
 	public Set<Group> getGroups() {
 		return this.groups;
 	}
@@ -43,4 +56,13 @@ public class Department implements Serializable {
 		this.groups = groups;
 	}
 	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "deapartments")
+	public Set<Plan> getPlans() {
+		return this.plans;
+	}
+	
+	public void setPlans(Set<Plan> plans) {
+		this.plans = plans;
+	}	
 }

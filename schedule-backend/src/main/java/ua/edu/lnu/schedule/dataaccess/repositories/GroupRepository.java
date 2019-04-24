@@ -6,13 +6,14 @@ import org.springframework.data.repository.CrudRepository;
 
 import ua.edu.lnu.schedule.dataaccess.models.Group;
 import ua.edu.lnu.schedule.dataaccess.models.Class;
-import ua.edu.lnu.schedule.dataaccess.models.Plan;
+import ua.edu.lnu.schedule.dataaccess.models.Department;
 
 public interface GroupRepository extends CrudRepository<Group, Integer> {
 	List<Group> findAllByYear(int year);
 	List<Group> findAllByClassesContaining(Class c);
-	List<Group> findAllByFaculty_Id(Integer id);
-	List<Group> findAllByFaculty_IdAndYear(Integer id, int year);
-	List<Group> findAllByFaculty_IdAndYearGreaterThanEqual(Integer id, int year);
-	Group findByPlansContaining(Plan plan);
+	List<Group> findAllByDepartment_Id(Integer id);
+	List<Group> findAllByDepartment_IdIn(List<Integer> ids);
+	List<Group> findAllByDepartment_IdAndYear(Integer id, int year);
+	List<Group> findAllByDepartment_IdAndYearGreaterThanEqual(Integer id, int year);
+	Group findByDepartmentsContaining(Department department);
 }

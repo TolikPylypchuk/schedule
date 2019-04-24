@@ -15,42 +15,28 @@ import org.springframework.web.bind.annotation.*;
 import ua.edu.lnu.schedule.dataaccess.models.Group;
 import ua.edu.lnu.schedule.dataaccess.models.Plan;
 import ua.edu.lnu.schedule.dataaccess.models.Semester;
+import ua.edu.lnu.schedule.services.GroupService;
 import ua.edu.lnu.schedule.dataaccess.models.Class;
-import ua.edu.lnu.schedule.dataaccess.repositories.ClassRepository;
-import ua.edu.lnu.schedule.dataaccess.repositories.GroupRepository;
-import ua.edu.lnu.schedule.dataaccess.repositories.PlanRepository;
 
 @RestController
 @RequestMapping("/groups")
 public class GroupController {
-	private ClassRepository classes;
-	private GroupRepository groups;
-	private PlanRepository plans;
+	private GroupService groupService;
 	
 	@Autowired
-	public void setClasses(ClassRepository classes) {
-		this.classes = classes;
-	}
-	
-	@Autowired
-	public void setGroups(GroupRepository groups) {
-		this.groups = groups;
-	}
-	
-	@Autowired
-	public void setPlans(PlanRepository plans) {
-		this.plans = plans;
+	public void setService(GroupService service) {
+		this.groupService = service;
 	}
 	
 	@GetMapping
 	public @ResponseBody Iterable<Group> getAll() {
-		return this.groups.findAll();
+		return this.groupService.getAll();
 	}
 	
 	@GetMapping("/{id}")
 	public @ResponseBody Group getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
-		Group group = this.groups.findOne(id);
+		Group group = this.groupService.getById(id);
 		
 		if (group == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -63,53 +49,42 @@ public class GroupController {
 	@GetMapping("/year/{year}")
 	public @ResponseBody Iterable<Group> getByYear(
 		@PathVariable("year") int year) {
-		return this.groups.findAllByYear(year);
+		return this.groupService.getByYear(year);
 		
 	}
 	
 	@GetMapping("/classId/{classId}")
 	public @ResponseBody Iterable<Group> getByClass(
 		@PathVariable("classId") int classId) {
-		Class c = this.classes.findOne(classId);
-		
-		return c == null
-			? new ArrayList<>()
-			: this.groups.findAllByClassesContaining(c);
+		return this.groupService.getByClass(classId);
 		
 	}
 	
 	@GetMapping("/facultyId/{facultyId}")
 	public @ResponseBody Iterable<Group> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
-		return this.groups.findAllByFaculty_Id(facultyId);
+		return this.groupService.getByFaculty(facultyId);
 	}
 	
 	@GetMapping("/facultyId/{facultyId}/year/{year}")
 	public @ResponseBody Iterable<Group> getByFacultyAndYear(
 		@PathVariable("facultyId") int facultyId,
 		@PathVariable("year") int year) {
-		return this.groups.findAllByFaculty_IdAndYear(facultyId, year);
+		return this.groupService.getByFacultyAndYear(facultyId, year);
 	}
 	
 	@GetMapping("/facultyId/{facultyId}/since/{year}")
 	public @ResponseBody Iterable<Group> getByFacultyAndYearSince(
 		@PathVariable("facultyId") int facultyId,
 		@PathVariable("year") int year) {
-		return this.groups.findAllByFaculty_IdAndYearGreaterThanEqual(
+		return this.groupService.getByFacultyAndYearSince(
 			facultyId, year);
 	}
 	
 	@GetMapping("/planId/{planId}")
 	public @ResponseBody Group getByPlan(
 		@PathVariable("planId") int planId, HttpServletResponse response) {
-		Plan plan = this.plans.findOne(planId);
-		
-		if (plan == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
-		}
-		
-		return this.groups.findByPlansContaining(plan);
+		return this.groupService.getByPlan(planId);
 	}
 	
 	@GetMapping(
@@ -121,48 +96,13 @@ public class GroupController {
 		@PathVariable("day") int day,
 		@PathVariable("number") int number,
 		@PathVariable("frequency") String frequencyName) {
-		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
-		
-		Semester currentSemester =
-			Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
-		
-		Class.Frequency frequency =
-			Class.Frequency.valueOf(frequencyName.toUpperCase());
-		
-		int currentYear = currentSemester == Semester.FIRST
-			? calendar.get(Calendar.YEAR)
-			: calendar.get(Calendar.YEAR) - 1;
-		
-		List<Plan> plans = this.plans.findAllBySubject_IdAndYearAndSemester(
-			subjectId, currentYear, currentSemester);
-		
-		Class.Frequency weekly = Class.Frequency.WEEKLY;
-		
-		List<Class> potentialClasses = frequency == weekly
-			? this.classes.findAllByDayOfWeekAndNumberAndYearAndSemester(
-				DayOfWeek.of(day), number, currentYear, currentSemester)
-			: this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
-				DayOfWeek.of(day), number, frequency, currentYear, currentSemester);
-		
-		if (frequency != weekly) {
-			potentialClasses.addAll(
-				this.classes.findAllByDayOfWeekAndNumberAndFrequencyAndYearAndSemester(
-					DayOfWeek.of(day), number, weekly, currentYear, currentSemester));
-		}
-		
-		return this.groups.findAllByFaculty_Id(facultyId).stream()
-			.filter(group -> plans.stream()
-				.anyMatch(plan -> Objects.equals(plan.getGroup().getId(), group.getId())))
-			.filter(group -> potentialClasses.stream()
-				.flatMap(c -> c.getGroups().stream())
-				.noneMatch(g -> Objects.equals(g.getId(), group.getId())))
-			.collect(Collectors.toList());
+		return this.groupService.getAvailable(facultyId,  subjectId, day, number, frequencyName);
 	}
 	
 	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Group group)
 		throws URISyntaxException {
-		this.groups.save(group);
+		this.groupService.add(group);
 		
 		return ResponseEntity.created(
 			new URI("/groups/" + group.getId())).build();
@@ -172,23 +112,15 @@ public class GroupController {
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Group group) {
-		if (!this.groups.exists(id)) {
-			return ResponseEntity.notFound().build();
-		}
 		
-		group.setId(id);
-		this.groups.save(group);
+		this.groupService.update(id, group);
 		
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") int id) {
-		if (!this.groups.exists(id)) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		this.groups.delete(id);
+	public ResponseEntity<?> delete(@PathVariable("id") int id) {		
+		this.groupService.delete(id);
 		
 		return ResponseEntity.noContent().build();
 	}
