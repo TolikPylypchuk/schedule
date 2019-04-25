@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.dataaccess.models.Plan;
 import ua.edu.lnu.schedule.dataaccess.models.Semester;
-import ua.edu.lnu.schedule.dataaccess.repositories.PlanRepository;
+import ua.edu.lnu.schedule.services.PlanService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,22 +16,22 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("/plans")
 public class PlanController {
-	private PlanRepository plans;
+	private PlanService planService;
 	
 	@Autowired
-	public void setPlans(PlanRepository plans) {
-		this.plans = plans;
+	public void setPlans(PlanService service) {
+		this.planService = service;
 	}
 	
 	@GetMapping
 	public @ResponseBody Iterable<Plan> getAll() {
-		return this.plans.findAll();
+		return this.planService.getAll();
 	}
 	
 	@GetMapping("/{id}")
 	public @ResponseBody Plan getById(
 		@PathVariable("id") int id, HttpServletResponse response) {
-		Plan plan = this.plans.findOne(id);
+		Plan plan = this.planService.getById(id);
 		
 		if (plan == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -44,13 +44,13 @@ public class PlanController {
 	@GetMapping("/departmentId/{departmentId}")
 	public @ResponseBody Iterable<Plan> getByDepartment(
 		@PathVariable("departmentId") int departmentId) {
-		return this.plans.findAllByDepartment_Id(departmentId);
+		return this.planService.getByDepartment(departmentId);
 	}
 
 	@GetMapping("/groupId/{groupId}")
 	public @ResponseBody Iterable<Plan> getByGroup(
 			@PathVariable("groupId") int groupId) {
-		return this.plans.findAllByGroup_Id(groupId);
+		return this.planService.getByGroup(groupId);
 	}
 	
 	@GetMapping("/groupId/{groupId}/year/{year}/semester/{semester}")
@@ -58,14 +58,14 @@ public class PlanController {
 		@PathVariable("groupId") int groupId,
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
-		return this.plans.findAllByGroup_IdAndYearAndSemester(
-			groupId, year, Semester.fromNumber(semester));
+		return this.planService.getByGroupYearSemester(
+			groupId, year, semester);
 	}
 	
 	@GetMapping("/subjectId/{subjectId}")
 	public @ResponseBody Iterable<Plan> getBySubject(
 		@PathVariable("subjectId") int subjectId) {
-		return this.plans.findAllBySubject_Id(subjectId);
+		return this.planService.getBySubject(subjectId);
 	}
 	
 	@GetMapping("/subjectId/{subjectId}/year/{year}/semester/{semester}")
@@ -73,14 +73,14 @@ public class PlanController {
 		@PathVariable("subjectId") int subjectId,
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
-		return this.plans.findAllBySubject_IdAndYearAndSemester(
-			subjectId, year, Semester.fromNumber(semester));
+		return this.planService.getBySubjectYearSemester(
+			subjectId, year, semester);
 	}
 	
 	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Plan plan)
 		throws URISyntaxException {
-		this.plans.save(plan);
+		this.planService.add(plan);
 
 		return ResponseEntity.created(
 			new URI("/plans/" + plan.getId())).build();
@@ -90,23 +90,14 @@ public class PlanController {
 	public ResponseEntity<?> put(
 		@PathVariable("id") int id,
 		@RequestBody Plan plan) {
-		if (!this.plans.exists(id)) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		plan.setId(id);
-		this.plans.save(plan);
+		this.planService.update(id, plan);
 		
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
-		if (!this.plans.exists(id)) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		this.plans.delete(id);
+		this.planService.delete(id);
 		
 		return ResponseEntity.noContent().build();
 	}

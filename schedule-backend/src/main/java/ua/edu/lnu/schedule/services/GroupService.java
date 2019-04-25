@@ -1,12 +1,8 @@
 package ua.edu.lnu.schedule.services;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -137,8 +133,7 @@ public class GroupService {
 	}
 	
 
-	public void add(@RequestBody Group group)
-		throws URISyntaxException {
+	public void add(Group group) {
 		this.groups.save(group);
 	}
 	
