@@ -12,5 +12,6 @@ public interface PlanRepository extends CrudRepository<Plan, Integer> {
 	List<Plan> findAllByGroup_IdAndYearAndSemester(Integer id, int year, Semester semester);
 	
 	List<Plan> findAllBySubject_Id(Integer id);
-	List<Plan> findAllBySubject_IdAndYearAndSemester(Integer id, int year, Semester semester);
+	List<Plan> findAllBySubject_IdAndSemesterAndYear(Integer id, Semester semester, int year);
+	List<Plan> findAllBySubject_IdAndCourseAndSemesterAndYear(Integer id, int year, Semester semester);
 }

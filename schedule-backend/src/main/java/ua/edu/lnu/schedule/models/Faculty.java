@@ -12,36 +12,35 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Faculty implements Serializable {
 	private Integer id;
 	private String name;
-	
-	private Set<Group> groups;
-	
+
+	private Set<Department> departments;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return this.id;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	@Column(name = "name", unique = true, nullable = false, length = 50)
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
-	public Set<Group> getGroups() {
-		return this.groups;
+	public Set<Department> getDepartments() {
+		return this.departments;
 	}
-	
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
+
+	public void setDepartments(Set<Department> departments) {
+		this.departments = departments;
 	}
-	
 }
