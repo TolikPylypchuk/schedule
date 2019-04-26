@@ -13,8 +13,10 @@ public interface GroupRepository extends CrudRepository<Group, Integer> {
 	List<Group> findAllByYear(int year);
 	List<Group> findAllByClassesContaining(Class c);
 	List<Group> findAllByDepartment_Id(Integer id);
-	List<Group> findAllByDepartmentIn(Department department);
+	List<Group> findAllByDepartmentIn(List<Department> departments);
 	List<Group> findAllByDepartment_IdAndYear(Integer id, int year);
+	List<Group> findAllByDepartmentInAndYear(List<Department> departments, int year);
 	List<Group> findAllByDepartment_IdAndYearGreaterThanEqual(Integer id, int year);
+	List<Group> findAllByDepartmentInAndYearGreaterThanEqual(List<Department> departments, int year);
 	Group findByPlansContaining(Plan plan);
 }
