@@ -23,8 +23,11 @@ import ua.edu.lnu.schedule.repositories.UserRepository;
 public class ClassController {
 	private ClassRepository classes;
 	private ClassroomRepository classrooms;
+	private DepartmentRepository departments;
 	private GroupRepository groups;
+	private PlanRepository plans;
 	private UserRepository users;
+	
 	
 	@Autowired
 	public void setClasses(ClassRepository classes) {
@@ -39,6 +42,16 @@ public class ClassController {
 	@Autowired
 	public void setGroups(GroupRepository groups) {
 		this.groups = groups;
+	}
+		
+	@Autowired
+	public void setDepartments(DepartmentRepository departments) {
+		this.departments = departments;
+	}
+	
+	@Autowired
+	public void setPlans(PlanRepository plans) {
+		this.plans = plans;
 	}
 	
 	@Autowired
@@ -166,6 +179,52 @@ public class ClassController {
 		@PathVariable("semester") int semester) {
 		return this.classes.findAllByYearAndSemester(
 			year, Semester.fromNumber(semester));
+	}
+
+	@GetMapping("/generate/faculty/{faculty}/year/{year}/semester/{semester}"")
+	public @ResponseBody Iterable<Class> getGeneratedByFaculty(
+		@PathVariable("faculty") int facultyId,
+		@PathVariable("year") int year,
+		@PathVariable("semester") int semester) {
+		List<Department> departments = this.departments.findAllByFaculty_Id(facultyId);
+		
+		List<Plan> plans = this.plans.findAllByDepartmentInAndSemesterAndYear(departments, semester, year);
+		List<Subject> subjects = plans.stream().map(plan -> plan.getSubject()).collect(Collectors.toList());
+		List<Class> classes = plans.stream().map(plan -> {
+			List<Class> generated = new List<Class>();
+			
+			Class template = new Class();
+			template.setYear(year);
+			template.setSemester(semester);
+			template.setSubject(plan.getSubject());
+			
+			List<Group> groups = this.groups.findAllByDepartment_Id(plan.getDepartment().getId());
+			for(Group group : groups) {
+				template.setGroup(group);
+				
+				for(int i = 0; i < plan.getNumLectures(); i++) {
+					template.setType(Type.LECTURE);
+					
+					generated.Add(template);
+				}
+				
+				for(int i = 0; i < plan.getNumPractices(); i++) {
+					template.setType(Type.PRACTICE);
+					
+					generated.Add(template);
+				}
+				
+				for(int i = 0; i < plan.getNumLabs(); i++) {
+					template.setType(Type.LAB);
+					
+					generated.Add(template);
+				}				
+			}
+			
+			return generated;
+		});
+		
+		return classes;
 	}
 	
 	@PostMapping

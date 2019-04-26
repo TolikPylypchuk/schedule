@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class Plan implements Serializable {
 	private Integer id;
 	private int numLectures;
-	private int numPractice;
+	private int numPractices;
 	private int numLabs;
 	private int course;
 	private Semester semester;
@@ -37,13 +37,13 @@ public class Plan implements Serializable {
 		this.numLectures = numLectures;
 	}
 
-	@Column(name = "num_practice", nullable = false)
-	public int getNumPractice() {
-		return this.numPractice;
+	@Column(name = "num_practices", nullable = false)
+	public int getNumPractices() {
+		return this.numPractices;
 	}
 
-	public void setNumPractice(int numPractice) {
-		this.numPractice = numPractice;
+	public void setNumPractices(int numPractice) {
+		this.numPractice = numPractices;
 	}
 
 	@Column(name = "num_labs", nullable = false)
