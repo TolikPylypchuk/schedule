@@ -38,8 +38,7 @@ export function getCurrentGroupName(group: Group): string {
 export function getClassStart(num: number): string {
 	let result = "";
 
-	if (!num)
-	{
+	if (!num) {
 		return result;
 	}
 
@@ -79,8 +78,7 @@ export function getClassStart(num: number): string {
 export function getClassEnd(num: number): string {
 	let result = "";
 
-	if (!num)
-	{
+	if (!num) {
 		return result;
 	}
 
@@ -241,12 +239,10 @@ export function getAuthorityName(authority: Authority): string {
 export function compareUsersByName(u1: User, u2: User) {
 	let result = u1.lastName.localeCompare(u2.lastName);
 
-	if (result === 0)
-	{
+	if (result === 0) {
 		result = u1.firstName.localeCompare(u2.firstName);
 
-		if (result === 0)
-		{
+		if (result === 0) {
 			result = u1.middleName.localeCompare(u2.middleName);
 		}
 	}
