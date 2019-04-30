@@ -43,7 +43,7 @@ public class Plan implements Serializable {
 	}
 
 	public void setNumPractices(int numPractice) {
-		this.numPractice = numPractices;
+		this.numPractices = numPractices;
 	}
 
 	@Column(name = "num_labs", nullable = false)
@@ -99,7 +99,7 @@ public class Plan implements Serializable {
 		return this.department;
 	}
 
-	public void setGroup(Department department) {
+	public void setDepartment(Department department) {
 		this.department = department;
 	}
 }

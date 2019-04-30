@@ -30,6 +30,7 @@ public class UserController {
 	private SubjectRepository subjects;
 	private UserRepository users;
 	private WishRepository wishes;
+	private DepartmentRepository departments;
 	
 	private UserService userService;
 	
@@ -57,6 +58,11 @@ public class UserController {
 	public void setWishes(WishRepository wishes) {
 		this.wishes = wishes;
 	}
+
+	@Autowired
+	public void setDepartments(DepartmentRepository departments) {
+		this.departments = departments;
+	}
 	
 	@Autowired
 	public void setUserService(UserService userService) {
@@ -83,7 +89,10 @@ public class UserController {
 	
 	@GetMapping("/current")
 	public @ResponseBody User getCurrentUser(Principal p) {
-		return this.users.findByUsername(p.getName());
+
+		return p != null
+				? this.users.findByUsername(p.getName())
+				: new User();
 	}
 	
 	@GetMapping("/role/{role}")
@@ -100,7 +109,7 @@ public class UserController {
 	@GetMapping("/facultyId/{facultyId}")
 	public @ResponseBody Iterable<User> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
-		return this.users.findAllByFaculty_Id(facultyId);
+		return this.users.findAllByDepartmentIn(this.departments.findAllByFaculty_Id(facultyId));
 	}
 	
 	@GetMapping("/role/{role}/facultyId/{facultyId}")
@@ -112,8 +121,8 @@ public class UserController {
 		
 		return authority == null
 			? new ArrayList<>()
-			: this.users.findAllByFaculty_IdAndAuthoritiesContaining(
-				facultyId,
+			: this.users.findAllByDepartmentInAndAuthoritiesContaining(
+				this.departments.findAllByFaculty_Id(facultyId),
 				this.authorities.findByName(
 					this.userService.getAuthorityName(role)));
 	}
@@ -176,7 +185,8 @@ public class UserController {
 		
 		return subject == null
 			? new ArrayList<>()
-			: this.users.findAllByFaculty_IdAndSubjectsContaining(facultyId, subject)
+			: this.users.findAllByDepartmentInAndSubjectsContaining(
+					this.departments.findAllByFaculty_Id(facultyId), subject)
 			.stream()
 			.filter(lecturer -> potentialClasses.stream()
 				.flatMap(c -> c.getLecturers().stream())

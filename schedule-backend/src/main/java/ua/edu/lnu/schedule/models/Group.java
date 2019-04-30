@@ -15,11 +15,11 @@ public class Group implements Serializable {
 	private int year;
 	private int numStudents;
 
-	private Faculty faculty;
+	/*private Faculty faculty;*/
 	private Department department;
 
 	private Set<Class> classes;
-	private Set<Plan> plans;
+	/*private Set<Plan> plans;*/
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,7 +67,7 @@ public class Group implements Serializable {
 	public void setClasses(Set<Class> classes) {
 		this.classes = classes;
 	}
-
+/*
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "faculty", nullable = false)
@@ -77,10 +77,9 @@ public class Group implements Serializable {
 
 	public void setFaculty(Faculty faculty) {
 		this.faculty = faculty;
-	}
+	}*/
 
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "department", nullable = false)
 	public Department getDepartment() {
 		return this.department;

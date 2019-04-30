@@ -18,5 +18,5 @@ public interface GroupRepository extends CrudRepository<Group, Integer> {
 	List<Group> findAllByDepartmentInAndYear(List<Department> departments, int year);
 	List<Group> findAllByDepartment_IdAndYearGreaterThanEqual(Integer id, int year);
 	List<Group> findAllByDepartmentInAndYearGreaterThanEqual(List<Department> departments, int year);
-	Group findByPlansContaining(Plan plan);
+/*	Group findByPlansContaining(Plan plan);*/
 }

@@ -3,7 +3,8 @@ package ua.edu.lnu.schedule.controllers;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
-import ua.edu.lnu.schedule.repositories.ClassRepository;
-import ua.edu.lnu.schedule.repositories.ClassroomRepository;
-import ua.edu.lnu.schedule.repositories.GroupRepository;
-import ua.edu.lnu.schedule.repositories.UserRepository;
+import ua.edu.lnu.schedule.repositories.*;
 
 @RestController
 @RequestMapping("/classes")
@@ -181,48 +179,55 @@ public class ClassController {
 			year, Semester.fromNumber(semester));
 	}
 
-	@GetMapping("/generate/faculty/{faculty}/year/{year}/semester/{semester}"")
+	@GetMapping("/generate/faculty/{faculty}/year/{year}/semester/{semester}")
 	public @ResponseBody Iterable<Class> getGeneratedByFaculty(
 		@PathVariable("faculty") int facultyId,
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
 		List<Department> departments = this.departments.findAllByFaculty_Id(facultyId);
 		
-		List<Plan> plans = this.plans.findAllByDepartmentInAndSemesterAndYear(departments, semester, year);
+		List<Plan> plans = this.plans.findAllByDepartmentInAndSemesterAndYear(departments, Semester.fromNumber(semester), year);
 		List<Subject> subjects = plans.stream().map(plan -> plan.getSubject()).collect(Collectors.toList());
-		List<Class> classes = plans.stream().map(plan -> {
-			List<Class> generated = new List<Class>();
+
+		List<Class> classes = new ArrayList<>();
+
+		for(Plan plan : plans) {
+			List<Class> generated = new ArrayList<Class>();
 			
 			Class template = new Class();
 			template.setYear(year);
-			template.setSemester(semester);
+			template.setSemester(Semester.fromNumber(semester));
 			template.setSubject(plan.getSubject());
 			
-			List<Group> groups = this.groups.findAllByDepartment_Id(plan.getDepartment().getId());
+			List<Group> groups = this.groups.findAllByDepartment_Id(plan.getDepartment().getId())
+					.stream().filter(group -> Objects.equals(year - group.getYear(), plan.getCourse()))
+					.collect(Collectors.toList());
 			for(Group group : groups) {
-				template.setGroup(group);
+				Set<Group> groupSet = new HashSet<Group>();
+				groupSet.add(group);
+				template.setGroups(groupSet);
 				
-				for(int i = 0; i < plan.getNumLectures(); i++) {
-					template.setType(Type.LECTURE);
+				if (plan.getNumLectures() > 0) {
+					template.setType(Class.Type.LECTURE);
 					
-					generated.Add(template);
+					generated.add(template);
 				}
 				
-				for(int i = 0; i < plan.getNumPractices(); i++) {
-					template.setType(Type.PRACTICE);
+				if (plan.getNumPractices() > 0) {
+					template.setType(Class.Type.PRACTICE);
 					
-					generated.Add(template);
+					generated.add(template);
 				}
 				
-				for(int i = 0; i < plan.getNumLabs(); i++) {
-					template.setType(Type.LAB);
+				if (plan.getNumLabs() > 0) {
+					template.setType(Class.Type.LAB);
 					
-					generated.Add(template);
-				}				
+					generated.add(template);
+				}
+
+				classes.addAll(generated);
 			}
-			
-			return generated;
-		});
+		}
 		
 		return classes;
 	}

@@ -47,7 +47,7 @@ public class Department implements Serializable {
     }
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "departments")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
     public Set<Group> getGroups() {
         return this.groups;
     }
@@ -57,7 +57,7 @@ public class Department implements Serializable {
     }
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "departments")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
     public Set<Plan> getPlans() {
         return this.plans;
     }
