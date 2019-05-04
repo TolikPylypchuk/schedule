@@ -103,7 +103,8 @@ public class User implements Serializable {
 	public void setLastPasswordReset(Date lastPasswordReset) {
 		this.lastPasswordReset = lastPasswordReset;
 	}
-	
+
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "department", nullable = false)
 	public Department getDepartment() {

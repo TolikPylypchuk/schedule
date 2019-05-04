@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -184,52 +185,8 @@ public class ClassController {
 		@PathVariable("faculty") int facultyId,
 		@PathVariable("year") int year,
 		@PathVariable("semester") int semester) {
-		List<Department> departments = this.departments.findAllByFaculty_Id(facultyId);
-		
-		List<Plan> plans = this.plans.findAllByDepartmentInAndSemesterAndYear(departments, Semester.fromNumber(semester), year);
-		List<Subject> subjects = plans.stream().map(plan -> plan.getSubject()).collect(Collectors.toList());
 
-		List<Class> classes = new ArrayList<>();
-
-		for(Plan plan : plans) {
-			List<Class> generated = new ArrayList<Class>();
-			
-			Class template = new Class();
-			template.setYear(year);
-			template.setSemester(Semester.fromNumber(semester));
-			template.setSubject(plan.getSubject());
-			
-			List<Group> groups = this.groups.findAllByDepartment_Id(plan.getDepartment().getId())
-					.stream().filter(group -> Objects.equals(year - group.getYear(), plan.getCourse()))
-					.collect(Collectors.toList());
-			for(Group group : groups) {
-				Set<Group> groupSet = new HashSet<Group>();
-				groupSet.add(group);
-				template.setGroups(groupSet);
-				
-				if (plan.getNumLectures() > 0) {
-					template.setType(Class.Type.LECTURE);
-					
-					generated.add(template);
-				}
-				
-				if (plan.getNumPractices() > 0) {
-					template.setType(Class.Type.PRACTICE);
-					
-					generated.add(template);
-				}
-				
-				if (plan.getNumLabs() > 0) {
-					template.setType(Class.Type.LAB);
-					
-					generated.add(template);
-				}
-
-				classes.addAll(generated);
-			}
-		}
-		
-		return classes;
+		return generateForFaculty(facultyId, year, semester);
 	}
 	
 	@PostMapping
@@ -263,5 +220,130 @@ public class ClassController {
 		this.classes.delete(id);
 		
 		return ResponseEntity.noContent().build();
+	}
+
+	private List<Class> generateForFaculty(
+			int facultyId,
+			int year,
+			int semester) {
+		List<Department> departments = this.departments.findAllByFaculty_Id(facultyId);
+
+		List<Plan> plans = this.plans.findAllByDepartmentInAndSemesterAndYear(
+				departments, Semester.fromNumber(semester), year);
+
+		List<Class> classes = new ArrayList<>();
+
+		classes.addAll(generateLectures(departments, year, semester, LectureType.COURSE));
+		classes.addAll(generateLectures(departments, year, semester, LectureType.DEPARTMENT));
+		classes.addAll(generateLectures(departments, year, semester, LectureType.GROUP));
+
+		Class template = new Class();
+		template.setYear(year);
+		template.setSemester(Semester.fromNumber(semester));
+
+		for (Plan plan : plans) {
+			template.setSubject(plan.getSubject());
+
+			List<Group> groups = this.groups.findAllByDepartment_IdAndYear(
+					plan.getDepartment().getId(),
+					year - plan.getCourse() + 1);
+			if (plan.getNumPractices() > 0) {
+				template.setType(Class.Type.PRACTICE);
+				template.setFrequency(plan.getNumPractices() > 30
+						? Class.Frequency.WEEKLY
+						: Class.Frequency.BIWEEKLY);
+
+				classes.addAll(generateForSingleGroup(template, groups));
+			}
+
+			if (plan.getNumLabs() > 0) {
+				template.setType(Class.Type.LAB);
+				template.setFrequency(plan.getNumLabs() > 30
+						? Class.Frequency.WEEKLY
+						: Class.Frequency.BIWEEKLY);
+
+				classes.addAll(generateForSingleGroup(template, groups));
+			}
+		}
+
+		return classes;
+	}
+
+	private List<Class> generateLectures(
+			List<Department> departments,
+			int year,
+			int semester,
+			LectureType lectureType) {
+		Class template = new Class();
+		template.setYear(year);
+		template.setSemester(Semester.fromNumber(semester));
+
+		List<Class> classes = new ArrayList<>();
+
+		Map<Pair<Integer, Subject>, List<Plan>> coursePlans = this.plans
+				.findAllByDepartmentInAndSemesterAndYearAndLectureType(
+						departments, Semester.fromNumber(semester), year, lectureType)
+				.stream().collect(Collectors.groupingBy(p -> new Pair<>(p.getCourse(), p.getSubject())));
+
+        List<Plan> planList = new ArrayList<>();
+		for(List<Plan> list : coursePlans.values()) {
+		    if (lectureType == LectureType.COURSE) {
+                planList.add(list.get(0));
+            } else {
+                planList.addAll(list);
+            }
+        }
+
+		for(Plan plan : planList) {
+		    int lectures = plan.getNumLectures();
+		    if (lectures > 0) {
+                template.setSubject(plan.getSubject());
+                template.setType(Class.Type.LECTURE);
+
+                template.setFrequency(lectures > 30
+                        ? Class.Frequency.WEEKLY
+                        : Class.Frequency.BIWEEKLY);
+
+                List<Group> groupList = this.groups.findAllByDepartment_IdAndYear(
+                        plan.getDepartment().getId(),
+                        year - plan.getCourse() + 1
+                );
+
+                switch (lectureType) {
+                    case GROUP:
+                        classes.addAll(generateForSingleGroup(template, groupList));
+                        break;
+                    case DEPARTMENT:
+                        template.setGroups(new HashSet<>(groupList));
+                        classes.add(template);
+                        break;
+                    case COURSE:
+                        List<Group> courseGroups = this.groups.findAllByDepartmentInAndYear(
+                                departments,
+                                year - plan.getCourse() + 1
+                        );
+                        template.setGroups(new HashSet<>(courseGroups));
+                        classes.add(template);
+                        break;
+                }
+            }
+        }
+
+		return classes;
+	}
+
+	private List<Class> generateForSingleGroup(Class template, List<Group> groups) {
+		List<Class> classes = new ArrayList<>();
+
+		for (Group group : groups) {
+            Class fromTemplate = template.clone();
+            Set<Group> groupSet = new HashSet<>();
+            groupSet.add(group);
+            fromTemplate.setGroups(groupSet);
+
+            classes.add(fromTemplate);
+		}
+
+		return classes;
 	}
 }

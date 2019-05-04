@@ -39,13 +39,20 @@ export interface ClassroomType extends EntityBase {
 
 export interface Faculty extends EntityBase {
 	name: string;
+	departments: Department[];
+}
+
+export interface Department extends EntityBase {
+	name: string;
+	faculty: Faculty;
+	groups: Group[];
 }
 
 export interface Group extends EntityBase {
 	name: string;
 	numStudents: number;
 	year: number;
-	faculty: Faculty;
+	department: Department;
 }
 
 export interface Plan extends EntityBase {
@@ -55,7 +62,8 @@ export interface Plan extends EntityBase {
 	year: number;
 	semester: number;
 	subject: Subject;
-	group: Group;
+	course: number;
+	department: Department;
 }
 
 export interface Subject extends EntityBase {
@@ -66,13 +74,13 @@ export interface Subject extends EntityBase {
 export interface User extends EntityBase {
 	username?: string;
 	password?: string;
-	authorities: Authority[],
+	authorities: Authority[];
 
 	firstName: string;
 	middleName: string;
 	lastName: string;
 	position: string;
-	faculty: Faculty;
+	department: Department;
 }
 
 export interface Wish extends EntityBase {

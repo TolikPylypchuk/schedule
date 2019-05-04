@@ -14,8 +14,10 @@ public class Plan implements Serializable {
 	private int course;
 	private Semester semester;
 	private int year;
+	private LectureType lectureType;
 
 	private Subject subject;
+	private boolean isCoreSubject;
 	private Department department;
 
 	@Id
@@ -37,12 +39,12 @@ public class Plan implements Serializable {
 		this.numLectures = numLectures;
 	}
 
-	@Column(name = "num_practices", nullable = false)
+	@Column(name = "num_practice", nullable = false)
 	public int getNumPractices() {
 		return this.numPractices;
 	}
 
-	public void setNumPractices(int numPractice) {
+	public void setNumPractices(int numPractices) {
 		this.numPractices = numPractices;
 	}
 
@@ -61,7 +63,7 @@ public class Plan implements Serializable {
 	}
 
 	public void setCourse(int course) {
-		this.year = course;
+		this.course = course;
 	}
 
 	@Column(name = "year", nullable = false)
@@ -82,6 +84,24 @@ public class Plan implements Serializable {
 	public void setSemester(Semester semester) {
 		this.semester = semester;
 	}
+
+	@Column(name = "lecture_type", nullable = false)
+	public LectureType getLectureType() {
+		return this.lectureType;
+	}
+
+	public void setLectureType(LectureType lectureType) {
+		this.lectureType = lectureType;
+	}
+
+/*	@Column(name = "is_core_subject", nullable = false)
+	public int getYear() {
+		return this.year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}*/
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "subject", nullable = false)

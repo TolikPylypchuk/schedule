@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public class Class implements Serializable {
 	public enum Frequency {
 		WEEKLY("Щотижня"),
+		BIWEEKLY("Через тиждень"),
 		NUMERATOR("По чисельнику"),
 		DENOMINATOR("По знаменнику");
 		
@@ -98,7 +99,7 @@ public class Class implements Serializable {
 	private Set<Classroom> classrooms;
 	private Set<Group> groups;
 	private Set<User> lecturers;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
@@ -235,5 +236,22 @@ public class Class implements Serializable {
 	
 	public void setLecturers(Set<User> lecturers) {
 		this.lecturers = lecturers;
+	}
+
+	public Class clone(){
+		Class clone = new Class();
+		clone.dayOfWeek = dayOfWeek;
+		clone.number = number;
+		clone.frequency = frequency;
+		clone.type = type;
+		clone.year = year;
+		clone.semester = semester;
+		clone.classroomType = classroomType;
+		clone.subject = subject;
+		clone.classrooms = classrooms;
+		clone.groups = groups;
+		clone.lecturers = lecturers;
+
+		return clone;
 	}
 }
