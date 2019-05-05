@@ -4,9 +4,9 @@ import { RouterModule, Routes } from "@angular/router";
 import { EditorComponent } from "./editor.component";
 
 import { HomeComponent } from "./components/home.component";
-import { ScheduleComponent } from './components/schedule.component';
+import { ScheduleComponent } from "./components/schedule.component";
 
-import { AuthGuard, EditorGuard } from '../auth/auth';
+import { AuthGuard, EditorGuard } from "../auth/auth";
 
 const routes: Routes = [
 	{

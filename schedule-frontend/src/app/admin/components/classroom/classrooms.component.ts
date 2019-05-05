@@ -2,61 +2,45 @@ import { Component, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import {
-	Building, Faculty, Classroom, ClassroomType, Subject
-} from "../../common/models/models";
+	Building, Classroom, ClassroomType
+} from "../../../common/models/models";
 
 import {
-	BuildingService, FacultyService, ClassroomService,
-	ClassroomTypeService, SubjectService
-} from "../../common/services/services";
+	BuildingService, ClassroomService, ClassroomTypeService
+} from "../../../common/services/services";
 
 import { BuildingModalComponent } from "./building-modal.component";
 import { ClassroomModalComponent } from "./classroom-modal.component";
 import { ClassroomTypeModalComponent } from "./classroom-type-modal.component";
-import { FacultyModalComponent } from "./faculty-modal.component";
-import { SubjectModalComponent } from "./subject-modal.component";
 
 @Component({
-	selector: "schedule-admin-home",
-	templateUrl: "./settings.component.html"
+	selector: "schedule-admin-classrooms",
+	templateUrl: "./classrooms.component.html"
 })
-export class SettingsComponent implements OnInit {
+export class ClassroomsComponent implements OnInit {
 	private modalService: NgbModal;
 
 	private buildingService: BuildingService;
 	private classroomService: ClassroomService;
 	private classroomTypeService: ClassroomTypeService;
-	private facultyService: FacultyService;
-	private subjectService: SubjectService;
 
-	faculties: Faculty[] = [];
 	buildings: Building[] = [];
 	classrooms: Map<number, Classroom[]> = new Map();
 	classroomTypes: ClassroomType[] = [];
-	subjects: Subject[];
 
 	constructor(
 		modalService: NgbModal,
 		buildingService: BuildingService,
 		classroomService: ClassroomService,
-		classroomTypeService: ClassroomTypeService,
-		facultyService: FacultyService,
-		subjectService: SubjectService) {
+		classroomTypeService: ClassroomTypeService) {
 		this.modalService = modalService;
 
 		this.buildingService = buildingService;
 		this.classroomService = classroomService;
 		this.classroomTypeService = classroomTypeService;
-		this.facultyService = facultyService;
-		this.subjectService = subjectService;
 	}
 
 	ngOnInit(): void {
-		this.facultyService.getFaculties()
-			.subscribe((faculties: Faculty[]) =>
-				this.faculties = faculties.sort(
-					(f1, f2) => f1.name.localeCompare(f2.name)));
-
 		this.classroomTypeService.getClassroomTypes()
 			.subscribe((types: ClassroomType[]) =>
 				this.classroomTypes = types.sort(
@@ -76,47 +60,6 @@ export class SettingsComponent implements OnInit {
 										(c1, c2) => c1.number.localeCompare(c2.number))));
 					}
 				});
-
-		this.subjectService.getSubjects()
-			.subscribe((subjects: Subject[]) =>
-				this.subjects = subjects.sort(
-					(s1, s2) => s1.name.localeCompare(s2.name)));
-	}
-
-	addFacultyClicked(): void {
-		const modalRef = this.modalService.open(FacultyModalComponent);
-
-		modalRef.result.then(
-			(faculty: Faculty) => {
-				this.faculties.push(faculty);
-				this.faculties.sort(
-					(f1, f2) => f1.name.localeCompare(f2.name));
-			},
-			() => { });
-	}
-
-	editFacultyClicked(faculty: Faculty): void {
-		const modalRef = this.modalService.open(FacultyModalComponent);
-		const modal = modalRef.componentInstance as FacultyModalComponent;
-
-		modal.isEditing = true;
-		modal.faculty = {
-			id: faculty.id,
-			name: faculty.name
-		};
-
-		modalRef.result.then(
-			(updatedFaculty: Faculty) => faculty.name = updatedFaculty.name,
-			() => { });
-	}
-
-	deleteFacultyClicked(id: number): void {
-		const action = this.facultyService.deleteFaculty(id);
-		action.subscribe(
-			() => this.faculties = this.faculties.filter(f => f.id !== id),
-			() => { });
-
-		action.connect();
 	}
 
 	addBuildingClicked(): void {
@@ -250,46 +193,6 @@ export class SettingsComponent implements OnInit {
 		const action = this.classroomTypeService.deleteClassroomType(id);
 		action.subscribe(
 			() => this.classroomTypes = this.classroomTypes.filter(t => t.id !== id),
-			() => { });
-
-		action.connect();
-	}
-
-	addSubjectClicked(): void {
-		const modalRef = this.modalService.open(SubjectModalComponent);
-
-		modalRef.result.then(
-			(subject: Subject) => {
-				this.subjects.push(subject);
-				this.subjects.sort(
-					(s1, s2) => s1.name.localeCompare(s2.name));
-			},
-			() => { });
-	}
-
-	editSubjectClicked(subject: Subject): void {
-		const modalRef = this.modalService.open(SubjectModalComponent);
-		const modal = modalRef.componentInstance as SubjectModalComponent;
-
-		modal.isEditing = true;
-		modal.subject = {
-			id: subject.id,
-			name: subject.name,
-			lecturers: subject.lecturers
-		};
-
-		modalRef.result.then(
-			(updatedSubject: Subject) => {
-				subject.name = updatedSubject.name;
-				subject.lecturers = updatedSubject.lecturers;
-			},
-			() => { });
-	}
-
-	deleteSubjectClicked(id: number): void {
-		const action = this.subjectService.deleteSubject(id);
-		action.subscribe(
-			() => this.subjects = this.subjects.filter(s => s.id !== id),
 			() => { });
 
 		action.connect();

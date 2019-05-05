@@ -80,7 +80,6 @@ export class ScheduleComponent implements OnInit {
 	ngOnInit(): void {
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => {
-				debugger;
 				this.currentUser = user;
 
 				this.userService.getLecturersByFaculty(user.department.faculty.id)

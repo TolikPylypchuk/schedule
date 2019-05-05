@@ -192,8 +192,8 @@ export class UsersComponent implements OnInit {
 						lecturer.position = updatedUser.position;
 						lecturer.department = updatedUser.department;
 					}
-				} else if (!user.authorities.find(a => a.name === "ROLE_LECTURER" &&
-					!!updatedUser.authorities.find(a => a.name === "ROLE_LECTURER"))) {
+				} else if (!user.authorities.find(a => a.name === "ROLE_LECTURER") &&
+					!!updatedUser.authorities.find(a => a.name === "ROLE_LECTURER")) {
 					this.lecturers.get(user.department.id).push(user);
 					this.lecturers.get(user.department.id).sort(compareUsersByName);
 				}
@@ -215,8 +215,8 @@ export class UsersComponent implements OnInit {
 						editor.position = updatedUser.position;
 						editor.department = updatedUser.department;
 					}
-				} else if (!user.authorities.find(a => a.name === "ROLE_EDITOR" &&
-					!!updatedUser.authorities.find(a => a.name === "ROLE_EDITOR"))) {
+				} else if (!user.authorities.find(a => a.name === "ROLE_EDITOR") &&
+					!!updatedUser.authorities.find(a => a.name === "ROLE_EDITOR")) {
 					this.editors.get(user.department.id).push(user);
 					this.editors.get(user.department.id).sort(compareUsersByName);
 				}
@@ -235,8 +235,8 @@ export class UsersComponent implements OnInit {
 						admin.position = updatedUser.position;
 						admin.department = updatedUser.department;
 					}
-				} else if (!user.authorities.find(a => a.name === "ROLE_ADMIN" &&
-					!!updatedUser.authorities.find(a => a.name === "ROLE_ADMIN"))) {
+				} else if (!user.authorities.find(a => a.name === "ROLE_ADMIN") &&
+					!!updatedUser.authorities.find(a => a.name === "ROLE_ADMIN")) {
 					this.admins.push(user);
 					this.admins.sort(compareUsersByName);
 				}

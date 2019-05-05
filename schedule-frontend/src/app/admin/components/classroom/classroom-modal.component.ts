@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Classroom, ClassroomType } from "../../common/models/models";
-import { ClassroomService } from "../../common/services/services";
+import { Classroom, ClassroomType } from "../../../common/models/models";
+import { ClassroomService } from "../../../common/services/services";
 
 @Component({
 	selector: "schedule-admin-classroom-modal",

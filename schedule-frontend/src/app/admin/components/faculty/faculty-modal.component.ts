@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Faculty } from "../../common/models/models";
-import { FacultyService } from "../../common/services/services";
+import { Faculty } from "../../../common/models/models";
+import { FacultyService } from "../../../common/services/services";
 
 @Component({
 	// tslint:disable-next-line:component-selector

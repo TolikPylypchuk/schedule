@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Building } from "../../common/models/models";
-import { BuildingService } from "../../common/services/services";
+import { Building } from "../../../common/models/models";
+import { BuildingService } from "../../../common/services/services";
 
 @Component({
 	selector: "schedule-admin-building-modal",

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { AuthService } from "../services/auth.service";
-import { LoginModel } from '../models/models';
+import { LoginModel } from "../models/models";
 
 @Component({
 	selector: "schedule-login",

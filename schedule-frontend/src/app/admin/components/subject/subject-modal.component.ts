@@ -1,17 +1,17 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Faculty, Subject, User } from "../../common/models/models";
+import { Faculty, Subject, User } from "../../../common/models/models";
 import {
 	FacultyService, SubjectService, UserService
-} from "../../common/services/services";
+} from "../../../common/services/services";
 
 import {
 	compareUsersByName, getUserInitials, getUsersAsString
-} from "../../common/models/functions";
+} from "../../../common/models/functions";
 
 @Component({
-	selector: "schdedule-admin-subject-modal",
+	selector: "schedule-admin-subject-modal",
 	templateUrl: "./subject-modal.component.html"
 })
 export class SubjectModalComponent implements OnInit {
@@ -20,6 +20,9 @@ export class SubjectModalComponent implements OnInit {
 	private facultySerivce: FacultyService;
 	private subjectService: SubjectService;
 	private userService: UserService;
+
+	getUserInitials = getUserInitials;
+	getUsersAsString = getUsersAsString;
 
 	subject: Subject = {
 		name: null,
@@ -50,7 +53,7 @@ export class SubjectModalComponent implements OnInit {
 			.subscribe((faculties: Faculty[]) => {
 			this.faculties = faculties.sort((f1, f2) =>
 				f1.name.localeCompare(f2.name));
-			for (let faculty of faculties) {
+			for (const faculty of faculties) {
 				this.userService.getLecturersByFaculty(faculty.id)
 					.subscribe((lecturers: User[]) =>
 					this.lecturers.set(
@@ -98,7 +101,4 @@ export class SubjectModalComponent implements OnInit {
 
 		action.connect();
 	}
-
-	getUserInitials = getUserInitials;
-	getUsersAsString = getUsersAsString;
 }

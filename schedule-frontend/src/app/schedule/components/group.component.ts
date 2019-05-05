@@ -25,7 +25,7 @@ interface ClassInfo {
 	subject: string;
 	type: string;
 	classrooms: string;
-	lecturers: string
+	lecturers: string;
 }
 
 @Component({
@@ -78,12 +78,12 @@ export class GroupComponent implements OnInit {
 	}
 
 	private initClasses(classes: Class[]): void {
-		let observables: Observable<any>[] = [];
+		const observables: Observable<any>[] = [];
 
 		if (classes.length === 0) {
 			this.isLoaded = true;
 		} else {
-			for (let c of classes) {
+			for (const c of classes) {
 				observables.push(Observable.forkJoin([
 						this.classroomService.getClassroomsByClass(c.id),
 						this.lecturerService.getLecturersByClass(c.id)

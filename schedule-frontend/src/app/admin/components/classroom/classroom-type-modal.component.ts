@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { ClassroomType } from "../../common/models/models";
-import { ClassroomTypeService } from "../../common/services/services";
+import { ClassroomType } from "../../../common/models/models";
+import { ClassroomTypeService } from "../../../common/services/services";
 
 @Component({
-	selector: "schdedule-admin-classroom-type-modal",
+	selector: "schedule-admin-classroom-type-modal",
 	templateUrl: "./classroom-type-modal.component.html"
 })
 export class ClassroomTypeModalComponent {
