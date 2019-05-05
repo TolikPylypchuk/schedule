@@ -10,7 +10,7 @@ import {
 	getCurrentGroupName, getUsersAsString,
 	getDayOfWeekNumber, getClassroomsAsString,
 	compareUsersByName, getFrequencyAsEnumString
-} from '../../common/models/functions';
+} from "../../common/models/functions";
 import { AuthService } from "../../auth/services/auth.service";
 
 @Component({
@@ -62,6 +62,12 @@ export class ClassModalComponent implements OnInit {
 	errorText: string = null;
 
 	wish: models.Wish = null;
+
+	getCurrentGroupName = getCurrentGroupName;
+	getClassroomsAsString = getClassroomsAsString;
+	getGroupsAsString = getGroupsAsString;
+	getLecturersAsString = getUsersAsString;
+	getLecturerInitials = getUserInitials;
 
 	constructor(
 		activeModal: NgbActiveModal,
@@ -132,7 +138,7 @@ export class ClassModalComponent implements OnInit {
 		}
 
 		this.groupService.getAvailableGroups(
-			this.currentEditor.faculty.id,
+			this.currentEditor.department.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
 			this.currentClass.number,
@@ -143,7 +149,7 @@ export class ClassModalComponent implements OnInit {
 						getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2))));
 
 		this.userService.getAvailableLecturers(
-			this.currentEditor.faculty.id,
+			this.currentEditor.department.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
 			this.currentClass.number,
@@ -166,7 +172,7 @@ export class ClassModalComponent implements OnInit {
 		}
 
 		this.groupService.getAvailableGroups(
-			this.currentEditor.faculty.id,
+			this.currentEditor.department.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
 			this.currentClass.number,
@@ -175,7 +181,7 @@ export class ClassModalComponent implements OnInit {
 				this.availableGroups = groups);
 
 		this.userService.getAvailableLecturers(
-			this.currentEditor.faculty.id,
+			this.currentEditor.department.faculty.id,
 			this.currentClass.subject.id,
 			getDayOfWeekNumber(this.currentClass.dayOfWeek),
 			this.currentClass.number,
@@ -192,7 +198,7 @@ export class ClassModalComponent implements OnInit {
 			return;
 		}
 
-		for (let building of this.availableBuildings) {
+		for (const building of this.availableBuildings) {
 			this.classroomService.getAvailableClassrooms(
 				building.id,
 				this.currentClass.classroomType.id,
@@ -218,7 +224,7 @@ export class ClassModalComponent implements OnInit {
 			return;
 		}
 
-		for (let building of this.availableBuildings) {
+		for (const building of this.availableBuildings) {
 			this.classroomService.getAvailableClassrooms(
 				building.id,
 				this.currentClass.classroomType.id,
@@ -324,10 +330,4 @@ export class ClassModalComponent implements OnInit {
 
 		result.connect();
 	}
-
-	getCurrentGroupName = getCurrentGroupName;
-	getClassroomsAsString = getClassroomsAsString;
-	getGroupsAsString = getGroupsAsString;
-	getLecturersAsString = getUsersAsString;
-	getLecturerInitials = getUserInitials;
 }

@@ -17,7 +17,7 @@ export class GroupModalComponent {
 		name: null,
 		numStudents: 0,
 		year: 0,
-		faculty: null
+		department: null
 	};
 
 	isEditing = false;

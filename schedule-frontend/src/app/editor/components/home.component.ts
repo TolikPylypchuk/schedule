@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit {
 	groups: Group[];
 	plans: Map<number, Plan[]> = new Map();
 
+	getCurrentGroupName = getCurrentGroupName;
+
 	constructor(
 		modalService: NgbModal,
 		router: Router,
@@ -52,7 +54,7 @@ export class HomeComponent implements OnInit {
 		this.authService.getCurrentUser()
 			.subscribe((user: User) => this.currentUser = user);
 
-		this.groupService.getGroupsByFaculty(this.currentUser.faculty.id)
+		this.groupService.getGroupsByFaculty(this.currentUser.department.faculty.id)
 			.subscribe((groups: Group[]) => {
 			this.groups = groups.sort(
 				(g1, g2) => getCurrentGroupName(g1).localeCompare(getCurrentGroupName(g2)));
@@ -76,7 +78,7 @@ export class HomeComponent implements OnInit {
 		const modalRef = this.modalService.open(GroupModalComponent);
 		const modal = modalRef.componentInstance as GroupModalComponent;
 
-		modal.group.faculty = this.currentUser.faculty;
+		modal.group.department = this.currentUser.department;
 		modal.group.year = getCurrentYear();
 
 		modalRef.result.then(
@@ -94,7 +96,7 @@ export class HomeComponent implements OnInit {
 		modal.group = {
 			id: group.id,
 			name: group.name,
-			faculty: group.faculty,
+			department: group.department,
 			numStudents: group.numStudents,
 			year: group.year
 		};
@@ -125,7 +127,7 @@ export class HomeComponent implements OnInit {
 		const modalRef = this.modalService.open(PlanModalComponent);
 		const modal = modalRef.componentInstance as PlanModalComponent;
 
-		modal.plan.group = group;
+		modal.plan.department = group.department;
 		modal.plan.year = getCurrentYear();
 		modal.plan.semester = getCurrentSemester();
 
@@ -144,7 +146,8 @@ export class HomeComponent implements OnInit {
 
 		modal.plan = {
 			id: plan.id,
-			group: plan.group,
+			department: plan.department,
+			course: plan.course,
 			subject: plan.subject,
 			numLectures: plan.numLectures,
 			numPractice: plan.numPractice,
@@ -162,7 +165,7 @@ export class HomeComponent implements OnInit {
 				plan.numPractice = newPlan.numPractice;
 				plan.numLabs = newPlan.numLabs;
 
-				this.plans.get(plan.group.id).sort(
+				this.plans.get(plan.department.id).sort(
 					(p1, p2) => p1.subject.name.localeCompare(p2.subject.name));
 			},
 			() => { });
@@ -174,12 +177,10 @@ export class HomeComponent implements OnInit {
 		action.subscribe(
 			() =>
 				this.plans.set(
-					plan.group.id,
-					this.plans.get(plan.group.id).filter(p => p.id !== plan.id)),
+					plan.department.id,
+					this.plans.get(plan.department.id).filter(p => p.id !== plan.id)),
 			() => { });
 
 		action.connect();
 	}
-
-	getCurrentGroupName = getCurrentGroupName;
 }

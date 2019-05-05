@@ -5,6 +5,7 @@ import { Faculty } from "../../common/models/models";
 import { FacultyService } from "../../common/services/services";
 
 @Component({
+	// tslint:disable-next-line:component-selector
 	selector: "schdedule-admin-faculty-modal",
 	templateUrl: "./faculty-modal.component.html"
 })

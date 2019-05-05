@@ -15,7 +15,8 @@ export class PlanModalComponent implements OnInit {
 	private subjectService: SubjectService;
 
 	plan: Plan = {
-		group: null,
+		department: null,
+		course: 0,
 		subject: null,
 		year: 0,
 		semester: 0,
@@ -43,7 +44,8 @@ export class PlanModalComponent implements OnInit {
 		this.subjectService.getSubjects()
 			.subscribe((subjects: Subject[]) => {
 				this.planService.getPlansByGroupAndYearAndSemester(
-					this.plan.group.id, this.plan.year, this.plan.semester)
+					// TODO: refactor to departmment
+					this.plan.department.id, this.plan.year, this.plan.semester)
 					.subscribe((plans: Plan[]) => {
 						this.subjects = subjects.filter(
 							s => !plans.find(

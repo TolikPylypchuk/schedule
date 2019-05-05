@@ -39,7 +39,6 @@ export interface ClassroomType extends EntityBase {
 
 export interface Faculty extends EntityBase {
 	name: string;
-	departments: Department[];
 }
 
 export interface Department extends EntityBase {

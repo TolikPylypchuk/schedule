@@ -73,7 +73,7 @@ export class SettingsComponent implements OnInit {
 								this.classrooms.set(
 									building.id,
 									classrooms.sort(
-										(c1, c2) => c1.number.localeCompare(c2.number))))
+										(c1, c2) => c1.number.localeCompare(c2.number))));
 					}
 				});
 

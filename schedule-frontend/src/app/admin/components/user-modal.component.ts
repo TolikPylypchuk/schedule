@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { getAuthorityName } from "../../common/models/functions";
-import { Authority, Faculty, User } from "../../common/models/models";
+import { Authority, Faculty, User, Department } from "../../common/models/models";
 import { FacultyService, UserService } from "../../common/services/services";
 
 @Component({
@@ -13,7 +13,10 @@ export class UserModalComponent implements OnInit {
 	private activeModal: NgbActiveModal;
 
 	private facultyService: FacultyService;
+	// private departmentService: DepartmentService;
 	private userService: UserService;
+
+	getAuthorityName = getAuthorityName;
 
 	user: User = {
 		username: null,
@@ -22,7 +25,7 @@ export class UserModalComponent implements OnInit {
 		lastName: null,
 		position: null,
 		password: "pass",
-		faculty: null,
+		department: null,
 		authorities: []
 	};
 
@@ -44,8 +47,8 @@ export class UserModalComponent implements OnInit {
 
 	ngOnInit(): void {
 		if (this.isEditing) {
-			this.user.faculty = this.faculties.find(
-				f => f.id === this.user.faculty.id);
+			// this.user.department = this.faculties.find(
+			// 	f => f.id === this.user.department.faculty.id);
 		}
 	}
 
@@ -70,7 +73,7 @@ export class UserModalComponent implements OnInit {
 	submit(): void {
 		if (!this.isUserValid()) {
 			this.error = true;
-			this.errorText = "Дані неправильно заповнені."
+			this.errorText = "Дані неправильно заповнені.";
 		}
 
 		const action = this.isEditing
@@ -94,8 +97,6 @@ export class UserModalComponent implements OnInit {
 			this.user.middleName && this.user.middleName.length !== 0 &&
 			this.user.lastName && this.user.lastName.length !== 0 &&
 			this.user.position && this.user.position.length !== 0 &&
-			this.user.faculty !== null;
+			this.user.department !== null;
 	}
-
-	getAuthorityName = getAuthorityName;
 }
