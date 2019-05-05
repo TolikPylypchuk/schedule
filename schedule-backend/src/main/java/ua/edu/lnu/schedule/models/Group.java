@@ -79,8 +79,7 @@ public class Group implements Serializable {
 		this.faculty = faculty;
 	}*/
 
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "department", nullable = false)
 	public Department getDepartment() {
 		return this.department;
