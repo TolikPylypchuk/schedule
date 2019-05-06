@@ -22,10 +22,9 @@ export enum ClassFrequency {
 }
 
 class ClassCell {
-	frequency: ClassFrequency;
 	weekly: models.Class;
 	numerator: models.Class;
-	deniminator: models.Class;
+	denominator: models.Class;
 }
 
 @Component({
@@ -177,7 +176,7 @@ export class ScheduleComponent implements OnInit {
 
 			cell.weekly = filtered.find(c => c.frequency.toLowerCase() === "щотижня");
 			cell.numerator = filtered.find(c => c.frequency.toLowerCase() === "по чисельнику");
-			cell.deniminator = filtered.find(c => c.frequency.toLowerCase() === "по знаменнику");
+			cell.denominator = filtered.find(c => c.frequency.toLowerCase() === "по знаменнику");
 
 			return cell;
 		});
