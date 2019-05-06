@@ -1,38 +1,11 @@
-<h1 class="text-center">{{ currentUser.department.faculty.name }}</h1>
-<h2 class="text-center">Розклад</h2>
-
-<div class="d-flex align-content-stretch flex-nowrap">
-    <div>
-        <table class="table table-bordered table-striped table-sm">
-            <thead>
-                <tr>
-                    <th class="text-center">День</th>
-                </tr>
-                <tr>
-                    <th class="text-center">#&nbsp;пари</th>
-                </tr>
-                <tr>
-                    <th class="text-center">Початок<br/>Кінець</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let lecturer of lecturers">
-                    <th>
-                        <div class="btn btn-block btn-sm text-center">
-                            {{ getLecturerInitials(lecturer) }}
-                        </div>
-                        <div class="btn btn-block btn-sm text-center" style="visibility: hidden">
-                            яйко-сподівайко
-                        </div>
-                    </th>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="table-responsive">
+<div>
+    <h1 class="text-center">{{ currentUser.department.faculty.name }}</h1>
+    <h2 class="text-center">Розклад</h2>
+    <div id="schedule-table" class="table-responsive">
         <table type="table" class="table table-bordered table-sm table-striped" id="header">
             <thead>
                 <tr>
+                    <th class="text-center">День</th>
                     <th colspan="9" class="text-center">Понеділок</th>
                     <th colspan="9" class="text-center">Вівторок</th>
                     <th colspan="9" class="text-center">Середа</th>
@@ -40,11 +13,13 @@
                     <th colspan="9" class="text-center">П'ятниця</th>
                 </tr>
                 <tr>
+                    <th class="text-center">#&nbsp;пари</th>
                     <th *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
                         {{ n % 9 + 1 }}
                     </th>
                 </tr>
                 <tr>
+                    <th class="text-center">Початок<br/>Кінець</th>
                     <th *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
                         {{ getClassStart(n % 9 + 1) }}<br />{{ getClassEnd(n % 9 + 1) }}
                     </th>
@@ -52,67 +27,89 @@
             </thead>
             <tbody>
                 <tr *ngFor="let lecturer of lecturers">
+                    <td>
+                        <div class="btn btn-block btn-sm text-center">
+                            {{ getLecturerInitials(lecturer) }}
+                        </div>
+                        <div class="btn btn-block btn-sm text-center" style="visibility: hidden">
+                            яйко-сподівайко
+                        </div>
+                    </td>
+                    <td *ngFor="let cell of getLecturerClasses(lecturer)" [class]="'text-center ' isSuitable(lecturer, n)">
+						<ng-container *ngIf="cell.weekly !== null; then weekly; ">
+
+						</ng-container>
+
+						<ng-template #fullCell>
+							<button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(n) }}, {{ getNumber(n) }} пара" container="body" (click)="addClassClicked(0, getDay(n), getNumber(n), lecturer, getWish(lecturer.id,getDay(n), getNumber(n))">
+								<span class="fa fa-plus"></span>
+							</button>
+						</ng-template>
+						<ng-template #emptyCell>
+
+						</ng-template>
+                    </td>
                     <td *ngFor="let n of getArrayOfNumbers(45)" class="text-center" [style.background-color]="getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1) == null
-								 ? 'none' : getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1).suitable
-								 ? '#CCFACC' : '#FACCCC'">
+									 ? 'none' 
+									 : getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1).suitable
+										 ? '#CCFACC' 
+										 : '#FACCCC'">
                         <div [ngSwitch]="getClassFrequency(lecturer, floor(n / 9 + 1), n % 9 + 1)">
                             <ng-container *ngSwitchCase="0">
                                 <!-- NONE -->
-                                <button class="btn btn-block btn-sm btn-outline-primary" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара" (click)="addClassClicked(0, floor(n / 9 + 1), n % 9 + 1, lecturer,
-											getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1))">
-								<span class="fa fa-plus"></span>
-							</button>
-                                <button class="btn btn-block btn-sm" style="visibility: hidden; max-width: 4em; overflow: hidden; text-overflow: ellipsis">
-								яйко-сподівайко
-							</button>
+                                <button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара" container="body" (click)="addClassClicked(0, floor(n / 9 + 1), n % 9 + 1, lecturer, getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1))">
+									<span class="fa fa-plus"></span>
+								</button>
+                                <button class="btn btn-block btn-sm placeholder">
+									яйко-сподівайко
+								</button>
                             </ng-container>
                             <ng-container *ngSwitchCase="1">
                                 <!-- WEEKLY -->
-                                <button class="btn btn-block btn-sm btn-primary" style="max-width: 4em; overflow: hidden; text-overflow: ellipsis" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
-&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'щотижня').subject.name }}" (click)="editClassClicked(1, floor(n / 9 + 1), n % 9 + 1, lecturer)">
-								{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "щотижня").subject.name }}
-							</button>
+                                <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
+	&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'щотижня').subject.name }}" container="body" (click)="editClassClicked(1, floor(n / 9 + 1), n % 9 + 1, lecturer)">
+									{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "щотижня").subject.name }}
+								</button>
                             </ng-container>
                             <ng-container *ngSwitchCase="2">
                                 <!-- NUMERATOR -->
-                                <button class="btn btn-block btn-sm btn-primary" style="max-width: 4em; overflow: hidden; text-overflow: ellipsis" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
-&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по чисельнику').subject.name }}" (click)="editClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
-								{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
-							</button>
-                                <button class="btn btn-block btn-sm btn-outline-primary" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара" (click)="addClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer,
-											getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1))">
-								<span class="fa fa-plus" aria-hidden="true"></span>
-							</button>
+                                <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
+	&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по чисельнику').subject.name }}" container="body" (click)="editClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
+									{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
+								</button>
+                                <button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара" container="body" (click)="addClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer,
+												getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1))">
+									<span class="fa fa-plus" aria-hidden="true"></span>
+								</button>
                             </ng-container>
                             <ng-container *ngSwitchCase="3">
                                 <!-- DENOMINATOR -->
-                                <button class="btn btn-block btn-sm btn-outline-primary" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара" (click)="addClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer,
-											getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1))">
-								<span class="fa fa-plus" aria-hidden="true"></span>
-							</button>
-                                <button class="btn btn-block btn-sm btn-primary" style="max-width: 4em; overflow: hidden; text-overflow: ellipsis" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
-&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по знаменнику').subject.name }}" (click)="editClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
-								{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
-							</button>
+                                <button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара" container="body" (click)="addClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer, getWish(lecturer.id, floor(n / 9 + 1), n % 9 + 1))">
+									<span class="fa fa-plus" aria-hidden="true"></span>
+								</button>
+                                <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
+	&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по знаменнику').subject.name }}" container="body" (click)="editClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
+									{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
+								</button>
                             </ng-container>
                             <ng-container *ngSwitchCase="4">
-                                <!-- BOTH -->
-                                <button class="btn btn-block btn-sm btn-primary" style="max-width: 4em; overflow: hidden; text-overflow: ellipsis" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
-&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по чисельнику').subject.name }}" (click)="editClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
-								{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
-							</button>
-                                <button class="btn btn-block btn-sm btn-primary" style="max-width: 4em; overflow: hidden; text-overflow: ellipsis" data-toggle="tooltip" title="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
-&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по знаменнику').subject.name }}" (click)="editClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
-								{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
-							</button>
+                                <!-- BIWEEKLY -->
+                                <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
+	&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по чисельнику').subject.name }}" container="body" (click)="editClassClicked(2, floor(n / 9 + 1), n % 9 + 1, lecturer)">
+									{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по чисельнику").subject.name }}
+								</button>
+                                <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(floor(n / 9 + 1)) }}, {{n % 9 + 1}} пара
+	&#013;{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, 'по знаменнику').subject.name }}" container="body" (click)="editClassClicked(3, floor(n / 9 + 1), n % 9 + 1, lecturer)">
+									{{ getClass(lecturer, floor(n / 9 + 1), n % 9 + 1, "по знаменнику").subject.name }}
+								</button>
                             </ng-container>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <table class="table table-bordered table-sm" aria-labelledby="header" (scroll)="verticalOverflow">
-
-        </table>
+        <!-- <table class="table table-bordered table-sm" aria-labelledby="header" (scroll)="verticalOverflow">
+	
+			</table> -->
     </div>
 </div>

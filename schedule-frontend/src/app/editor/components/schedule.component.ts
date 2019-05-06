@@ -21,6 +21,13 @@ export enum ClassFrequency {
 	BIWEEKLY
 }
 
+class ClassCell {
+	frequency: ClassFrequency;
+	weekly: models.Class;
+	numerator: models.Class;
+	deniminator: models.Class;
+}
+
 @Component({
 	selector: "schedule-editor-schedule",
 	templateUrl: "./schedule.component.html"
@@ -142,6 +149,61 @@ export class ScheduleComponent implements OnInit {
 			c => getDayOfWeekNumber(c.dayOfWeek) === day &&
 					c.number === num &&
 					c.frequency.toLowerCase() === frequency.toLowerCase());
+	}
+
+	getLecturerClasses(
+		lecturer: models.User): ClassCell[] | undefined {
+
+		const classes = this.lecturersClasses.get(lecturer.id);
+
+		const result = this.getArrayOfNumbers(45).map(n => {
+			const day = this.getDay(n);
+			const num = this.getNumber(n);
+			const filtered = classes.filter(
+				c => getDayOfWeekNumber(c.dayOfWeek) === day &&
+				c.number === num);
+
+			const cell: ClassCell = new ClassCell();
+			// if (classes.length === 2) {
+			// 	cell.frequency = ClassFrequency.BIWEEKLY;
+			// } else if (classes.length === 1) {
+			// 	const f = classes[0].frequency.toLowerCase();
+			// 	cell.frequency = f.toLowerCase() === "щотижня"
+			// 		? ClassFrequency.WEEKLY
+			// 		: f.toLowerCase() === "по чисельнику"
+			// 			? ClassFrequency.NUMERATOR
+			// 			: ClassFrequency.DENOMINATOR;
+			// }
+
+			cell.weekly = filtered.find(c => c.frequency.toLowerCase() === "щотижня");
+			cell.numerator = filtered.find(c => c.frequency.toLowerCase() === "по чисельнику");
+			cell.deniminator = filtered.find(c => c.frequency.toLowerCase() === "по знаменнику");
+
+			return cell;
+		});
+
+		return result;
+	}
+
+	isSuitable(lecturer: models.User, n: number): string {
+		const wish = this.getWish(lecturer.id, this.getDay(n), this.getNumber(n));
+		return wish == null
+			? "none"
+			: `suitable-${wish.suitable}`;
+	}
+
+	getDescpiption(n: number, c: models.Class): string {
+		return `${this.getDayOfWeekName(this.getDay(n))}, ${this.getNumber(n)} пара
+		<br />
+		${c.subject.name}`;
+	}
+
+	getDay(n: number): number {
+		return this.floor(n / 9 + 1);
+	}
+
+	getNumber(n: number): number {
+		return n % 9 + 1;
 	}
 
 	getArrayOfNumbers(num: number): number[] {
