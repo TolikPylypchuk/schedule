@@ -50,6 +50,9 @@ export class ScheduleComponent implements OnInit {
 	private userService: services.UserService;
 	private wishService: services.WishService;
 
+	private dragPosition: number;
+	private dropPosition: number;
+
 	currentUser: models.User;
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
@@ -224,6 +227,62 @@ export class ScheduleComponent implements OnInit {
 
 	getArrayOfNumbers(num: number): number[] {
 		return Array.apply(null, { length: num }).map(Number.call, Number);
+	}
+
+	startDrag(c: models.Class, position: number): void {
+		this.dragPosition = position;
+		console.log(c.subject. name + " drag");
+	}
+
+	releaseDrop(c: models.Class, lecturerId: number): void {
+		this.areLoaded.set(lecturerId, false);
+		const classes = this.lecturersClassesAll.get(lecturerId).map(cell => {
+			if (cell.n === this.dropPosition && cell.n !== this.dragPosition) {
+				if (cell.frequency === ClassFrequency.NONE) {
+					c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
+					c.number = this.getNumber(this.dropPosition);
+					switch (c.frequency) {
+						case "Щотижня":
+						cell.weekly = c;
+						cell.frequency = ClassFrequency.WEEKLY;
+						break;
+						case "По чисельнику":
+						cell.numerator = c;
+						cell.frequency = ClassFrequency.NUMERATOR;
+						break;
+						case "По знаменнику":
+						cell.denominator = c;
+						cell.frequency = ClassFrequency.DENOMINATOR;
+						break;
+					}
+				}
+			} else if (cell.n !== this.dropPosition && cell.n === this.dragPosition) {
+				cell.frequency = ClassFrequency.NONE;
+				switch (c.frequency) {
+					case "Щотижня":
+					cell.weekly = null;
+					break;
+					case "По чисельнику":
+					cell.numerator = null;
+					break;
+					case "По знаменнику":
+					cell.denominator = null;
+					break;
+				}
+			}
+
+			return cell;
+		});
+
+		const copy = this.lecturersClassesAll;
+		copy.set(lecturerId, classes);
+		this.lecturersClassesAll = copy;
+		this.areLoaded.set(lecturerId, true);
+		console.log(c.subject. name + " drop");
+	}
+
+	addDropItem(event: models.Class, position: number): void {
+		this.dropPosition = position;
 	}
 
 	// editClassClicked(
