@@ -60,6 +60,7 @@ export class ScheduleComponent implements OnInit {
 	getClassStart = getClassStart;
 	getClassEnd = getClassEnd;
 	getDayOfWeekName = getDayOfWeekName;
+	getDayOfWeekNumber = getDayOfWeekNumber;
 
 	floor = Math.floor;
 
@@ -221,45 +222,87 @@ export class ScheduleComponent implements OnInit {
 		return Array.apply(null, { length: num }).map(Number.call, Number);
 	}
 
+	// editClassClicked(
+	// 	frequency: ClassFrequency,
+	// 	day: number,
+	// 	num: number,
+	// 	lecturer: models.User): void {
+	// 	const modalRef = this.modalService.open(
+	// 		ClassModalComponent, { size: "lg" });
+	// 	const modal = modalRef.componentInstance as ClassModalComponent;
+	// 	modal.contextLecturer = lecturer;
+
+	// 	const frequencyName = frequency === ClassFrequency.WEEKLY
+	// 		? "Щотижня"
+	// 		: frequency === ClassFrequency.NUMERATOR
+	// 			? "По чисельнику"
+	// 			: "По знаменнику";
+
+	// 	const reverseFrequencyName = frequency === ClassFrequency.NUMERATOR
+	// 		? "По знаменнику"
+	// 		: "По чисельнику";
+
+	// 	const currentClass = this.getClass(lecturer, day, num, frequencyName);
+	// 	modal.currentClass = {
+	// 		id: currentClass.id,
+	// 		number: currentClass.number,
+	// 		frequency: currentClass.frequency,
+	// 		dayOfWeek: currentClass.dayOfWeek,
+	// 		year: getCurrentYear(),
+	// 		semester: getCurrentSemester(),
+	// 		type: currentClass.type,
+	// 		classroomType: currentClass.classroomType,
+	// 		subject: currentClass.subject,
+	// 		classrooms: currentClass.classrooms.filter(() => true),
+	// 		groups: currentClass.groups.filter(() => true),
+	// 		lecturers: currentClass.lecturers.filter(() => true),
+	// 	};
+
+	// 	modal.isEditing = true;
+	// 	modal.frequencySet = currentClass.frequency !== "Щотижня" &&
+	// 		this.getClass(lecturer, day, num, reverseFrequencyName) as any;
+
+	// 	modalRef.result.then(
+	// 		(changedClass: models.Class | number) => {
+	// 			if (typeof (changedClass) === "number") {
+	// 				this.lecturersClasses.set(
+	// 					lecturer.id,
+	// 					this.lecturersClasses.get(lecturer.id).filter(
+	// 						c => c.id !== changedClass));
+	// 			} else if (changedClass) {
+	// 				const c = this.lecturersClasses.get(lecturer.id).find(
+	// 					lc => lc.id === changedClass.id);
+	// 				c.frequency = changedClass.frequency;
+	// 				c.type = changedClass.type;
+	// 				c.classroomType = changedClass.classroomType;
+	// 				c.subject = changedClass.subject;
+	// 				c.classrooms = changedClass.classrooms;
+	// 				c.groups = changedClass.groups;
+	// 				c.lecturers = changedClass.lecturers;
+	// 			}
+	// 		},
+	// 		() => { });
+	// }
+
 	editClassClicked(
-		frequency: ClassFrequency,
-		day: number,
-		num: number,
+		classObject: models.Class,
 		lecturer: models.User): void {
 		const modalRef = this.modalService.open(
 			ClassModalComponent, { size: "lg" });
 		const modal = modalRef.componentInstance as ClassModalComponent;
 		modal.contextLecturer = lecturer;
 
-		const frequencyName = frequency === ClassFrequency.WEEKLY
-			? "Щотижня"
-			: frequency === ClassFrequency.NUMERATOR
-				? "По чисельнику"
-				: "По знаменнику";
+		const frequency = classObject.frequency;
 
-		const reverseFrequencyName = frequency === ClassFrequency.NUMERATOR
+		const reverseFrequencyName = frequency === "По чисельнику"
 			? "По знаменнику"
 			: "По чисельнику";
 
-		const currentClass = this.getClass(lecturer, day, num, frequencyName);
-		modal.currentClass = {
-			id: currentClass.id,
-			number: currentClass.number,
-			frequency: currentClass.frequency,
-			dayOfWeek: currentClass.dayOfWeek,
-			year: getCurrentYear(),
-			semester: getCurrentSemester(),
-			type: currentClass.type,
-			classroomType: currentClass.classroomType,
-			subject: currentClass.subject,
-			classrooms: currentClass.classrooms.filter(() => true),
-			groups: currentClass.groups.filter(() => true),
-			lecturers: currentClass.lecturers.filter(() => true),
-		};
+		modal.currentClass = classObject;
 
 		modal.isEditing = true;
-		modal.frequencySet = currentClass.frequency !== "Щотижня" &&
-			this.getClass(lecturer, day, num, reverseFrequencyName) as any;
+		modal.frequencySet = classObject.frequency !== "Щотижня" &&
+			this.getClass(lecturer, this.getDayOfWeekNumber(classObject.dayOfWeek), classObject.number, reverseFrequencyName) as any;
 
 		modalRef.result.then(
 			(changedClass: models.Class | number) => {

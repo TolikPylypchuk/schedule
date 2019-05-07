@@ -55,7 +55,7 @@
                                 <ng-container *ngSwitchCase="1">
                                     <button class="btn btn-block btn-sm btn-primary" placement="right"
                                         ngbTooltip="{{ getDescpiption(cell.weekly) }}" container="body"
-                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        (click)="editClassClicked(cell.weekly, lecturer)">
                                         {{ cell.weekly.subject.name }}
                                     </button>
                                 </ng-container>
@@ -63,7 +63,7 @@
                                 <ng-container *ngSwitchCase="2">
                                     <button class="btn btn-block btn-sm btn-primary" placement="right"
                                         ngbTooltip="{{ getDescpiption(cell.numerator) }}" container="body"
-                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        (click)="editClassClicked(cell.numerator, lecturer)">
                                         {{ cell.numerator.subject.name }}
                                     </button>
                                     <button class="btn btn-block btn-sm btn-outline-primary" placement="right"
@@ -83,7 +83,7 @@
                                     </button>
                                     <button class="btn btn-block btn-sm btn-primary" placement="right"
                                         ngbTooltip="{{ getDescpiption(cell.denominator) }}" container="body"
-                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        (click)="editClassClicked(cell.denominator, lecturer)">
                                         {{ cell.denominaor.subject.name }}
                                     </button>
                                 </ng-container>
@@ -91,12 +91,12 @@
                                 <ng-container *ngSwitchCase="4">
                                     <button class="btn btn-block btn-sm btn-primary" placement="right"
                                         ngbTooltip="{{ getDescpiption(cell.numerator) }}" container="body"
-                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        (click)="editClassClicked(cell.numerator, lecturer)">
                                         {{ cell.numerator.subject.name }}
                                     </button>
                                     <button class="btn btn-block btn-sm btn-primary" placement="right"
                                         ngbTooltip="{{ getDescpiption(cell.denominator) }}" container="body"
-                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        (click)="editClassClicked(cell.denominator, lecturer)">
                                         {{ cell.denominator.subject.name }}
                                     </button>
                                 </ng-container>
