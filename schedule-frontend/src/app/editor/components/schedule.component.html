@@ -19,7 +19,7 @@
                     </th>
                 </tr>
                 <tr>
-                    <th class="text-center">Початок<br/>Кінець</th>
+                    <th class="text-center">Початок<br />Кінець</th>
                     <th *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
                         {{ getClassStart(getNumber(n)) }}<br />{{ getClassEnd(getNumber(n)) }}
                     </th>
@@ -36,49 +36,69 @@
                                 яйко-сподівайко
                             </div>
                         </td>
+
                         <td *ngFor="let cell of lecturersClassesAll.get(lecturer.id)" class="text-center">
                             <div [ngSwitch]="cell.frequency">
+                                <!-- NONE -->
                                 <ng-container *ngSwitchCase="0">
-
-                                    <button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
-                                    <span class="fa fa-plus"></span>
-                                </button>
+                                    <button class="btn btn-block btn-sm btn-outline-primary" placement="right"
+                                        ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара"
+                                        container="body"
+                                        (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
                                     <button class="btn btn-block btn-sm placeholder">
-									яйко-сподівайко
-								</button>
+                                        яйко-сподівайко
+                                    </button>
                                 </ng-container>
+                                <!-- WEEKLY -->
                                 <ng-container *ngSwitchCase="1">
-
-                                    <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDescpiption(cell.weekly) }}" container="body" (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
-                                    {{ cell.weekly.subject.name }}
-                                </button>
+                                    <button class="btn btn-block btn-sm btn-primary" placement="right"
+                                        ngbTooltip="{{ getDescpiption(cell.weekly) }}" container="body"
+                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        {{ cell.weekly.subject.name }}
+                                    </button>
                                 </ng-container>
+                                <!-- NUMERATOR -->
                                 <ng-container *ngSwitchCase="2">
-
-                                    <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDescpiption(cell.numerator) }}" container="body" (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
-                                    {{ cell.numerator.subject.name }}
-                                </button>
-                                    <button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
-                                    <span class="fa fa-plus"></span>
-                                </button>
+                                    <button class="btn btn-block btn-sm btn-primary" placement="right"
+                                        ngbTooltip="{{ getDescpiption(cell.numerator) }}" container="body"
+                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        {{ cell.numerator.subject.name }}
+                                    </button>
+                                    <button class="btn btn-block btn-sm btn-outline-primary" placement="right"
+                                        ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара"
+                                        container="body"
+                                        (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
                                 </ng-container>
+                                <!-- DENOMINATOR -->
                                 <ng-container *ngSwitchCase="3">
-
-                                    <button class="btn btn-block btn-sm btn-outline-primary" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
-                                    <span class="fa fa-plus"></span>
-                                </button>
-                                    <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDescpiption(cell.denominator) }}" container="body" (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
-                                    {{ cell.denominaor.subject.name }}
-                                </button>
+                                    <button class="btn btn-block btn-sm btn-outline-primary" placement="right"
+                                        ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара"
+                                        container="body"
+                                        (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
+                                    <button class="btn btn-block btn-sm btn-primary" placement="right"
+                                        ngbTooltip="{{ getDescpiption(cell.denominator) }}" container="body"
+                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        {{ cell.denominaor.subject.name }}
+                                    </button>
                                 </ng-container>
+                                <!-- BIWEEKLY -->
                                 <ng-container *ngSwitchCase="4">
-
-                                    <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDescpiption(cell.numerator) }}" container="body" (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
-                                    {{ cell.numerator.subject.name }}
-                                </button>
-                                    <button class="btn btn-block btn-sm btn-primary" placement="right" ngbTooltip="{{ getDescpiption(cell.denominator) }}" container="body" (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
-                                    {{ cell.denominator.subject.name }}
-                                </button>
+                                    <button class="btn btn-block btn-sm btn-primary" placement="right"
+                                        ngbTooltip="{{ getDescpiption(cell.numerator) }}" container="body"
+                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        {{ cell.numerator.subject.name }}
+                                    </button>
+                                    <button class="btn btn-block btn-sm btn-primary" placement="right"
+                                        ngbTooltip="{{ getDescpiption(cell.denominator) }}" container="body"
+                                        (click)="editClassClicked(1, getDay(cell.n), getNumber(cell.n), lecturer)">
+                                        {{ cell.denominator.subject.name }}
+                                    </button>
                                 </ng-container>
                             </div>
                         </td>
