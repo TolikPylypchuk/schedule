@@ -12,6 +12,7 @@ import {
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareUsersByName, getDayOfWeekName
 } from "../../common/models/functions";
+import { Observable } from "rxjs/Observable";
 
 export enum ClassFrequency {
 	NONE,
@@ -22,6 +23,8 @@ export enum ClassFrequency {
 }
 
 class ClassCell {
+	n: number;
+	frequency: ClassFrequency;
 	weekly: models.Class;
 	numerator: models.Class;
 	denominator: models.Class;
@@ -49,7 +52,9 @@ export class ScheduleComponent implements OnInit {
 	currentUser: models.User;
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
+	lecturersClassesAll: Map<number, ClassCell[]> = new Map();
 	lecturerWishes: Map<number, models.Wish[]> = new Map();
+	areLoaded: Map<number, boolean> = new Map();
 
 	getLecturerInitials = getUserInitials;
 	getClassStart = getClassStart;
@@ -91,14 +96,19 @@ export class ScheduleComponent implements OnInit {
 				this.userService.getLecturersByFaculty(user.department.faculty.id)
 					.subscribe((lecturers: models.User[]) => {
 						this.lecturers = lecturers.sort(compareUsersByName);
+						console.log("added");
 
 						for (const lecturer of lecturers) {
+							this.areLoaded.set(lecturer.id, false);
 							this.classService.getClassesByLecturerAndYearAndSemester(
 								lecturer.id,
 								getCurrentYear(),
 								getCurrentSemester())
-								.subscribe((classes: models.Class[]) =>
-									this.lecturersClasses.set(lecturer.id, classes));
+								.subscribe((classes: models.Class[]) => {
+									this.lecturersClasses.set(lecturer.id, classes);
+									this.lecturersClassesAll.set(lecturer.id, this.getLecturerClasses(lecturer));
+									this.areLoaded.set(lecturer.id, true);
+								});
 							this.wishService.getWishesByLecturerAndYearAndSemester(
 								lecturer.id,
 								getCurrentYear(),
@@ -121,7 +131,7 @@ export class ScheduleComponent implements OnInit {
 		if (classes) {
 			classes = classes.filter(
 				c => getDayOfWeekNumber(c.dayOfWeek) === day &&
-				c.number === num);
+					c.number === num);
 
 			if (classes.length === 2) {
 				frequency = ClassFrequency.BIWEEKLY;
@@ -146,8 +156,8 @@ export class ScheduleComponent implements OnInit {
 		const classes = this.lecturersClasses.get(lecturer.id);
 		return classes.find(
 			c => getDayOfWeekNumber(c.dayOfWeek) === day &&
-					c.number === num &&
-					c.frequency.toLowerCase() === frequency.toLowerCase());
+				c.number === num &&
+				c.frequency.toLowerCase() === frequency.toLowerCase());
 	}
 
 	getLecturerClasses(
@@ -156,27 +166,31 @@ export class ScheduleComponent implements OnInit {
 		const classes = this.lecturersClasses.get(lecturer.id);
 
 		const result = this.getArrayOfNumbers(45).map(n => {
+			const cell: ClassCell = new ClassCell();
+			cell.n = n;
+			cell.frequency = ClassFrequency.NONE;
+
 			const day = this.getDay(n);
 			const num = this.getNumber(n);
-			const filtered = classes.filter(
-				c => getDayOfWeekNumber(c.dayOfWeek) === day &&
-				c.number === num);
+			if (classes && classes.length !== 0) {
+				const filtered = classes.filter(
+					c => getDayOfWeekNumber(c.dayOfWeek) === day &&
+						c.number === num);
+				if (filtered.length === 2) {
+					cell.frequency = ClassFrequency.BIWEEKLY;
+				} else if (filtered.length === 1) {
+					const f = filtered[0].frequency.toLowerCase();
+					cell.frequency = f === "щотижня"
+						? ClassFrequency.WEEKLY
+						: f === "по чисельнику"
+							? ClassFrequency.NUMERATOR
+							: ClassFrequency.DENOMINATOR;
+				}
 
-			const cell: ClassCell = new ClassCell();
-			// if (classes.length === 2) {
-			// 	cell.frequency = ClassFrequency.BIWEEKLY;
-			// } else if (classes.length === 1) {
-			// 	const f = classes[0].frequency.toLowerCase();
-			// 	cell.frequency = f.toLowerCase() === "щотижня"
-			// 		? ClassFrequency.WEEKLY
-			// 		: f.toLowerCase() === "по чисельнику"
-			// 			? ClassFrequency.NUMERATOR
-			// 			: ClassFrequency.DENOMINATOR;
-			// }
-
-			cell.weekly = filtered.find(c => c.frequency.toLowerCase() === "щотижня");
-			cell.numerator = filtered.find(c => c.frequency.toLowerCase() === "по чисельнику");
-			cell.denominator = filtered.find(c => c.frequency.toLowerCase() === "по знаменнику");
+				cell.weekly = filtered.find(c => c.frequency.toLowerCase() === "щотижня");
+				cell.numerator = filtered.find(c => c.frequency.toLowerCase() === "по чисельнику");
+				cell.denominator = filtered.find(c => c.frequency.toLowerCase() === "по знаменнику");
+			}
 
 			return cell;
 		});
@@ -186,15 +200,13 @@ export class ScheduleComponent implements OnInit {
 
 	isSuitable(lecturer: models.User, n: number): string {
 		const wish = this.getWish(lecturer.id, this.getDay(n), this.getNumber(n));
-		return wish == null
-			? "none"
+		return wish === null
+			? ""
 			: `suitable-${wish.suitable}`;
 	}
 
-	getDescpiption(n: number, c: models.Class): string {
-		return `${this.getDayOfWeekName(this.getDay(n))}, ${this.getNumber(n)} пара
-		<br />
-		${c.subject.name}`;
+	getDescpiption(c: models.Class): string {
+		return `${c.dayOfWeek}, ${c.number} пара \n ${c.subject.name}`;
 	}
 
 	getDay(n: number): number {
@@ -206,7 +218,7 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	getArrayOfNumbers(num: number): number[] {
-		return Array.apply(null, {length: num}).map(Number.call, Number);
+		return Array.apply(null, { length: num }).map(Number.call, Number);
 	}
 
 	editClassClicked(
@@ -251,7 +263,7 @@ export class ScheduleComponent implements OnInit {
 
 		modalRef.result.then(
 			(changedClass: models.Class | number) => {
-				if (typeof(changedClass) === "number") {
+				if (typeof (changedClass) === "number") {
 					this.lecturersClasses.set(
 						lecturer.id,
 						this.lecturersClasses.get(lecturer.id).filter(
@@ -289,7 +301,7 @@ export class ScheduleComponent implements OnInit {
 		modal.currentClass.dayOfWeek = getDayOfWeekName(day);
 		modal.currentClass.number = num;
 		modal.contextLecturer = lecturer;
-		modal.currentClass.lecturers = [ lecturer ];
+		modal.currentClass.lecturers = [lecturer];
 		modal.wish = wish;
 
 		modalRef.result.then(
@@ -304,8 +316,8 @@ export class ScheduleComponent implements OnInit {
 		if (wishes != null) {
 			wish = wishes.find(w => {
 				return getDayOfWeekNumber(w.dayOfWeek) === day
-				&& w.startTime.localeCompare(getClassStart(classNum) + ":00") <= 0
-				&& w.endTime.localeCompare(getClassEnd(classNum) + ":00") >= 0;
+					&& w.startTime.localeCompare(getClassStart(classNum) + ":00") <= 0
+					&& w.endTime.localeCompare(getClassEnd(classNum) + ":00") >= 0;
 			});
 		}
 		return wish;
