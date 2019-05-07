@@ -10,7 +10,8 @@ import * as services from "../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester, getUserInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
-	compareUsersByName, getDayOfWeekName
+	compareUsersByName, getDayOfWeekName,
+	getUsersAsString, getGroupsAsString, getClassroomsAsString
 } from "../../common/models/functions";
 import { Observable } from "rxjs/Observable";
 
@@ -61,6 +62,9 @@ export class ScheduleComponent implements OnInit {
 	getClassEnd = getClassEnd;
 	getDayOfWeekName = getDayOfWeekName;
 	getDayOfWeekNumber = getDayOfWeekNumber;
+	getLecturersAsString = getUsersAsString;
+	getGroupsAsString = getGroupsAsString;
+	getClassroomsAsString = getClassroomsAsString;
 
 	floor = Math.floor;
 
