@@ -1,6 +1,16 @@
 #schedule-table {
     width: 100%;
     height: 90%;
+    margin-bottom: 15em;
+}
+
+
+/* 
+#available-classes {
+
+} */
+
+.scroll-x {
     overflow-x: scroll;
     overflow-y: hidden;
 }
@@ -13,15 +23,28 @@
     background-color: #FACCCC;
 }
 
-#schedule-table button.btn-primary {
-    max-width: 4em;
+#schedule-table td {
+    font-size: 0.8em;
+}
+
+#schedule-table td :nth-child(2) {
+    margin-top: 0.3rem;
+}
+
+#schedule-table button {
+    max-width: 3em;
+}
+
+#schedule-table .placeholder {
+    visibility: hidden;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-#schedule-table button.placeholder {
-    visibility: hidden;
-    max-width: 4em;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.drop-highlight-true {
+    border: 1px solid #88ff55;
+}
+
+.not-set-class {
+    width: 10em;
 }

@@ -13,7 +13,6 @@ import {
 	compareUsersByName, getDayOfWeekName,
 	getUsersAsString, getGroupsAsString, getClassroomsAsString
 } from "../../common/models/functions";
-import { Observable } from "rxjs/Observable";
 
 export enum ClassFrequency {
 	NONE,
@@ -51,7 +50,12 @@ export class ScheduleComponent implements OnInit {
 	private wishService: services.WishService;
 
 	private dragPosition: number;
+	private dragFrequency: number;
+	private dragClass: models.Class;
 	private dropPosition: number;
+	private dropFrequency: number;
+	private showDenominator: boolean;
+	private allowDrop: Map<number, string> = new Map();
 
 	currentUser: models.User;
 	lecturers: models.User[] = [];
@@ -97,6 +101,7 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.showDenominator = false;
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => {
 				this.currentUser = user;
@@ -213,10 +218,6 @@ export class ScheduleComponent implements OnInit {
 			: `suitable-${wish.suitable}`;
 	}
 
-	getDescpiption(c: models.Class): string {
-		return `${c.dayOfWeek}, ${c.number} пара \n ${c.subject.name}`;
-	}
-
 	getDay(n: number): number {
 		return this.floor(n / 9 + 1);
 	}
@@ -231,58 +232,89 @@ export class ScheduleComponent implements OnInit {
 
 	startDrag(c: models.Class, position: number): void {
 		this.dragPosition = position;
-		console.log(c.subject. name + " drag");
+		this.dragFrequency = c.frequency === "Щотижня"
+			? ClassFrequency.WEEKLY
+			: c.frequency === "По чисельнику"
+				? ClassFrequency.NUMERATOR
+				: ClassFrequency.DENOMINATOR;
+		this.dragClass = c;
+		this.showDenominator = c.frequency !== "Щотижня";
 	}
 
-	releaseDrop(c: models.Class, lecturerId: number): void {
-		this.areLoaded.set(lecturerId, false);
-		const classes = this.lecturersClassesAll.get(lecturerId).map(cell => {
-			if (cell.n === this.dropPosition && cell.n !== this.dragPosition) {
-				if (cell.frequency === ClassFrequency.NONE) {
+	canDrop(lecturer: models.User): boolean {
+		return this.dragClass.subject.lecturers.map(l => l.id).includes(lecturer.id);
+	}
+
+	releaseDrop(c: models.Class): void {
+		const copy = this.lecturersClassesAll;
+		const frequencyDrop = c.frequency === "Щотижня" ? ClassFrequency.WEEKLY : this.dropFrequency;
+		const frequencyDrag = c.frequency === "Щотижня" ? ClassFrequency.WEEKLY : this.dragFrequency;
+
+		for (const lecturer of c.lecturers) {
+			const classes = this.lecturersClassesAll.get(lecturer.id).map(cell => {
+				if (cell.n === this.dropPosition
+					&& (cell.n !== this.dragPosition || this.dragFrequency !== this.dropFrequency)) {
+
 					c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
 					c.number = this.getNumber(this.dropPosition);
-					switch (c.frequency) {
-						case "Щотижня":
-						cell.weekly = c;
-						cell.frequency = ClassFrequency.WEEKLY;
-						break;
-						case "По чисельнику":
-						cell.numerator = c;
-						cell.frequency = ClassFrequency.NUMERATOR;
-						break;
-						case "По знаменнику":
-						cell.denominator = c;
-						cell.frequency = ClassFrequency.DENOMINATOR;
-						break;
+
+					switch (frequencyDrop) {
+						case ClassFrequency.WEEKLY:
+							cell.weekly = c;
+							cell.frequency = ClassFrequency.WEEKLY;
+							break;
+						case ClassFrequency.NUMERATOR:
+							c.frequency = "По чисельнику";
+							cell.numerator = c;
+							cell.frequency = !cell.denominator
+								? ClassFrequency.NUMERATOR
+								: ClassFrequency.BIWEEKLY;
+							break;
+						case ClassFrequency.DENOMINATOR:
+							c.frequency = "По знаменнику";
+							cell.denominator = c;
+							cell.frequency = !cell.numerator
+								? ClassFrequency.DENOMINATOR
+								: ClassFrequency.BIWEEKLY;
+							break;
 					}
 				}
-			} else if (cell.n !== this.dropPosition && cell.n === this.dragPosition) {
-				cell.frequency = ClassFrequency.NONE;
-				switch (c.frequency) {
-					case "Щотижня":
-					cell.weekly = null;
-					break;
-					case "По чисельнику":
-					cell.numerator = null;
-					break;
-					case "По знаменнику":
-					cell.denominator = null;
-					break;
+
+				if (cell.n === this.dragPosition
+					&& (cell.n !== this.dropPosition || this.dragFrequency !== this.dropFrequency)) {
+					switch (frequencyDrag) {
+						case ClassFrequency.WEEKLY:
+							cell.weekly = null;
+							cell.frequency = ClassFrequency.NONE;
+							break;
+						case ClassFrequency.NUMERATOR:
+							cell.numerator = null;
+							cell.frequency = cell.denominator
+								? ClassFrequency.DENOMINATOR
+								: ClassFrequency.NONE;
+							break;
+						case ClassFrequency.DENOMINATOR:
+							cell.denominator = null;
+							cell.frequency = cell.numerator
+								? ClassFrequency.NUMERATOR
+								: ClassFrequency.NONE;
+							break;
+					}
 				}
-			}
 
-			return cell;
-		});
+				return cell;
+			});
 
-		const copy = this.lecturersClassesAll;
-		copy.set(lecturerId, classes);
+			copy.set(lecturer.id, classes);
+		}
 		this.lecturersClassesAll = copy;
-		this.areLoaded.set(lecturerId, true);
-		console.log(c.subject. name + " drop");
+		this.showDenominator = false;
+		this.dragClass = null;
 	}
 
-	addDropItem(event: models.Class, position: number): void {
+	addDropItem(event: models.Class, position: number, frequency: number): void {
 		this.dropPosition = position;
+		this.dropFrequency = frequency;
 	}
 
 	// editClassClicked(
