@@ -13,8 +13,12 @@ import { EditorComponent } from "./editor.component";
 import { HomeComponent } from "./components/home.component";
 import { ScheduleComponent } from "./components/schedule.component";
 import { ClassModalComponent } from "./components/class-modal.component";
-import { GroupModalComponent } from "./components/group-modal.component";
-import { PlanModalComponent } from "./components/plan-modal.component";
+
+import { GroupsComponent } from "./components/groups/groups.component";
+import { GroupModalComponent } from "./components/groups/group-modal.component";
+
+import { PlansComponent } from "./components/plans/plans.component";
+import { PlanModalComponent } from "./components/plans/plan-modal.component";
 
 @NgModule({
 	declarations: [
@@ -22,7 +26,9 @@ import { PlanModalComponent } from "./components/plan-modal.component";
 		HomeComponent,
 		ScheduleComponent,
 		ClassModalComponent,
+		GroupsComponent,
 		GroupModalComponent,
+		PlansComponent,
 		PlanModalComponent
 	],
 	imports: [

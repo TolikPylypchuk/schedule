@@ -7,7 +7,7 @@ import { Department } from "../models/models";
 import { handleError, getHeaders } from "../functions";
 
 @Injectable()
-export class departmentService {
+export class DepartmentService {
 	private departmentsUrl = "http://localhost:8080/departments";
 
 	private http: Http;
