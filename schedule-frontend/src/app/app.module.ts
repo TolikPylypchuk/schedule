@@ -41,6 +41,7 @@ import * as services from "./common/services/services";
 		services.ClassroomService,
 		services.ClassroomTypeService,
 		services.FacultyService,
+		services.DepartmentService,
 		services.GroupService,
 		services.UserService,
 		services.PlanService,
