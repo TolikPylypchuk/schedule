@@ -26,7 +26,7 @@ export class PlansComponent implements OnInit {
     private authService: AuthService;
     private departmentService: DepartmentService;
     private subjectService: SubjectService;
-    private planSirvice: PlanService;
+    private planService: PlanService;
 
     currentUser: User;
     departments: Department[];
@@ -46,7 +46,7 @@ export class PlansComponent implements OnInit {
         this.authService = authService;
         this.departmentService = departmentService;
         this.subjectService = subjectService;
-        this.planSirvice = planService;
+        this.planService = planService;
     }
 
     ngOnInit(): void {
@@ -59,7 +59,7 @@ export class PlansComponent implements OnInit {
                     (d1, d2) => d1.name.localeCompare(d2.name));
 
                 for (const department of departments) {
-                    this.planSirvice.getPlansByGroupAndYearAndSemester(
+                    this.planService.getPlansByGroupAndYearAndSemester(
                         department.id,
                         getCurrentYear(),
                         getCurrentSemester())
@@ -70,6 +70,10 @@ export class PlansComponent implements OnInit {
                         });
                 }
             });
+    }
+
+    getPlans(departmentId: number, course: number): Plan[] {
+        return this.plans.get(departmentId).filter(p => p.course === course);
     }
 
     addPlan(department: Department, course: number): void {
@@ -122,7 +126,7 @@ export class PlansComponent implements OnInit {
     }
 
     deletePlan(plan: Plan): void {
-        const action = this.planSirvice.deletePlan(plan.id);
+        const action = this.planService.deletePlan(plan.id);
 
         action.subscribe(
             () =>

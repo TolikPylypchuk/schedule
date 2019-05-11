@@ -1,42 +1,37 @@
 <div class="container">
-	<div class="row">
-		<div class="col-md text-center">
+    <div class="row">
+        <div class="col text-center">
             <h2 class="h2">Навчальні плани</h2>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col">
-			<div id="departments" role="tablist" aria-multiselectable="true">
-				<div class="card" *ngFor="let department of departments">
-					<div class="card-header" role="tab" id="{{ department.id }}">
-						<h6 class="m-0">
-							<a data-toggle="collapse"
-								 data-parent="#faculties"	href="#department{{ department.id }}"
-								 aria-expanded="false" [attr.aria-controls]="'department' + department.id">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div id="departments" role="tablist" aria-multiselectable="true">
+                <div class="card" *ngFor="let department of departments">
+                    <div class="card-header" role="tab" id="{{ department.id }}">
+                        <h6 class="m-0">
+                            <a data-toggle="collapse" data-parent="#faculties" href="#department{{ department.id }}" aria-expanded="false" [attr.aria-controls]="'department' + department.id">
 								{{ department.name }}
 							</a>
-						</h6>
-					</div>
+                        </h6>
+                    </div>
 
-					<div id="department{{ department.id }}" class="collapse"
-					     role="tabpanel" [attr.aria-labelledby]="department.id">
-						<div class="card card-body">
-							<div *ngFor="let course of [ 1, 2, 3, 4, 5, 6 ]" class="card">
-								<h6 class="m-2">
-									<a data-toggle="collapse" [attr.data-parent]="'#department'+department.id"
-										 href="#department{{ department.id }}{{ course }}"
-										 aria-expanded="false" [attr.aria-controls]="'department'+department.id+course">
+                    <div id="department{{ department.id }}" class="collapse" role="tabpanel" [attr.aria-labelledby]="department.id">
+                        <div class="card card-body">
+                            <div *ngFor="let course of [ 1, 2, 3, 4, 5, 6 ]" class="card">
+                                <h6 class="m-2">
+                                    <a data-toggle="collapse" [attr.data-parent]="'#department'+department.id" href="#department{{ department.id }}{{ course }}" aria-expanded="false" [attr.aria-controls]="'department'+department.id+course">
 										{{course}} курс
 									</a>
-								</h6>
+                                </h6>
 
-								<div id="department{{ department.id }}{{ course }}" class="collapse"
-                                         role="tabpanel" [attr.aria-labelledby]="'department'+department.id+course">
-                                         
-                                    <button class="btn btn-primary m-3" (click)="addPlan(department, course)">
-                                        Додати
-                                    </button>
-                                    <table>
+                                <div id="department{{ department.id }}{{ course }}" class="collapse" role="tabpanel" [attr.aria-labelledby]="'department'+department.id+course">
+                                    <div class="text-right">
+                                        <button class="btn btn-primary m-3" (click)="addPlan(department, course)">
+											Додати
+										</button>
+                                    </div>
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Предмет</th>
@@ -48,10 +43,10 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let plan of plans.get(group.id).filter(p => p.course === course)">
-                                                <td>{{ plan.subject }}</td>
+                                            <tr *ngFor="let plan of getPlans(department.id, course)">
+                                                <td>{{ plan.subject.name }}</td>
                                                 <td>{{ plan.numLectures }}</td>
-                                                <td>{{ plan.numPractice }}</td>
+                                                <td>{{ plan.numPractices }}</td>
                                                 <td>{{ plan.numLabs }}</td>
                                                 <td>{{ plan.lectureType }}</td>
                                                 <td class="text-right">
@@ -61,16 +56,16 @@
                                                     <button class="btn btn-sm btn-danger" (click)="deletePlan(plan)">
                                                         <i class="fa fa-remove" aria-hidden="true"></i>
                                                     </button>
-                                                </td>                                                
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

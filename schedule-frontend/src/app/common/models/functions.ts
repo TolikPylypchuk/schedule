@@ -256,3 +256,19 @@ export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[
 		return prev;
 	}, { } as any);
 }
+
+export function getShortName(name: string): string {
+	let shortName = "";
+	const words = name.split(" ");
+	for (let i = 0; i < words.length; i++) {
+		if (words[i].length <= 3) {
+			shortName += shortName.length === 0
+				? words[i]
+				: ` ${words[i]} `;
+		} else {
+			shortName += words[i][0].toUpperCase();
+		}
+	}
+
+	return shortName;
+}

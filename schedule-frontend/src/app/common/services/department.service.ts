@@ -8,7 +8,7 @@ import { handleError, getHeaders } from "../functions";
 
 @Injectable()
 export class DepartmentService {
-	private departmentsUrl = "http://localhost:8080/departments";
+	private departmentsUrl = "http://localhost:8080/department";
 
 	private http: Http;
 

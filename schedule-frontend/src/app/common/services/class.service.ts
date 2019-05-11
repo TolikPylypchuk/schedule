@@ -102,6 +102,18 @@ export class ClassService {
 			.first();
 	}
 
+	getGeneratedClassesByFacultyAndYearAndSemester(
+		facultyId: number, year: number, semester: number): Observable<Class[]> {
+		return this.http.get(
+			`${this.classesUrl}/generate/faculty/${facultyId}/year/${year}/semester/${semester}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Class[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
 	getClassesByDayOfWeek(day: number): Observable<Class[]> {
 		return this.http.get(`${this.classesUrl}/day/${day}`)
 			.map(response =>

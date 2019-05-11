@@ -37,15 +37,14 @@
 					Розклад
 				</a>
             </li>
-            <li *ngIf="isEditor() | async" class="nav-item">/li>
-                
+            <li *ngIf="isEditor() | async" class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="settings" data-toggle="dropdown">
 					Налаштування
 				</a>
-				<div class="dropdown-menu">
-					<a class="dropdown-item" routerLink="/editor/groups" routerLinkActive="active">Групи</a>
-					<a class="dropdown-item" routerLink="/editor/plans" routerLinkActive="active">Навчальні плани</a>
-				</div>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" routerLink="/editor/groups" routerLinkActive="active">Групи</a>
+                    <a class="dropdown-item" routerLink="/editor/plans" routerLinkActive="active">Навчальні плани</a>
+                </div>
             </li>
 
             <!-- Admin -->

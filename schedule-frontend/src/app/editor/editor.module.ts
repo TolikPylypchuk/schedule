@@ -10,7 +10,6 @@ import { AuthModule } from "../auth/auth";
 
 import { EditorComponent } from "./editor.component";
 
-import { HomeComponent } from "./components/home.component";
 import { ScheduleComponent } from "./components/schedule.component";
 import { ClassModalComponent } from "./components/class-modal.component";
 
@@ -23,7 +22,6 @@ import { PlanModalComponent } from "./components/plans/plan-modal.component";
 @NgModule({
 	declarations: [
 		EditorComponent,
-		HomeComponent,
 		ScheduleComponent,
 		ClassModalComponent,
 		GroupsComponent,
