@@ -11,7 +11,8 @@ import {
 	getCurrentYear, getCurrentSemester, getUserInitials,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareUsersByName, getDayOfWeekName,
-	getUsersAsString, getGroupsAsString, getClassroomsAsString
+	getUsersAsString, getGroupsAsString, getClassroomsAsString,
+	getShortName
 } from "../../common/models/functions";
 
 export enum ClassFrequency {
@@ -52,17 +53,23 @@ export class ScheduleComponent implements OnInit {
 	private dragPosition: number;
 	private dragFrequency: number;
 	private dragClass: models.Class;
+	private dragLecturer: models.User;
+
+
 	private dropPosition: number;
 	private dropFrequency: number;
-	private showDenominator: boolean;
-	private allowDrop: Map<number, string> = new Map();
+	private dropLecturer: models.User;
+
+	showDenominator = false;
 
 	currentUser: models.User;
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
 	lecturersClassesAll: Map<number, ClassCell[]> = new Map();
 	lecturerWishes: Map<number, models.Wish[]> = new Map();
+	availableClasses: models.Class[];
 	areLoaded: Map<number, boolean> = new Map();
+
 
 	getLecturerInitials = getUserInitials;
 	getClassStart = getClassStart;
@@ -72,6 +79,7 @@ export class ScheduleComponent implements OnInit {
 	getLecturersAsString = getUsersAsString;
 	getGroupsAsString = getGroupsAsString;
 	getClassroomsAsString = getClassroomsAsString;
+	getShortName = getShortName;
 
 	floor = Math.floor;
 
@@ -131,6 +139,14 @@ export class ScheduleComponent implements OnInit {
 								});
 						}
 					});
+
+				this.classService.getGeneratedClassesByFacultyAndYearAndSemester(
+					user.department.faculty.id,
+					getCurrentYear(),
+					getCurrentSemester()
+				).subscribe((classes: models.Class[]) => {
+					this.availableClasses = classes;
+				});
 			});
 	}
 
@@ -230,7 +246,7 @@ export class ScheduleComponent implements OnInit {
 		return Array.apply(null, { length: num }).map(Number.call, Number);
 	}
 
-	startDrag(c: models.Class, position: number): void {
+	startDrag(c: models.Class, lecturer: models.User, position: number): void {
 		this.dragPosition = position;
 		this.dragFrequency = c.frequency === "Щотижня"
 			? ClassFrequency.WEEKLY
@@ -238,11 +254,12 @@ export class ScheduleComponent implements OnInit {
 				? ClassFrequency.NUMERATOR
 				: ClassFrequency.DENOMINATOR;
 		this.dragClass = c;
+		this.dragLecturer = lecturer;
 		this.showDenominator = c.frequency !== "Щотижня";
 	}
 
 	canDrop(lecturer: models.User): boolean {
-		return this.dragClass.subject.lecturers.map(l => l.id).includes(lecturer.id);
+		return !lecturer || this.dragClass.subject.lecturers.map(l => l.id).includes(lecturer.id);
 	}
 
 	releaseDrop(c: models.Class): void {
@@ -250,13 +267,21 @@ export class ScheduleComponent implements OnInit {
 		const frequencyDrop = c.frequency === "Щотижня" ? ClassFrequency.WEEKLY : this.dropFrequency;
 		const frequencyDrag = c.frequency === "Щотижня" ? ClassFrequency.WEEKLY : this.dragFrequency;
 
+		if (this.dragPosition === -1) {
+			c.lecturers = [this.dropLecturer];
+		} else if (this.dragLecturer !== this.dropLecturer) {
+			c.lecturers.push(this.dropLecturer);
+		}
+
 		for (const lecturer of c.lecturers) {
 			const classes = this.lecturersClassesAll.get(lecturer.id).map(cell => {
-				if (cell.n === this.dropPosition
+				if (this.dragPosition === -1
+					|| cell.n === this.dropPosition
 					&& (cell.n !== this.dragPosition || this.dragFrequency !== this.dropFrequency)) {
 
 					c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
 					c.number = this.getNumber(this.dropPosition);
+					c.lecturers.push(lecturer);
 
 					switch (frequencyDrop) {
 						case ClassFrequency.WEEKLY:
@@ -280,7 +305,8 @@ export class ScheduleComponent implements OnInit {
 					}
 				}
 
-				if (cell.n === this.dragPosition
+				if (this.dropPosition === -1
+					|| cell.n === this.dragPosition
 					&& (cell.n !== this.dropPosition || this.dragFrequency !== this.dropFrequency)) {
 					switch (frequencyDrag) {
 						case ClassFrequency.WEEKLY:
@@ -299,6 +325,24 @@ export class ScheduleComponent implements OnInit {
 								? ClassFrequency.NUMERATOR
 								: ClassFrequency.NONE;
 							break;
+						default:
+							cell.weekly = null;
+							cell.numerator = this.dragFrequency === ClassFrequency.DENOMINATOR
+								? cell.numerator
+								: null;
+							cell.denominator = this.dragFrequency === ClassFrequency.NUMERATOR
+								? cell.denominator
+								: null;
+							cell.frequency = this.dragFrequency === ClassFrequency.BIWEEKLY
+								? cell.numerator
+									? ClassFrequency.NUMERATOR
+									: ClassFrequency.DENOMINATOR
+								: ClassFrequency.NONE;
+
+							const availableCopy = this.availableClasses;
+							availableCopy.push(c);
+							this.availableClasses = availableCopy;
+							break;
 					}
 				}
 
@@ -307,77 +351,19 @@ export class ScheduleComponent implements OnInit {
 
 			copy.set(lecturer.id, classes);
 		}
+
 		this.lecturersClassesAll = copy;
 		this.showDenominator = false;
 		this.dragClass = null;
+		this.dragLecturer = null;
+		this.dropLecturer = null;
 	}
 
-	addDropItem(event: models.Class, position: number, frequency: number): void {
+	addDropItem(event: models.Class, lecturer: models.User, position: number, frequency: number): void {
 		this.dropPosition = position;
 		this.dropFrequency = frequency;
+		this.dropLecturer = lecturer;
 	}
-
-	// editClassClicked(
-	// 	frequency: ClassFrequency,
-	// 	day: number,
-	// 	num: number,
-	// 	lecturer: models.User): void {
-	// 	const modalRef = this.modalService.open(
-	// 		ClassModalComponent, { size: "lg" });
-	// 	const modal = modalRef.componentInstance as ClassModalComponent;
-	// 	modal.contextLecturer = lecturer;
-
-	// 	const frequencyName = frequency === ClassFrequency.WEEKLY
-	// 		? "Щотижня"
-	// 		: frequency === ClassFrequency.NUMERATOR
-	// 			? "По чисельнику"
-	// 			: "По знаменнику";
-
-	// 	const reverseFrequencyName = frequency === ClassFrequency.NUMERATOR
-	// 		? "По знаменнику"
-	// 		: "По чисельнику";
-
-	// 	const currentClass = this.getClass(lecturer, day, num, frequencyName);
-	// 	modal.currentClass = {
-	// 		id: currentClass.id,
-	// 		number: currentClass.number,
-	// 		frequency: currentClass.frequency,
-	// 		dayOfWeek: currentClass.dayOfWeek,
-	// 		year: getCurrentYear(),
-	// 		semester: getCurrentSemester(),
-	// 		type: currentClass.type,
-	// 		classroomType: currentClass.classroomType,
-	// 		subject: currentClass.subject,
-	// 		classrooms: currentClass.classrooms.filter(() => true),
-	// 		groups: currentClass.groups.filter(() => true),
-	// 		lecturers: currentClass.lecturers.filter(() => true),
-	// 	};
-
-	// 	modal.isEditing = true;
-	// 	modal.frequencySet = currentClass.frequency !== "Щотижня" &&
-	// 		this.getClass(lecturer, day, num, reverseFrequencyName) as any;
-
-	// 	modalRef.result.then(
-	// 		(changedClass: models.Class | number) => {
-	// 			if (typeof (changedClass) === "number") {
-	// 				this.lecturersClasses.set(
-	// 					lecturer.id,
-	// 					this.lecturersClasses.get(lecturer.id).filter(
-	// 						c => c.id !== changedClass));
-	// 			} else if (changedClass) {
-	// 				const c = this.lecturersClasses.get(lecturer.id).find(
-	// 					lc => lc.id === changedClass.id);
-	// 				c.frequency = changedClass.frequency;
-	// 				c.type = changedClass.type;
-	// 				c.classroomType = changedClass.classroomType;
-	// 				c.subject = changedClass.subject;
-	// 				c.classrooms = changedClass.classrooms;
-	// 				c.groups = changedClass.groups;
-	// 				c.lecturers = changedClass.lecturers;
-	// 			}
-	// 		},
-	// 		() => { });
-	// }
 
 	editClassClicked(
 		classObject: models.Class,
