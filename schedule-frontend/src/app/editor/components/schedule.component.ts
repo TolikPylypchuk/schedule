@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { ClassModalComponent } from "./class-modal.component";
@@ -50,15 +50,19 @@ export class ScheduleComponent implements OnInit {
 	private userService: services.UserService;
 	private wishService: services.WishService;
 
+	private scrollLeft = false;
+	private scrollRight = false;
+
 	private dragPosition: number;
 	private dragFrequency: number;
 	private dragClass: models.Class;
 	private dragLecturer: models.User;
 
-
 	private dropPosition: number;
 	private dropFrequency: number;
 	private dropLecturer: models.User;
+
+	@ViewChild("scheduleTable") table: ElementRef;
 
 	showDenominator = false;
 
@@ -106,6 +110,16 @@ export class ScheduleComponent implements OnInit {
 		this.subjectService = subjectService;
 		this.userService = userService;
 		this.wishService = wishService;
+
+		setInterval(() => {
+			if (this.scrollRight) {
+				this.table.nativeElement.scrollBy(10, 0);
+			}
+
+			if (this.scrollLeft) {
+				this.table.nativeElement.scrollBy(-10, 0);
+			}
+		}, 100);
 	}
 
 	ngOnInit(): void {
@@ -269,11 +283,13 @@ export class ScheduleComponent implements OnInit {
 
 		if (this.dragPosition === -1) {
 			c.lecturers = [this.dropLecturer];
-		} else if (this.dragLecturer !== this.dropLecturer) {
+		} else if (this.dragLecturer.id !== this.dropLecturer.id) {
 			c.lecturers.push(this.dropLecturer);
 		}
 
-		for (const lecturer of c.lecturers) {
+		const classLecturers = c.lecturers;
+
+		for (const lecturer of classLecturers) {
 			const classes = this.lecturersClassesAll.get(lecturer.id).map(cell => {
 				if (this.dragPosition === -1
 					|| cell.n === this.dropPosition

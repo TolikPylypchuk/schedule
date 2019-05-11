@@ -1,18 +1,49 @@
-#schedule-table {
-    width: 100%;
+#schedule-editor {
     height: 90%;
-    margin-bottom: 15em;
 }
 
+#schedule-table {
+    width: 100%;
+    height: 50%;
+    /* margin-bottom: 5em; */
+}
 
-/* 
-#available-classes {
+.text-sm {
+    font-size: 0.8em;
+}
 
-} */
+#schedule-table .fixed {
+    position: absolute;
+    padding-top: 2em;
+    width: 2vw;
+    border: none;
+}
+
+#schedule-editor .control.control-right {
+    margin-left: -2em;
+}
+
+#schedule-editor .control.control-left {
+    margin-right: -2em;
+}
+
+#schedule-editor .control {
+    width: 2em;
+    z-index: 10;
+}
+
+#schedule-editor .control:hover {
+    background-color: rgb(0, 0, 255, 0.2);
+}
+
+#schedule-table th,
+#schedule-table td {
+    padding: 10em auto;
+}
 
 .scroll-x {
     overflow-x: scroll;
-    overflow-y: hidden;
+    overflow-y: scroll;
 }
 
 #schedule-table td.suitable-true {
@@ -23,16 +54,14 @@
     background-color: #FACCCC;
 }
 
-#schedule-table td {
-    font-size: 0.8em;
-}
-
 #schedule-table td :nth-child(2) {
     margin-top: 0.3rem;
 }
 
-#schedule-table button {
-    max-width: 3em;
+#schedule-table .btn-sm {
+    height: 1.8em;
+    padding: 0.2em 0.1em;
+    line-height: 1.2em;
 }
 
 #schedule-table .placeholder {
@@ -41,10 +70,6 @@
     text-overflow: ellipsis;
 }
 
-.drop-highlight-true {
-    border: 1px solid #88ff55;
-}
-
 .not-set-class {
-    width: 10em;
+    width: 8em;
 }
