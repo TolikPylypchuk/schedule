@@ -15,21 +15,43 @@ import {
 	getShortName
 } from "../../common/models/functions";
 
-export enum ClassFrequency {
-	NONE,
-	WEEKLY,
-	NUMERATOR,
-	DENOMINATOR,
-	BIWEEKLY
-}
+import {
+	ClassCell, ClassFrequency,
+	frequencyFromString, frequencyToString
+} from "./helpers";
 
-class ClassCell {
-	n: number;
-	frequency: ClassFrequency;
-	weekly: models.Class;
-	numerator: models.Class;
-	denominator: models.Class;
-}
+// export enum ClassFrequency {
+// 	NONE,
+// 	WEEKLY,
+// 	NUMERATOR,
+// 	DENOMINATOR,
+// 	BIWEEKLY
+// }
+
+// export function fromString(frequency: string): ClassFrequency {
+// 	let result = ClassFrequency.NONE;
+// 	switch (frequency) {
+// 		case "Щотижня":
+// 		result = ClassFrequency.WEEKLY;
+// 		break;
+// 		case "По чисельнику":
+// 		result = ClassFrequency.NUMERATOR;
+// 		break;
+// 		case "По знаменнику":
+// 		result = ClassFrequency.DENOMINATOR;
+// 		break;
+// 	}
+
+// 	return result;
+// }
+
+// export class ClassCell {
+// 	n: number;
+// 	frequency: ClassFrequency;
+// 	weekly: models.Class;
+// 	numerator: models.Class;
+// 	denominator: models.Class;
+// }
 
 @Component({
 	selector: "schedule-editor-schedule",
@@ -276,99 +298,233 @@ export class ScheduleComponent implements OnInit {
 		return !lecturer || this.dragClass.subject.lecturers.map(l => l.id).includes(lecturer.id);
 	}
 
+
+
 	releaseDrop(c: models.Class): void {
-		const copy = this.lecturersClassesAll;
-		const frequencyDrop = c.frequency === "Щотижня" ? ClassFrequency.WEEKLY : this.dropFrequency;
-		const frequencyDrag = c.frequency === "Щотижня" ? ClassFrequency.WEEKLY : this.dragFrequency;
+		// const copy = this.lecturersClassesAll;
+		// let classes = this.dropLecturer
+		// 	? this.lecturersClasses.get(this.dropLecturer.id)
+		// 	: null;
+		const frequencyDrop = this.dropPosition !== -1
+			? this.dropFrequency
+			: frequencyFromString(c.frequency);
+		const frequencyDrag = frequencyFromString(c.frequency);
+
+		let lecturers = c.lecturers;
+
+		c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
+		c.number = this.getNumber(this.dropPosition);
+		c.frequency = frequencyToString(frequencyDrop);
+
+		// const lecturerClasses = this.lecturersClasses;
 
 		if (this.dragPosition === -1) {
 			c.lecturers = [this.dropLecturer];
+			lecturers = c.lecturers;
+			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
+			const classes = this.lecturersClasses.get(this.dropLecturer.id);
+			classes.push(c);
+			this.lecturersClasses.set(this.dropLecturer.id, classes);
+		} else if (this.dropPosition === -1) {
+			c.lecturers = c.lecturers.filter(l => l.id !== this.dragLecturer.id);
+			this.lecturersClasses.set(
+				this.dragLecturer.id,
+				this.lecturersClasses.get(this.dragLecturer.id).filter(cl => cl.id !== c.id));
+
+			if (c.lecturers.length === 0) {
+				c.dayOfWeek = null;
+				c.number = 0;
+				this.availableClasses.push(c);
+			} else {
+				for (const lecturer of c.lecturers) {
+					this.lecturersClasses.set(
+						lecturer.id,
+						this.lecturersClasses.get(lecturer.id).map(cl => cl.id === c.id ? c : cl));
+				}
+			}
 		} else if (this.dragLecturer.id !== this.dropLecturer.id) {
-			c.lecturers.push(this.dropLecturer);
+			lecturers.push(this.dropLecturer);
+			c.lecturers[c.lecturers.indexOf(this.dragLecturer)] = this.dropLecturer;
+			for (const lecturer of lecturers) {
+				this.lecturersClasses.set(
+					lecturer.id,
+					this.lecturersClasses.get(lecturer.id).map(cl => cl.id === c.id ? c : cl));
+			}
+		} else if (this.dragPosition !== this.dropPosition
+			|| this.dragFrequency !== this.dropFrequency) {
+			for (const lecturer of lecturers) {
+				this.lecturersClasses.set(
+					lecturer.id,
+					this.lecturersClasses.get(lecturer.id).map(cl => cl.id === c.id ? c : cl));
+			}
 		}
 
-		const classLecturers = c.lecturers;
+		const lecturerClassesAll = this.lecturersClassesAll;
 
-		for (const lecturer of classLecturers) {
-			const classes = this.lecturersClassesAll.get(lecturer.id).map(cell => {
-				if (this.dragPosition === -1
-					|| cell.n === this.dropPosition
-					&& (cell.n !== this.dragPosition || this.dragFrequency !== this.dropFrequency)) {
-
-					c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
-					c.number = this.getNumber(this.dropPosition);
-					c.lecturers.push(lecturer);
-
-					switch (frequencyDrop) {
-						case ClassFrequency.WEEKLY:
-							cell.weekly = c;
-							cell.frequency = ClassFrequency.WEEKLY;
-							break;
-						case ClassFrequency.NUMERATOR:
-							c.frequency = "По чисельнику";
-							cell.numerator = c;
-							cell.frequency = !cell.denominator
-								? ClassFrequency.NUMERATOR
-								: ClassFrequency.BIWEEKLY;
-							break;
-						case ClassFrequency.DENOMINATOR:
-							c.frequency = "По знаменнику";
-							cell.denominator = c;
-							cell.frequency = !cell.numerator
-								? ClassFrequency.DENOMINATOR
-								: ClassFrequency.BIWEEKLY;
-							break;
-					}
-				}
-
-				if (this.dropPosition === -1
-					|| cell.n === this.dragPosition
-					&& (cell.n !== this.dropPosition || this.dragFrequency !== this.dropFrequency)) {
-					switch (frequencyDrag) {
-						case ClassFrequency.WEEKLY:
-							cell.weekly = null;
-							cell.frequency = ClassFrequency.NONE;
-							break;
-						case ClassFrequency.NUMERATOR:
-							cell.numerator = null;
-							cell.frequency = cell.denominator
-								? ClassFrequency.DENOMINATOR
-								: ClassFrequency.NONE;
-							break;
-						case ClassFrequency.DENOMINATOR:
-							cell.denominator = null;
-							cell.frequency = cell.numerator
-								? ClassFrequency.NUMERATOR
-								: ClassFrequency.NONE;
-							break;
-						default:
-							cell.weekly = null;
-							cell.numerator = this.dragFrequency === ClassFrequency.DENOMINATOR
-								? cell.numerator
-								: null;
-							cell.denominator = this.dragFrequency === ClassFrequency.NUMERATOR
-								? cell.denominator
-								: null;
-							cell.frequency = this.dragFrequency === ClassFrequency.BIWEEKLY
-								? cell.numerator
-									? ClassFrequency.NUMERATOR
-									: ClassFrequency.DENOMINATOR
-								: ClassFrequency.NONE;
-
-							const availableCopy = this.availableClasses;
-							availableCopy.push(c);
-							this.availableClasses = availableCopy;
-							break;
-					}
-				}
-
-				return cell;
-			});
-
-			copy.set(lecturer.id, classes);
+		for (const lecturer of lecturers) {
+			lecturerClassesAll.set(lecturer.id, this.getLecturerClasses(lecturer));
 		}
 
-		this.lecturersClassesAll = copy;
+		this.lecturersClassesAll = lecturerClassesAll;
+		// for (const lecturer of c.lecturers) {
+		// 	const classes = this.lecturersClassesAll.get(lecturer.id).map(cell => {
+		// 		if (cell.n === this.dropPosition
+		// 			&& (cell.n !== this.dragPosition
+		// 				|| this.dragFrequency !== this.dropFrequency)) {
+
+		// 			c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
+		// 			c.number = this.getNumber(this.dropPosition);
+
+		// 			switch (frequencyDrop) {
+		// 				case ClassFrequency.WEEKLY:
+		// 					cell.weekly = c;
+		// 					cell.frequency = ClassFrequency.WEEKLY;
+		// 					break;
+		// 				case ClassFrequency.NUMERATOR:
+		// 					c.frequency = "По чисельнику";
+		// 					cell.numerator = c;
+		// 					cell.frequency = !cell.denominator
+		// 						? ClassFrequency.NUMERATOR
+		// 						: ClassFrequency.BIWEEKLY;
+		// 					break;
+		// 				case ClassFrequency.DENOMINATOR:
+		// 					c.frequency = "По знаменнику";
+		// 					cell.denominator = c;
+		// 					cell.frequency = !cell.numerator
+		// 						? ClassFrequency.DENOMINATOR
+		// 						: ClassFrequency.BIWEEKLY;
+		// 					break;
+		// 			}
+		// 		}
+
+		// 		if (cell.n === this.dragPosition
+		// 			&& (cell.n !== this.dropPosition || this.dragFrequency !== this.dropFrequency)) {
+		// 			switch (frequencyDrag) {
+		// 				case ClassFrequency.WEEKLY:
+		// 					cell.weekly = null;
+		// 					cell.frequency = ClassFrequency.NONE;
+		// 					break;
+		// 				case ClassFrequency.NUMERATOR:
+		// 					cell.numerator = null;
+		// 					cell.frequency = cell.denominator
+		// 						? ClassFrequency.DENOMINATOR
+		// 						: ClassFrequency.NONE;
+		// 					break;
+		// 				case ClassFrequency.DENOMINATOR:
+		// 					cell.denominator = null;
+		// 					cell.frequency = cell.numerator
+		// 						? ClassFrequency.NUMERATOR
+		// 						: ClassFrequency.NONE;
+		// 					break;
+		// 				default:
+		// 					cell.weekly = null;
+		// 					cell.numerator = this.dragFrequency === ClassFrequency.DENOMINATOR
+		// 						? cell.numerator
+		// 						: null;
+		// 					cell.denominator = this.dragFrequency === ClassFrequency.NUMERATOR
+		// 						? cell.denominator
+		// 						: null;
+		// 					cell.frequency = this.dragFrequency === ClassFrequency.BIWEEKLY
+		// 						? cell.numerator
+		// 							? ClassFrequency.NUMERATOR
+		// 							: ClassFrequency.DENOMINATOR
+		// 						: ClassFrequency.NONE;
+
+		// 					const availableCopy = this.availableClasses;
+		// 					availableCopy.push(c);
+		// 					this.availableClasses = availableCopy;
+		// 					break;
+		// 			}
+		// 		}
+
+		// 		return cell;
+		// 	});
+
+		// 	copy.set(lecturer.id, classes);
+		// }
+
+
+		// for (const lecturer of classLecturers) {
+		// 	const classes = this.lecturersClassesAll.get(lecturer.id).map(cell => {
+		// 		if (this.dragPosition === -1
+		// 			|| cell.n === this.dropPosition
+		// 			&& (cell.n !== this.dragPosition || this.dragFrequency !== this.dropFrequency)) {
+
+		// 			c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
+		// 			c.number = this.getNumber(this.dropPosition);
+		// 			c.lecturers.push(lecturer);
+
+		// 			switch (frequencyDrop) {
+		// 				case ClassFrequency.WEEKLY:
+		// 					cell.weekly = c;
+		// 					cell.frequency = ClassFrequency.WEEKLY;
+		// 					break;
+		// 				case ClassFrequency.NUMERATOR:
+		// 					c.frequency = "По чисельнику";
+		// 					cell.numerator = c;
+		// 					cell.frequency = !cell.denominator
+		// 						? ClassFrequency.NUMERATOR
+		// 						: ClassFrequency.BIWEEKLY;
+		// 					break;
+		// 				case ClassFrequency.DENOMINATOR:
+		// 					c.frequency = "По знаменнику";
+		// 					cell.denominator = c;
+		// 					cell.frequency = !cell.numerator
+		// 						? ClassFrequency.DENOMINATOR
+		// 						: ClassFrequency.BIWEEKLY;
+		// 					break;
+		// 			}
+		// 		}
+
+		// 		if (this.dropPosition === -1
+		// 			|| cell.n === this.dragPosition
+		// 			&& (cell.n !== this.dropPosition || this.dragFrequency !== this.dropFrequency)) {
+		// 			switch (frequencyDrag) {
+		// 				case ClassFrequency.WEEKLY:
+		// 					cell.weekly = null;
+		// 					cell.frequency = ClassFrequency.NONE;
+		// 					break;
+		// 				case ClassFrequency.NUMERATOR:
+		// 					cell.numerator = null;
+		// 					cell.frequency = cell.denominator
+		// 						? ClassFrequency.DENOMINATOR
+		// 						: ClassFrequency.NONE;
+		// 					break;
+		// 				case ClassFrequency.DENOMINATOR:
+		// 					cell.denominator = null;
+		// 					cell.frequency = cell.numerator
+		// 						? ClassFrequency.NUMERATOR
+		// 						: ClassFrequency.NONE;
+		// 					break;
+		// 				default:
+		// 					cell.weekly = null;
+		// 					cell.numerator = this.dragFrequency === ClassFrequency.DENOMINATOR
+		// 						? cell.numerator
+		// 						: null;
+		// 					cell.denominator = this.dragFrequency === ClassFrequency.NUMERATOR
+		// 						? cell.denominator
+		// 						: null;
+		// 					cell.frequency = this.dragFrequency === ClassFrequency.BIWEEKLY
+		// 						? cell.numerator
+		// 							? ClassFrequency.NUMERATOR
+		// 							: ClassFrequency.DENOMINATOR
+		// 						: ClassFrequency.NONE;
+
+		// 					const availableCopy = this.availableClasses;
+		// 					availableCopy.push(c);
+		// 					this.availableClasses = availableCopy;
+		// 					break;
+		// 			}
+		// 		}
+
+		// 		return cell;
+		// 	});
+
+		// 	copy.set(lecturer.id, classes);
+		// }
+
+		// this.lecturersClassesAll = copy;
+		// this.lecturersClassesAll = this.getLecturerClasses()
 		this.showDenominator = false;
 		this.dragClass = null;
 		this.dragLecturer = null;
