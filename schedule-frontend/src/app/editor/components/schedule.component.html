@@ -1,15 +1,35 @@
 <div id="schedule-editor" class=container-fluid>
     <div class="row">
         <div class="col">
-            <h1 class="text-center">{{ currentUser.department.faculty.name }}</h1>
-            <h2 class="text-center">Розклад</h2>
+            <h2 class="text-center">{{ currentUser.department.faculty.name }}</h2>
+            <h3 class="text-center">Розклад</h3>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-0 p-0 text-center control control-left" (mouseenter)="scrollLeft=true;" (mouseleave)="scrollLeft=false;">
-            <i class="fa fa-chevron-left"></i>
+        <div class="col-3">
+            <div class="text-left">
+                <button class="btn btn-sm btn-light {{ viewToggle === 0 ? 'active' : ''}}" (click)="viewToggle=0">Групи</button>
+                <button class="btn btn-sm btn-light {{ viewToggle === 1 ? 'active' : ''}}" (click)="viewToggle=1">Викладачі</button>
+            </div>
         </div>
-        <div class="col-12 ">
+        <div class="col-6 text-center">
+            <span class="btn" (click)="decreaseSize()">                
+                <i class="fa fa-minus-square"></i>
+            </span>
+            <span>
+                <i class="fa fa-search"></i>
+            </span>
+            <span class="btn" (click)="increaseSize()">
+                <i class="fa fa-plus-square"></i>
+            </span>
+        </div>
+        <div class="col-3">
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-0 p-0 text-center control control-left" (mouseenter)="scrollLeft=true;" (mouseleave)="scrollLeft=false;">
+        </div>
+        <div class="col-12">
             <div #scheduleTable id="schedule-table" class="table-responsive  scroll-x">
                 <table type="table" class="table table-bordered table-sm table-striped" id="header">
                     <thead>
@@ -27,28 +47,14 @@
                                 {{ getNumber(n) }}
                             </th>
                         </tr>
-                        <tr class="text-sm">
-                            <th class="text-center ">Початок<br />Кінець</th>
-                            <th *ngFor="let n of getArrayOfNumbers(45)" class="text-center">
+                        <tr [style.fontSize]="fontSize+'em'" class="text-sm">
+                            <th class="text-center text-sm">Початок<br />Кінець</th>
+                            <th *ngFor="let n of getArrayOfNumbers(45)" class="text-center text-sm">
                                 {{ getClassStart(getNumber(n)) }}<br />{{ getClassEnd(getNumber(n)) }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr>
-                            <td [attr.rowspan]="lecturers.length" class="text-center fixed left" (mouseenter)="scrollLeft=true;" (mouseleave)="scrollLeft=false;">
-                                <div *ngFor="let n of getArrayOfNumbers(lecturers.length * 2)" class="btn btn-block btn-sm text-center placeholder text-sm">
-                                    яйко-сподівайко
-                                </div>
-                            </td>
-                            <td colspan="44" class="content">
-                            </td>
-                            <td [attr.rowspan]="lecturers.length" class="text-center fixed right" (mouseenter)="scrollRight=true;" (mouseleave)="scrollRight=false;">
-                                <div *ngFor="let n of getArrayOfNumbers(lecturers.length * 2)" class="btn btn-block btn-sm text-center placeholder text-sm">
-                                    яйко-сподівайко
-                                </div>
-                            </td>
-                        </tr> -->
                         <tr *ngFor="let lecturer of lecturers">
                             <ng-container *ngIf="areLoaded.get(lecturer.id)">
                                 <td>
@@ -60,14 +66,19 @@
                                     </div>
                                 </td>
 
-                                <td *ngFor="let cell of lecturersClassesAll.get(lecturer.id)" class="text-center">
+                                <td *ngFor="let cell of lecturersClassesAll.get(lecturer.id)" class="text-center" [style.fontSize]="fontSize+'em'">
                                     <div [ngSwitch]="cell.frequency">
                                         <!-- NONE -->
                                         <ng-container *ngSwitchCase="0">
                                             <ng-container *ngTemplateOutlet="emptyCell; context: { frequency: dragFrequency === 1 ? 1 : 2 }"></ng-container>
-                                            <ng-container *ngIf="showDenominator">
+                                            <ng-container *ngIf="showDenominator; else placeholder">
                                                 <ng-container *ngTemplateOutlet="emptyCell; context: { frequency: 3 }"></ng-container>
                                             </ng-container>
+                                            <ng-template #placeholder>
+                                                <div class="btn btn-block btn-sm text-center placeholder text-sm">
+                                                    <span class="fa fa-plus"></span>
+                                                </div>
+                                            </ng-template>
                                         </ng-container>
                                         <!-- WEEKLY -->
                                         <ng-container *ngSwitchCase="1">
@@ -92,9 +103,9 @@
 
                                     <ng-template #emptyCell let-frequency="frequency">
                                         <div dropDirective (dropEvent)="addDropItem($event, lecturer, cell.n, frequency)">
-                                            <button class="btn btn-block btn-sm btn-outline-{{ dragClass && !canDrop(lecturer) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
-                                        <span class="fa fa-plus"></span>
-                                    </button>
+                                            <button type="button" class="btn btn-block btn-sm btn-outline-{{ !canDrop(lecturer) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
+                                                <span class="fa fa-plus"></span>
+                                            </button>
                                         </div>
                                     </ng-template>
 
@@ -108,10 +119,10 @@
                                             <div>{{ getClassroomsAsString(class.classrooms) }}</div>
                                             <div>{{ getLecturersAsString(class.lecturers) }}</div>
                                         </ng-template>
-                                        <div [dragDirective]='class' [dragHightlight]="'drag-highlight'" (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, lecturer, cell.n)">
-                                            <button class="btn btn-block btn-sm btn-primary" placement="right" [ngbTooltip]="tooltip" container="body" (click)="editClassClicked(class, lecturer)">
-                                        <span class="fa fa-calendar-check-o"></span>
-                                    </button>
+                                        <div [dragDirective]='class' (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, lecturer, cell.n)">
+                                            <button type="button" class="btn btn-block btn-sm btn-primary" placement="right" [ngbTooltip]="tooltip" container="body" (click)="editClassClicked(class, lecturer)">
+                                                    <span class="fa fa-calendar-check-o"></span>
+                                                </button>
                                         </div>
                                     </ng-template>
                                 </td>
@@ -122,7 +133,6 @@
             </div>
         </div>
         <div class="col-sm-0 p-0 text-center control control-right" (mouseenter)="scrollRight=true;" (mouseleave)="scrollRight=false;">
-            <i class="fa fa-chevron-right"></i>
         </div>
     </div>
     <div class="row">
@@ -133,7 +143,7 @@
                         <div class="text-center"><i class="fa fa-chevron-up"></i></div>
                     </ng-template>
                     <ng-template ngbPanelContent>
-                        <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, null, -1, 0)">
+                        <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, null, -1, class.frequency)">
                             <div class="d-inline-flex text-white justify-content-center">
                                 <div *ngFor="let class of availableClasses" class="m-1 bg-primary not-set-class">
                                     <div [dragDirective]='class' [dragHightlight]="'drag-highlight'" (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, null, -1)">

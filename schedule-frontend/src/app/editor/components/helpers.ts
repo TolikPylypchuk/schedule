@@ -8,6 +8,11 @@ export enum ClassFrequency {
 	BIWEEKLY
 }
 
+export enum ViewToggle {
+    GROUPS,
+    LECTURERS
+}
+
 export class ClassCell {
 	n: number;
 	frequency: ClassFrequency;
