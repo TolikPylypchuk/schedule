@@ -62,13 +62,8 @@ export class ScheduleComponent implements OnInit {
 
 	private authService: AuthService;
 
-	private buildingService: services.BuildingService;
 	private classService: services.ClassService;
-	private classroomService: services.ClassroomService;
-	private classroomTypeService: services.ClassroomTypeService;
 	private groupService: services.GroupService;
-	private planService: services.PlanService;
-	private subjectService: services.SubjectService;
 	private userService: services.UserService;
 	private wishService: services.WishService;
 
@@ -92,6 +87,7 @@ export class ScheduleComponent implements OnInit {
 	showDenominator = false;
 
 	currentUser: models.User;
+
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
 	lecturersClassesAll: Map<number, ClassCell[]> = new Map();
@@ -100,6 +96,9 @@ export class ScheduleComponent implements OnInit {
 	groups: models.User[] = [];
 	groupsClasses: Map<number, models.Class[]> = new Map();
 	groupsClassesAll: Map<number, ClassCell[]> = new Map();
+
+	viewClasses: Map<number, models.Class[]> = new Map();
+	viewClassesAll: Map<number, ClassCell[]> = new Map();
 
 	availableClasses: models.Class[];
 	areLoaded: Map<number, boolean> = new Map();
@@ -120,24 +119,14 @@ export class ScheduleComponent implements OnInit {
 	constructor(
 		modalService: NgbModal,
 		authService: AuthService,
-		buildingService: services.BuildingService,
 		classService: services.ClassService,
-		classroomService: services.ClassroomService,
-		classroomTypeService: services.ClassroomTypeService,
 		groupService: services.GroupService,
-		planService: services.PlanService,
-		subjectService: services.SubjectService,
 		userService: services.UserService,
 		wishService: services.WishService) {
 		this.modalService = modalService;
 		this.authService = authService;
-		this.buildingService = buildingService;
 		this.classService = classService;
-		this.classroomService = classroomService;
-		this.classroomTypeService = classroomTypeService;
 		this.groupService = groupService;
-		this.planService = planService;
-		this.subjectService = subjectService;
 		this.userService = userService;
 		this.wishService = wishService;
 
@@ -172,6 +161,9 @@ export class ScheduleComponent implements OnInit {
 								.subscribe((classes: models.Class[]) => {
 									this.lecturersClasses.set(lecturer.id, classes);
 									this.lecturersClassesAll.set(lecturer.id, this.getLecturerClasses(lecturer));
+
+									this.viewClasses = this.lecturersClasses;
+									this.viewClassesAll = this.lecturersClassesAll;
 									this.areLoaded.set(lecturer.id, true);
 								});
 							this.wishService.getWishesByLecturerAndYearAndSemester(
@@ -205,33 +197,6 @@ export class ScheduleComponent implements OnInit {
 			this.fontSize += 0.2;
 		}
 	}
-
-	// getClassFrequency(
-	// 	lecturer: models.User,
-	// 	day: number,
-	// 	num: number): ClassFrequency {
-	// 	let frequency: ClassFrequency = ClassFrequency.NONE;
-	// 	let classes = this.lecturersClasses.get(lecturer.id);
-
-	// 	if (classes) {
-	// 		classes = classes.filter(
-	// 			c => getDayOfWeekNumber(c.dayOfWeek) === day &&
-	// 				c.number === num);
-
-	// 		if (classes.length === 2) {
-	// 			frequency = ClassFrequency.BIWEEKLY;
-	// 		} else if (classes.length === 1) {
-	// 			const f = classes[0].frequency.toLowerCase();
-	// 			frequency = f === "щотижня"
-	// 				? ClassFrequency.WEEKLY
-	// 				: f === "по чисельнику"
-	// 					? ClassFrequency.NUMERATOR
-	// 					: ClassFrequency.DENOMINATOR;
-	// 		}
-	// 	}
-
-	// 	return frequency;
-	// }
 
 	getClass(
 		lecturer: models.User,
@@ -319,26 +284,22 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	releaseDrop(c: models.Class): void {
-		const frequencyDrop = this.dropPosition !== -1
-			? this.dropFrequency
-			: frequencyFromString(c.frequency);
-		const frequencyDrag = frequencyFromString(c.frequency);
-
 		let lecturers = c.lecturers;
 
-		c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
-		c.number = this.getNumber(this.dropPosition);
-		c.frequency = frequencyToString(frequencyDrop);
+		c = this.updateDroppedClass(c);
 
 		if (this.dragPosition === -1) {
-			c.lecturers = [this.dropLecturer];
-			lecturers = c.lecturers;
-			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
+			lecturers = [this.dropLecturer];
+			c.lecturers = lecturers;
+
 			const classes = this.lecturersClasses.get(this.dropLecturer.id);
 			classes.push(c);
 			this.lecturersClasses.set(this.dropLecturer.id, classes);
+
+			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
 		} else if (this.dropPosition === -1) {
 			c.lecturers = c.lecturers.filter(l => l.id !== this.dragLecturer.id);
+
 			this.lecturersClasses.set(
 				this.dragLecturer.id,
 				this.lecturersClasses.get(this.dragLecturer.id).filter(cl => cl.id !== c.id));
@@ -346,30 +307,27 @@ export class ScheduleComponent implements OnInit {
 			if (c.lecturers.length === 0) {
 				c.dayOfWeek = null;
 				c.number = 0;
+				c.frequency = frequencyToString(this.dragFrequency);
 				this.availableClasses.push(c);
-			} else {
-				for (const lecturer of c.lecturers) {
-					this.lecturersClasses.set(
-						lecturer.id,
-						this.lecturersClasses.get(lecturer.id).map(cl => cl.id === c.id ? c : cl));
-				}
 			}
 		} else if (this.dragLecturer.id !== this.dropLecturer.id) {
 			lecturers.push(this.dropLecturer);
-			c.lecturers[c.lecturers.indexOf(this.dragLecturer)] = this.dropLecturer;
-			for (const lecturer of lecturers) {
-				this.lecturersClasses.set(
-					lecturer.id,
-					this.lecturersClasses.get(lecturer.id).map(cl => cl.id === c.id ? c : cl));
-			}
-		} else if (this.dragPosition !== this.dropPosition
-			|| this.dragFrequency !== this.dropFrequency) {
-			for (const lecturer of lecturers) {
-				this.lecturersClasses.set(
-					lecturer.id,
-					this.lecturersClasses.get(lecturer.id).map(cl => cl.id === c.id ? c : cl));
-			}
+			c.lecturers = lecturers.filter(l => l.id !== this.dragLecturer.id);
+
+			this.lecturersClasses.set(
+				this.dragLecturer.id,
+				this.lecturersClasses.get(this.dragLecturer.id).filter(cl => cl.id !== c.id));
+
+			const classes = this.lecturersClasses.get(this.dropLecturer.id);
+			classes.push(c);
+			this.lecturersClasses.set(
+				this.dropLecturer.id,
+				classes);
 		}
+
+		this.viewClasses = this.lecturersClasses;
+		this.updateAssosiated(c, c.lecturers);
+		this.lecturersClasses = this.viewClasses;
 
 		const lecturerClassesAll = this.lecturersClassesAll;
 
@@ -385,10 +343,30 @@ export class ScheduleComponent implements OnInit {
 		this.dropLecturer = null;
 	}
 
-	addDropItem(event: models.Class, lecturer: models.User, position: number, frequency: number): void {
+	addDropItem(c: models.Class, lecturer: models.User, position: number, frequency: number): void {
 		this.dropPosition = position;
-		this.dropFrequency = frequency;
+		this.dropFrequency = position !== -1
+			? frequency
+			: frequencyFromString(c.frequency);
 		this.dropLecturer = lecturer;
+	}
+
+	updateDroppedClass(c: models.Class): models.Class {
+		if (this.dropPosition !== -1) {
+			c.dayOfWeek = getDayOfWeekName(this.getDay(this.dropPosition));
+			c.number = this.getNumber(this.dropPosition);
+			c.frequency = frequencyToString(this.dropFrequency);
+		}
+
+		return c;
+	}
+
+	updateAssosiated(c: models.Class, assosiated: models.User[] | models.Group[]): void {
+		for (const assosiate of assosiated) {
+			this.viewClasses.set(
+				assosiate.id,
+				this.viewClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
+		}
 	}
 
 	editClassClicked(
