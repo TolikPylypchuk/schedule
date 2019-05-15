@@ -8,7 +8,8 @@ import { AuthService } from "../../auth/auth";
 import * as models from "../../common/models/models";
 import * as services from "../../common/services/services";
 import {
-	getCurrentYear, getCurrentSemester, getUserInitials,
+	getCurrentYear, getCurrentSemester,
+	getUserInitials, getCurrentGroupName,
 	getClassStart, getClassEnd, getDayOfWeekNumber,
 	compareUsersByName, getDayOfWeekName,
 	getUsersAsString, getGroupsAsString, getClassroomsAsString,
@@ -19,39 +20,6 @@ import {
 	ClassCell, ClassFrequency, ViewToggle,
 	frequencyFromString, frequencyToString
 } from "./helpers";
-
-// export enum ClassFrequency {
-// 	NONE,
-// 	WEEKLY,
-// 	NUMERATOR,
-// 	DENOMINATOR,
-// 	BIWEEKLY
-// }
-
-// export function fromString(frequency: string): ClassFrequency {
-// 	let result = ClassFrequency.NONE;
-// 	switch (frequency) {
-// 		case "Щотижня":
-// 		result = ClassFrequency.WEEKLY;
-// 		break;
-// 		case "По чисельнику":
-// 		result = ClassFrequency.NUMERATOR;
-// 		break;
-// 		case "По знаменнику":
-// 		result = ClassFrequency.DENOMINATOR;
-// 		break;
-// 	}
-
-// 	return result;
-// }
-
-// export class ClassCell {
-// 	n: number;
-// 	frequency: ClassFrequency;
-// 	weekly: models.Class;
-// 	numerator: models.Class;
-// 	denominator: models.Class;
-// }
 
 @Component({
 	selector: "schedule-editor-schedule",
@@ -67,7 +35,7 @@ export class ScheduleComponent implements OnInit {
 	private userService: services.UserService;
 	private wishService: services.WishService;
 
-	private viewToggle = ViewToggle.LECTURERS;
+	@ViewChild("scheduleTable") table: ElementRef;
 	private fontSize = 1;
 
 	private scrollLeft = false;
@@ -76,35 +44,34 @@ export class ScheduleComponent implements OnInit {
 	private dragPosition: number;
 	private dragFrequency: number;
 	private dragClass: models.Class;
-	private dragLecturer: models.User;
+	private dragViewObjectId: number;
 
 	private dropPosition: number;
 	private dropFrequency: number;
-	private dropLecturer: models.User;
-
-	@ViewChild("scheduleTable") table: ElementRef;
-
-	showDenominator = false;
+	private dropViewObjectId: number;
 
 	currentUser: models.User;
+
+	viewToggle = ViewToggle.LECTURERS;
+	showDenominator = false;
+	availableExpanded = false;
 
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
 	lecturersClassesAll: Map<number, ClassCell[]> = new Map();
 	lecturerWishes: Map<number, models.Wish[]> = new Map();
 
-	groups: models.User[] = [];
+	groups: models.Group[] = [];
 	groupsClasses: Map<number, models.Class[]> = new Map();
 	groupsClassesAll: Map<number, ClassCell[]> = new Map();
 
+	viewObjects: models.User[] | models.Group[];
 	viewClasses: Map<number, models.Class[]> = new Map();
 	viewClassesAll: Map<number, ClassCell[]> = new Map();
 
-	availableClasses: models.Class[];
+	availableClasses: models.Class[] = [];
 	areLoaded: Map<number, boolean> = new Map();
 
-
-	getLecturerInitials = getUserInitials;
 	getClassStart = getClassStart;
 	getClassEnd = getClassEnd;
 	getDayOfWeekName = getDayOfWeekName;
@@ -113,8 +80,6 @@ export class ScheduleComponent implements OnInit {
 	getGroupsAsString = getGroupsAsString;
 	getClassroomsAsString = getClassroomsAsString;
 	getShortName = getShortName;
-
-	floor = Math.floor;
 
 	constructor(
 		modalService: NgbModal,
@@ -146,11 +111,10 @@ export class ScheduleComponent implements OnInit {
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => {
 				this.currentUser = user;
-
 				this.userService.getLecturersByFaculty(user.department.faculty.id)
 					.subscribe((lecturers: models.User[]) => {
 						this.lecturers = lecturers.sort(compareUsersByName);
-						console.log("added");
+						this.viewObjects = this.lecturers;
 
 						for (const lecturer of lecturers) {
 							this.areLoaded.set(lecturer.id, false);
@@ -160,10 +124,9 @@ export class ScheduleComponent implements OnInit {
 								getCurrentSemester())
 								.subscribe((classes: models.Class[]) => {
 									this.lecturersClasses.set(lecturer.id, classes);
-									this.lecturersClassesAll.set(lecturer.id, this.getLecturerClasses(lecturer));
 
 									this.viewClasses = this.lecturersClasses;
-									this.viewClassesAll = this.lecturersClassesAll;
+									this.viewClassesAll.set(lecturer.id, this.getViewClasses(lecturer.id));
 									this.areLoaded.set(lecturer.id, true);
 								});
 							this.wishService.getWishesByLecturerAndYearAndSemester(
@@ -183,6 +146,27 @@ export class ScheduleComponent implements OnInit {
 				).subscribe((classes: models.Class[]) => {
 					this.availableClasses = classes;
 				});
+
+				this.groupService.getGroupsByFaculty(user.department.faculty.id)
+					.subscribe((groups: models.Group[]) => {
+						this.groups = groups;
+
+						for (const group of groups) {
+							this.areLoaded.set(group.id, false);
+							this.classService.getClassesByGroupAndYearAndSemester(
+								group.id,
+								getCurrentYear(),
+								getCurrentSemester())
+								.subscribe((classes: models.Class[]) => {
+									this.groupsClasses.set(group.id, classes);
+									this.availableClasses = this.availableClasses.filter(c =>
+										!(c.groups.find(x => x.id === group.id)
+											&& classes.find(x => x.subject.id === c.subject.id
+												&& x.type === c.type))
+									);
+								});
+						}
+					});
 			});
 	}
 
@@ -198,6 +182,14 @@ export class ScheduleComponent implements OnInit {
 		}
 	}
 
+	getLecturerInitials(viewObject: models.User): string {
+		return getUserInitials(viewObject);
+	}
+
+	getGroupName(viewObject: models.Group): string {
+		return getCurrentGroupName(viewObject);
+	}
+
 	getClass(
 		lecturer: models.User,
 		day: number,
@@ -210,10 +202,30 @@ export class ScheduleComponent implements OnInit {
 				c.frequency.toLowerCase() === frequency.toLowerCase());
 	}
 
-	getLecturerClasses(
-		lecturer: models.User): ClassCell[] | undefined {
+	changeViewType() {
+		switch (this.viewToggle) {
+			case ViewToggle.GROUPS:
+				this.viewObjects = this.groups;
+				this.viewClasses = this.groupsClasses;
+				break;
+			case ViewToggle.LECTURERS:
+				this.viewObjects = this.lecturers;
+				this.viewClasses = this.lecturersClasses;
+				break;
+		}
 
-		const classes = this.lecturersClasses.get(lecturer.id);
+		const viewClasses = new Map();
+		for (const viewObject of this.viewObjects) {
+			viewClasses.set(viewObject.id, this.getViewClasses(viewObject.id));
+		}
+
+		this.viewClassesAll = viewClasses;
+	}
+
+	getViewClasses(
+		viweObjectId: number): ClassCell[] | undefined {
+
+		const classes = this.viewClasses.get(viweObjectId);
 
 		const result = this.getArrayOfNumbers(45).map(n => {
 			const cell: ClassCell = new ClassCell();
@@ -229,17 +241,12 @@ export class ScheduleComponent implements OnInit {
 				if (filtered.length === 2) {
 					cell.frequency = ClassFrequency.BIWEEKLY;
 				} else if (filtered.length === 1) {
-					const f = filtered[0].frequency.toLowerCase();
-					cell.frequency = f === "щотижня"
-						? ClassFrequency.WEEKLY
-						: f === "по чисельнику"
-							? ClassFrequency.NUMERATOR
-							: ClassFrequency.DENOMINATOR;
+					cell.frequency = frequencyFromString(filtered[0].frequency);
 				}
 
-				cell.weekly = filtered.find(c => c.frequency.toLowerCase() === "щотижня");
-				cell.numerator = filtered.find(c => c.frequency.toLowerCase() === "по чисельнику");
-				cell.denominator = filtered.find(c => c.frequency.toLowerCase() === "по знаменнику");
+				cell.weekly = filtered.find(c => frequencyFromString(c.frequency) === ClassFrequency.WEEKLY);
+				cell.numerator = filtered.find(c => frequencyFromString(c.frequency) === ClassFrequency.NUMERATOR);
+				cell.denominator = filtered.find(c => frequencyFromString(c.frequency) === ClassFrequency.DENOMINATOR);
 			}
 
 			return cell;
@@ -248,6 +255,16 @@ export class ScheduleComponent implements OnInit {
 		return result;
 	}
 
+	getViewObjectName(viewObject: models.User | models.Group): string {
+		switch (this.viewToggle) {
+			case ViewToggle.GROUPS:
+				return getCurrentGroupName(viewObject as models.Group);
+			case ViewToggle.LECTURERS:
+				return getUserInitials(viewObject as models.User);
+			default:
+				return "";
+		}
+	}
 	isSuitable(lecturer: models.User, n: number): string {
 		const wish = this.getWish(lecturer.id, this.getDay(n), this.getNumber(n));
 		return wish === null
@@ -256,7 +273,7 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	getDay(n: number): number {
-		return this.floor(n / 9 + 1);
+		return Math.floor(n / 9 + 1);
 	}
 
 	getNumber(n: number): number {
@@ -275,7 +292,7 @@ export class ScheduleComponent implements OnInit {
 				? ClassFrequency.NUMERATOR
 				: ClassFrequency.DENOMINATOR;
 		this.dragClass = c;
-		this.dragLecturer = lecturer;
+		this.dragViewObjectId = lecturer.id;
 		this.showDenominator = c.frequency !== "Щотижня";
 	}
 
@@ -284,63 +301,73 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	releaseDrop(c: models.Class): void {
-		let lecturers = c.lecturers;
+		let updated = [];
 
 		c = this.updateDroppedClass(c);
 
-		if (this.dragPosition === -1) {
-			lecturers = [this.dropLecturer];
-			c.lecturers = lecturers;
+		switch (this.viewToggle) {
+			case ViewToggle.GROUPS:
+			break;
+			case ViewToggle.LECTURERS:
+			updated = this.updateForLecturers(c);
+			break;
+		}
+		// let lecturers = c.lecturers;
 
-			const classes = this.lecturersClasses.get(this.dropLecturer.id);
-			classes.push(c);
-			this.lecturersClasses.set(this.dropLecturer.id, classes);
+		// if (this.dragPosition === -1) {
+		// 	lecturers = [this.lecturers.find(l => l.id === this.dropViewObjectId)];
+		// 	c.lecturers = lecturers;
 
-			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
-		} else if (this.dropPosition === -1) {
-			c.lecturers = c.lecturers.filter(l => l.id !== this.dragLecturer.id);
+		// 	const classes = this.lecturersClasses.get(this.dropViewObjectId);
+		// 	classes.push(c);
+		// 	this.lecturersClasses.set(this.dropViewObjectId, classes);
 
-			this.lecturersClasses.set(
-				this.dragLecturer.id,
-				this.lecturersClasses.get(this.dragLecturer.id).filter(cl => cl.id !== c.id));
+		// 	this.availableClasses = this.availableClasses.filter(cl => cl !== c);
+		// } else if (this.dropPosition === -1) {
+		// 	c.lecturers = c.lecturers.filter(l => l.id !== this.dragViewObjectId);
 
-			if (c.lecturers.length === 0) {
-				c.dayOfWeek = null;
-				c.number = 0;
-				c.frequency = frequencyToString(this.dragFrequency);
-				this.availableClasses.push(c);
-			}
-		} else if (this.dragLecturer.id !== this.dropLecturer.id) {
-			lecturers.push(this.dropLecturer);
-			c.lecturers = lecturers.filter(l => l.id !== this.dragLecturer.id);
+		// 	this.lecturersClasses.set(
+		// 		this.dragViewObjectId,
+		// 		this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
 
-			this.lecturersClasses.set(
-				this.dragLecturer.id,
-				this.lecturersClasses.get(this.dragLecturer.id).filter(cl => cl.id !== c.id));
+		// 	if (c.lecturers.length === 0) {
+		// 		c.dayOfWeek = null;
+		// 		c.number = 0;
+		// 		c.frequency = frequencyToString(this.dragFrequency);
+		// 		this.availableClasses.push(c);
+		// 	}
+		// } else if (this.dragViewObjectId !== this.dropViewObjectId) {
+		// 	lecturers.push(this.lecturers.find(l => l.id === this.dropViewObjectId));
+		// 	c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
 
-			const classes = this.lecturersClasses.get(this.dropLecturer.id);
-			classes.push(c);
-			this.lecturersClasses.set(
-				this.dropLecturer.id,
-				classes);
+		// 	this.lecturersClasses.set(
+		// 		this.dragViewObjectId,
+		// 		this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
+
+		// 	const classes = this.lecturersClasses.get(this.dropViewObjectId);
+		// 	classes.push(c);
+		// 	this.lecturersClasses.set(
+		// 		this.dropViewObjectId,
+		// 		classes);
+		// }
+
+		// this.viewClasses = this.lecturersClasses;
+
+		// this.updateAssosiated(c, c.lecturers);
+		// this.lecturersClasses = this.viewClasses;
+
+		const viewClassesAll = this.viewClassesAll;
+
+		for (const updatedObject of updated) {
+			viewClassesAll.set(updatedObject.id, this.getViewClasses(updatedObject.id));
 		}
 
-		this.viewClasses = this.lecturersClasses;
-		this.updateAssosiated(c, c.lecturers);
-		this.lecturersClasses = this.viewClasses;
-
-		const lecturerClassesAll = this.lecturersClassesAll;
-
-		for (const lecturer of lecturers) {
-			lecturerClassesAll.set(lecturer.id, this.getLecturerClasses(lecturer));
-		}
-
-		this.lecturersClassesAll = lecturerClassesAll;
+		this.viewClassesAll = viewClassesAll;
 
 		this.showDenominator = false;
 		this.dragClass = null;
-		this.dragLecturer = null;
-		this.dropLecturer = null;
+		this.dragViewObjectId = null;
+		this.dropViewObjectId = null;
 	}
 
 	addDropItem(c: models.Class, lecturer: models.User, position: number, frequency: number): void {
@@ -348,7 +375,7 @@ export class ScheduleComponent implements OnInit {
 		this.dropFrequency = position !== -1
 			? frequency
 			: frequencyFromString(c.frequency);
-		this.dropLecturer = lecturer;
+		this.dropViewObjectId = lecturer.id;
 	}
 
 	updateDroppedClass(c: models.Class): models.Class {
@@ -359,6 +386,102 @@ export class ScheduleComponent implements OnInit {
 		}
 
 		return c;
+	}
+
+	updateForGroups(c: models.Class): models.Group[] {
+		let lecturers = c.lecturers;
+
+		if (this.dragPosition === -1) {
+			lecturers = [this.lecturers.find(l => l.id === this.dropViewObjectId)];
+			c.lecturers = lecturers;
+
+			const classes = this.lecturersClasses.get(this.dropViewObjectId);
+			classes.push(c);
+			this.lecturersClasses.set(this.dropViewObjectId, classes);
+
+			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
+		} else if (this.dropPosition === -1) {
+			c.lecturers = c.lecturers.filter(l => l.id !== this.dragViewObjectId);
+
+			this.lecturersClasses.set(
+				this.dragViewObjectId,
+				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
+
+			if (c.lecturers.length === 0) {
+				c.dayOfWeek = null;
+				c.number = 0;
+				c.frequency = frequencyToString(this.dragFrequency);
+				this.availableClasses.push(c);
+			}
+		} else if (this.dragViewObjectId !== this.dropViewObjectId) {
+			lecturers.push(this.lecturers.find(l => l.id === this.dropViewObjectId));
+			c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
+
+			this.lecturersClasses.set(
+				this.dragViewObjectId,
+				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
+
+			const classes = this.lecturersClasses.get(this.dropViewObjectId);
+			classes.push(c);
+			this.lecturersClasses.set(
+				this.dropViewObjectId,
+				classes);
+		}
+
+		this.viewClasses = this.lecturersClasses;
+
+		this.updateAssosiated(c, c.lecturers);
+		this.lecturersClasses = this.viewClasses;
+
+		return [];
+	}
+
+	updateForLecturers(c: models.Class): models.User[] {
+		let lecturers = c.lecturers;
+
+		if (this.dragPosition === -1) {
+			lecturers = [this.lecturers.find(l => l.id === this.dropViewObjectId)];
+			c.lecturers = lecturers;
+
+			const classes = this.lecturersClasses.get(this.dropViewObjectId);
+			classes.push(c);
+			this.lecturersClasses.set(this.dropViewObjectId, classes);
+
+			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
+		} else if (this.dropPosition === -1) {
+			c.lecturers = c.lecturers.filter(l => l.id !== this.dragViewObjectId);
+
+			this.lecturersClasses.set(
+				this.dragViewObjectId,
+				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
+
+			if (c.lecturers.length === 0) {
+				c.dayOfWeek = null;
+				c.number = 0;
+				c.frequency = frequencyToString(this.dragFrequency);
+				this.availableClasses.push(c);
+			}
+		} else if (this.dragViewObjectId !== this.dropViewObjectId) {
+			lecturers.push(this.lecturers.find(l => l.id === this.dropViewObjectId));
+			c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
+
+			this.lecturersClasses.set(
+				this.dragViewObjectId,
+				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
+
+			const classes = this.lecturersClasses.get(this.dropViewObjectId);
+			classes.push(c);
+			this.lecturersClasses.set(
+				this.dropViewObjectId,
+				classes);
+		}
+
+		this.viewClasses = this.lecturersClasses;
+
+		this.updateAssosiated(c, c.lecturers);
+		this.lecturersClasses = this.viewClasses;
+
+		return lecturers;
 	}
 
 	updateAssosiated(c: models.Class, assosiated: models.User[] | models.Group[]): void {

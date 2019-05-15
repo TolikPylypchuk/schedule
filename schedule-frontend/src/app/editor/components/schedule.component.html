@@ -6,10 +6,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-3">
+        <div class="col-3 m-0 p-0">
             <div class="text-left">
-                <button class="btn btn-sm btn-light {{ viewToggle === 0 ? 'active' : ''}}" (click)="viewToggle=0">Групи</button>
-                <button class="btn btn-sm btn-light {{ viewToggle === 1 ? 'active' : ''}}" (click)="viewToggle=1">Викладачі</button>
+                <button class="btn btn-sm btn-light {{ viewToggle === 0 ? 'active' : ''}}" (click)="viewToggle=0; changeViewType()">Групи</button>
+                <button class="btn btn-sm btn-light {{ viewToggle === 1 ? 'active' : ''}}" (click)="viewToggle=1; changeViewType()">Викладачі</button>
             </div>
         </div>
         <div class="col-6 text-center">
@@ -26,7 +26,7 @@
         <div class="col-3">
         </div>
     </div>
-    <div class="row text-center">
+    <div class="row text-center" [style.marginBottom]="availableExpanded ? '6em' : '1em'">
         <div class="col-sm-0 p-0 text-center control control-left" (mouseenter)="scrollLeft=true;" (mouseleave)="scrollLeft=false;">
         </div>
         <div class="col-12">
@@ -55,18 +55,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let lecturer of lecturers">
+                        <tr *ngFor="let lecturer of viewObjects">
                             <ng-container *ngIf="areLoaded.get(lecturer.id)">
                                 <td>
                                     <div class="btn btn-block btn-sm text-center text-sm">
-                                        {{ getLecturerInitials(lecturer) }}
+                                        {{ getViewObjectName(lecturer) }}
                                     </div>
                                     <div class="btn btn-block btn-sm text-center placeholder text-sm">
                                         яйко-сподівайко
                                     </div>
                                 </td>
 
-                                <td *ngFor="let cell of lecturersClassesAll.get(lecturer.id)" class="text-center" [style.fontSize]="fontSize+'em'">
+                                <td *ngFor="let cell of viewClassesAll.get(lecturer.id)" class="text-center" [style.fontSize]="fontSize+'em'">
                                     <div [ngSwitch]="cell.frequency">
                                         <!-- NONE -->
                                         <ng-container *ngSwitchCase="0">
@@ -140,7 +140,7 @@
             <ngb-accordion #acc="ngbAccordion" class="fixed-bottom text-sm text-center">
                 <ngb-panel id="toggle-1">
                     <ng-template ngbPanelTitle>
-                        <div class="text-center"><i class="fa fa-chevron-up"></i></div>
+                        <div class="text-center" (click)="availableExpanded=!availableExpanded"><i class="fa fa-chevron-up"></i></div>
                     </ng-template>
                     <ng-template ngbPanelContent>
                         <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, null, -1, 0)">
