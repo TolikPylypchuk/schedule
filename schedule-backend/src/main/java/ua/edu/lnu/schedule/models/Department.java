@@ -16,6 +16,7 @@ public class Department implements Serializable {
     private Set<Group> groups;
     private Set<Plan> plans;
     private Set<User> lecturers;
+    private Set<User> relatedLecturers;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,5 +75,23 @@ public class Department implements Serializable {
 
     public void setLecturers(Set<User> lecturers) {
         this.lecturers = lecturers;
+    }
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "department_user",
+            joinColumns = {
+                    @JoinColumn(name = "department", referencedColumnName = "id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "`user`", referencedColumnName = "id")
+            })
+    public Set<User> getRelatedLecturers() {
+        return this.relatedLecturers;
+    }
+
+    public void setRelatedLecturers(Set<User> lecturers) {
+        this.relatedLecturers = lecturers;
     }
 }

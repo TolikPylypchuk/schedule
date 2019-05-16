@@ -22,6 +22,7 @@ public class User implements Serializable {
 	private Date lastPasswordReset;
 	
 	private Department department;
+	private Set<Department> relatedDepartments;
 	private Set<Authority> authorities;
 	private Set<Subject> subjects;
 	private Set<Class> classes;
@@ -130,13 +131,23 @@ public class User implements Serializable {
 	public void setAuthorities(Set<Authority> authorities) {
 		this.authorities = authorities;
 	}
-	
+
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lecturers")
+	public Set<Department> getRelatedDepartments() {
+		return relatedDepartments;
+	}
+
+	public void setRelatedDepartments(Set<Department> departments) {
+		this.relatedDepartments = departments;
+	}
+
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lecturers")
 	public Set<Subject> getSubjects() {
 		return subjects;
 	}
-	
+
 	public void setSubjects(Set<Subject> subjects) {
 		this.subjects = subjects;
 	}
