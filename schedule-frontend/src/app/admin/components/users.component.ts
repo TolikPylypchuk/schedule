@@ -148,6 +148,7 @@ export class UsersComponent implements OnInit {
 			a => a.name === "ROLE_ADMIN"));
 
 		modal.faculties = this.faculties;
+		modal.currentFaculty = user.department.faculty;
 		modal.isEditing = true;
 
 		modal.user = {

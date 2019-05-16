@@ -3,7 +3,7 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { getAuthorityName } from "../../common/models/functions";
 import { Authority, Faculty, User, Department } from "../../common/models/models";
-import { FacultyService, UserService } from "../../common/services/services";
+import { FacultyService, UserService, DepartmentService } from "../../common/services/services";
 
 @Component({
 	selector: "schedule-admin-user-modal",
@@ -13,7 +13,7 @@ export class UserModalComponent implements OnInit {
 	private activeModal: NgbActiveModal;
 
 	private facultyService: FacultyService;
-	// private departmentService: DepartmentService;
+	private departmentService: DepartmentService;
 	private userService: UserService;
 
 	getAuthorityName = getAuthorityName;
@@ -31,6 +31,9 @@ export class UserModalComponent implements OnInit {
 
 	authorities: Authority[] = [];
 	faculties: Faculty[] = [];
+	departments: Department[] = [];
+
+	currentFaculty: Faculty;
 
 	isEditing = false;
 	error = false;
@@ -39,17 +42,34 @@ export class UserModalComponent implements OnInit {
 	constructor(
 		activeModal: NgbActiveModal,
 		facultyService: FacultyService,
+		departmentService: DepartmentService,
 		userService: UserService) {
 		this.activeModal = activeModal;
 		this.facultyService = facultyService;
+		this.departmentService = departmentService;
 		this.userService = userService;
 	}
 
 	ngOnInit(): void {
 		if (this.isEditing) {
-			// this.user.department = this.faculties.find(
-			// 	f => f.id === this.user.department.faculty.id);
+			console.log(this.user);
+			this.currentFaculty = this.faculties.find(f => f.id === this.user.department.faculty.id);
+			this.setDepartments();
 		}
+	}
+
+	setDepartments(): void {
+		this.departments = [];
+
+		if (!this.currentFaculty) {
+			return;
+		}
+
+		this.departmentService.getDepartmentsByFaculty(this.currentFaculty.id)
+			.subscribe((departments: Department[]) => {
+				this.departments = departments;
+				this.user.department = this.departments.find(d => d.id === this.user.department.id);
+			});
 	}
 
 	isAuthorityChecked(authority: Authority): boolean {
@@ -85,7 +105,7 @@ export class UserModalComponent implements OnInit {
 			() => {
 				this.error = true;
 				this.errorText = "Не вдалося зберегти";
-		});
+			});
 
 		action.connect();
 	}
