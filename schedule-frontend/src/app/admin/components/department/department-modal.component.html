@@ -14,11 +14,24 @@
 		</p>
 
 		<div class="form-group">
-			<label for="facultyName" class="form-control-label">
+			<label for="departmentName" class="form-control-label">
 				Назва
 			</label>
-			<input id="facultyName" name="name" [(ngModel)]="faculty.name" class="form-control" required
-				(change)="change()" />
+			<input id="departmentName" name="name" [(ngModel)]="department.name" class="form-control" required
+						 (change)="change()" />
+		</div>
+
+		<div class="form-group">
+			<label for="department">Факультет</label>
+			<select class="form-control" id="department" name="department" [(ngModel)]="currentdepartment" (change)="change()">
+				<option *ngIf="!isEditing" selected [value]="null">
+					Виберіть факультет
+				</option>
+				<option *ngFor="let faculty of faculties"
+								[ngValue]="faculty">
+					{{ faculty.name }}
+				</option>
+			</select>
 		</div>
 	</div>
 
