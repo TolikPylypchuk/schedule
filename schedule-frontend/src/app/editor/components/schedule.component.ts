@@ -284,7 +284,15 @@ export class ScheduleComponent implements OnInit {
 		return Array.apply(null, { length: num }).map(Number.call, Number);
 	}
 
-	startDrag(c: models.Class, lecturer: models.User, position: number): void {
+	checkFields(c: models.Class): boolean {
+		return c.dayOfWeek
+			&& c.number > 0
+			&& c.groups !== null && c.groups.length > 0
+			&& c.lecturers !== null && c.lecturers.length > 0
+			&& c.classrooms !== null && c.classrooms.length > 0;
+	}
+
+	startDrag(c: models.Class, viewObject: models.User | models.Group, position: number): void {
 		this.dragPosition = position;
 		this.dragFrequency = c.frequency === "Щотижня"
 			? ClassFrequency.WEEKLY
@@ -292,69 +300,41 @@ export class ScheduleComponent implements OnInit {
 				? ClassFrequency.NUMERATOR
 				: ClassFrequency.DENOMINATOR;
 		this.dragClass = c;
-		this.dragViewObjectId = lecturer.id;
+		this.dragViewObjectId = viewObject ? viewObject.id : null;
 		this.showDenominator = c.frequency !== "Щотижня";
 	}
 
-	canDrop(lecturer: models.User): boolean {
-		return !this.dragClass || !lecturer || this.dragClass.subject.lecturers.map(l => l.id).includes(lecturer.id);
+	canDrop(viewObjectId: number): boolean {
+		return !this.dragClass
+			|| this.viewToggle === ViewToggle.GROUPS
+				&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
+			|| this.viewToggle === ViewToggle.LECTURERS
+				&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
 	}
 
 	releaseDrop(c: models.Class): void {
+		if (!this.canDrop(this.dropViewObjectId)) {
+			this.showDenominator = false;
+			this.dragClass = null;
+			this.dragViewObjectId = null;
+			this.dropViewObjectId = null;
+
+			return;
+		}
+
 		let updated = [];
 
 		c = this.updateDroppedClass(c);
 
 		switch (this.viewToggle) {
 			case ViewToggle.GROUPS:
-			break;
+				this.updateAssosiated(c, c.groups);
+				updated = c.groups;
+				break;
 			case ViewToggle.LECTURERS:
-			updated = this.updateForLecturers(c);
-			break;
+				updated = this.updateForLecturers(c);
+				break;
 		}
-		// let lecturers = c.lecturers;
-
-		// if (this.dragPosition === -1) {
-		// 	lecturers = [this.lecturers.find(l => l.id === this.dropViewObjectId)];
-		// 	c.lecturers = lecturers;
-
-		// 	const classes = this.lecturersClasses.get(this.dropViewObjectId);
-		// 	classes.push(c);
-		// 	this.lecturersClasses.set(this.dropViewObjectId, classes);
-
-		// 	this.availableClasses = this.availableClasses.filter(cl => cl !== c);
-		// } else if (this.dropPosition === -1) {
-		// 	c.lecturers = c.lecturers.filter(l => l.id !== this.dragViewObjectId);
-
-		// 	this.lecturersClasses.set(
-		// 		this.dragViewObjectId,
-		// 		this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
-
-		// 	if (c.lecturers.length === 0) {
-		// 		c.dayOfWeek = null;
-		// 		c.number = 0;
-		// 		c.frequency = frequencyToString(this.dragFrequency);
-		// 		this.availableClasses.push(c);
-		// 	}
-		// } else if (this.dragViewObjectId !== this.dropViewObjectId) {
-		// 	lecturers.push(this.lecturers.find(l => l.id === this.dropViewObjectId));
-		// 	c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
-
-		// 	this.lecturersClasses.set(
-		// 		this.dragViewObjectId,
-		// 		this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
-
-		// 	const classes = this.lecturersClasses.get(this.dropViewObjectId);
-		// 	classes.push(c);
-		// 	this.lecturersClasses.set(
-		// 		this.dropViewObjectId,
-		// 		classes);
-		// }
-
-		// this.viewClasses = this.lecturersClasses;
-
-		// this.updateAssosiated(c, c.lecturers);
-		// this.lecturersClasses = this.viewClasses;
 
 		const viewClassesAll = this.viewClassesAll;
 
@@ -370,12 +350,12 @@ export class ScheduleComponent implements OnInit {
 		this.dropViewObjectId = null;
 	}
 
-	addDropItem(c: models.Class, lecturer: models.User, position: number, frequency: number): void {
+	addDropItem(c: models.Class, viewObject: models.User | models.Group, position: number, frequency: number): void {
 		this.dropPosition = position;
 		this.dropFrequency = position !== -1
 			? frequency
 			: frequencyFromString(c.frequency);
-		this.dropViewObjectId = lecturer.id;
+		this.dropViewObjectId = viewObject ? viewObject.id : null;
 	}
 
 	updateDroppedClass(c: models.Class): models.Class {
@@ -464,7 +444,6 @@ export class ScheduleComponent implements OnInit {
 		} else if (this.dragViewObjectId !== this.dropViewObjectId) {
 			lecturers.push(this.lecturers.find(l => l.id === this.dropViewObjectId));
 			c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
-
 			this.lecturersClasses.set(
 				this.dragViewObjectId,
 				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
@@ -475,6 +454,16 @@ export class ScheduleComponent implements OnInit {
 				this.dropViewObjectId,
 				classes);
 		}
+
+		const action = !c.id
+			? this.classService.addClass(c)
+			: c.lecturers.length > 0
+				? this.classService.updateClass(c)
+				: this.classService.deleteClass(c.id);
+
+		action.subscribe();
+		action.connect();
+
 
 		this.viewClasses = this.lecturersClasses;
 
@@ -499,6 +488,7 @@ export class ScheduleComponent implements OnInit {
 			ClassModalComponent, { size: "lg" });
 		const modal = modalRef.componentInstance as ClassModalComponent;
 		modal.contextLecturer = lecturer;
+		modal.contextGroup = null;
 
 		const frequency = classObject.frequency;
 
@@ -551,9 +541,16 @@ export class ScheduleComponent implements OnInit {
 		modal.frequencySet = frequency !== ClassFrequency.NONE;
 		modal.currentClass.dayOfWeek = getDayOfWeekName(day);
 		modal.currentClass.number = num;
-		modal.contextLecturer = lecturer;
-		modal.currentClass.lecturers = [lecturer];
 		modal.wish = wish;
+
+		switch (this.viewToggle) {
+			case ViewToggle.GROUPS:
+				break;
+			case ViewToggle.LECTURERS:
+				modal.contextLecturer = lecturer;
+				modal.currentClass.lecturers = [lecturer];
+				break;
+		}
 
 		modalRef.result.then(
 			(newClass: models.Class) =>

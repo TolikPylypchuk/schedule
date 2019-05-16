@@ -47,6 +47,7 @@ export class ClassModalComponent implements OnInit {
 	};
 
 	contextLecturer: models.User;
+	contextGroup: models.Group;
 	availableBuildings: models.Building[] = [];
 	subjects: models.Subject[] = [];
 	classroomTypes: models.ClassroomType[] = [];
@@ -110,7 +111,7 @@ export class ClassModalComponent implements OnInit {
 			.subscribe((types: models.ClassroomType[]) => {
 				this.classroomTypes = types;
 
-				if (this.isEditing) {
+				if (this.isEditing && this.currentClass.classroomType) {
 					this.currentClass.classroomType = types.find(
 						t => t.id === this.currentClass.classroomType.id);
 				}
@@ -119,7 +120,7 @@ export class ClassModalComponent implements OnInit {
 					.subscribe((buildings: models.Building[]) => {
 						this.availableBuildings = buildings;
 
-						if (this.isEditing) {
+						if (this.isEditing && this.currentClass.classrooms) {
 							this.setClassrooms();
 						}
 					});
@@ -157,13 +158,13 @@ export class ClassModalComponent implements OnInit {
 			.subscribe((lecturers: models.User[]) =>
 				this.availableLecturers = lecturers
 					.concat(this.currentClass.lecturers)
-					.filter(l => l.id !== this.contextLecturer.id)
+					.filter(l => this.contextLecturer || l.id !== this.contextLecturer.id)
 					.sort(compareUsersByName));
 	}
 
 	resetGroupsAndLecturers(): void {
 		this.currentClass.groups = [];
-		this.currentClass.lecturers = [ this.contextLecturer ];
+		this.currentClass.lecturers = [this.contextLecturer];
 		this.availableGroups = [];
 		this.availableLecturers = [];
 
@@ -188,7 +189,7 @@ export class ClassModalComponent implements OnInit {
 			getFrequencyAsEnumString(this.currentClass.frequency))
 			.subscribe((lecturers: models.User[]) =>
 				this.availableLecturers = lecturers.filter(
-					l => l.id !== this.contextLecturer.id));
+					l => this.contextLecturer || l.id !== this.contextLecturer.id));
 	}
 
 	setClassrooms(): void {
@@ -284,23 +285,27 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	getTotalNumberOfStudents(): number {
-		return this.currentClass.groups.reduce(
-			(prev: number, curr: models.Group) => prev + curr.numStudents, 0);
+		return this.currentClass.groups
+			? this.currentClass.groups.reduce(
+				(prev: number, curr: models.Group) => prev + curr.numStudents, 0)
+			: 0;
 	}
 
 	getTotalCapacity(): number {
-		return this.currentClass.classrooms.reduce(
-			(prev: number, curr: models.Classroom) => prev + curr.capacity, 0);
+		return this.currentClass.classrooms
+			? this.currentClass.classrooms.reduce(
+				(prev: number, curr: models.Classroom) => prev + curr.capacity, 0)
+			: 0;
 	}
 
 	submit(): void {
-		if (!this.isClassValid()) {
-			this.errorText = "Заповніть усі поля.";
-			this.error = true;
-			return;
-		}
+		// if (!this.isClassValid()) {
+		// 	this.errorText = "Заповніть усі поля.";
+		// 	this.error = true;
+		// 	return;
+		// }
 
-		const action = this.isEditing
+		const action = this.isEditing && this.currentClass.id
 			? this.classService.updateClass(this.currentClass)
 			: this.classService.addClass(this.currentClass);
 
@@ -315,8 +320,8 @@ export class ClassModalComponent implements OnInit {
 
 	isClassValid(): boolean {
 		return this.currentClass.classrooms.length !== 0 &&
-				this.currentClass.groups.length !== 0 &&
-				this.currentClass.frequency !== null;
+			this.currentClass.groups.length !== 0 &&
+			this.currentClass.frequency !== null;
 	}
 
 	deleteClass(): void {

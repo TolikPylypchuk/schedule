@@ -159,7 +159,7 @@ public class GroupController {
 				.findAllByDepartmentIn(this.departments.findAllByFaculty_Id(facultyId)).stream()
 				.filter(group -> plans.stream()
 						.anyMatch(plan -> Objects.equals(plan.getDepartment(), group.getDepartment())
-								&& Objects.equals(plan.getCourse(), (currentYear - group.getYear()))))
+								&& Objects.equals(plan.getCourse(), (currentYear - group.getYear() + 1))))
 				.filter(group -> potentialClasses.stream()
 						.flatMap(c -> c.getGroups().stream())
 						.noneMatch(g -> Objects.equals(g.getId(), group.getId())))

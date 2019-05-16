@@ -55,18 +55,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let lecturer of viewObjects">
-                            <ng-container *ngIf="areLoaded.get(lecturer.id)">
+                        <tr *ngFor="let viewObject of viewObjects">
+                            <ng-container *ngIf="areLoaded.get(viewObject.id)">
                                 <td>
                                     <div class="btn btn-block btn-sm text-center text-sm">
-                                        {{ getViewObjectName(lecturer) }}
+                                        {{ getViewObjectName(viewObject) }}
                                     </div>
                                     <div class="btn btn-block btn-sm text-center placeholder text-sm">
                                         яйко-сподівайко
                                     </div>
                                 </td>
 
-                                <td *ngFor="let cell of viewClassesAll.get(lecturer.id)" class="text-center" [style.fontSize]="fontSize+'em'">
+                                <td *ngFor="let cell of viewClassesAll.get(viewObject.id)" class="text-center" [style.fontSize]="fontSize+'em'">
                                     <div [ngSwitch]="cell.frequency">
                                         <!-- NONE -->
                                         <ng-container *ngSwitchCase="0">
@@ -102,8 +102,8 @@
                                     </div>
 
                                     <ng-template #emptyCell let-frequency="frequency">
-                                        <div dropDirective (dropEvent)="addDropItem($event, lecturer, cell.n, frequency)">
-                                            <button type="button" class="btn btn-block btn-sm btn-outline-{{ !canDrop(lecturer) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), lecturer, getWish(lecturer.id, getDay(cell.n), getNumber(cell.n)))">
+                                        <div dropDirective (dropEvent)="addDropItem($event, viewObject, cell.n, frequency)">
+                                            <button type="button" class="btn btn-block btn-sm btn-outline-{{ !canDrop(viewObject.id) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), viewObject, getWish(viewObject.id, getDay(cell.n), getNumber(cell.n)))">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </div>
@@ -119,8 +119,8 @@
                                             <div>{{ getClassroomsAsString(class.classrooms) }}</div>
                                             <div>{{ getLecturersAsString(class.lecturers) }}</div>
                                         </ng-template>
-                                        <div [dragDirective]='class' (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, lecturer, cell.n)">
-                                            <button type="button" class="btn btn-block btn-sm btn-primary" placement="right" [ngbTooltip]="tooltip" container="body" (click)="editClassClicked(class, lecturer)">
+                                        <div [dragDirective]='class' (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, viewObject, cell.n)">
+                                            <button type="button" class="btn btn-block btn-sm btn-{{checkFields(class) ? 'primary' : 'secondary'}}" placement="right" [ngbTooltip]="tooltip" #tt="ngbTooltip" (mousedown)="tt.close()" container="body" (click)="editClassClicked(class, viewObject)">
                                                 <span class="fa fa-calendar-check-o"></span>
                                             </button>
                                         </div>
@@ -147,9 +147,11 @@
                             <div class="d-inline-flex text-white justify-content-center">
                                 <div *ngFor="let class of availableClasses" class="m-1 bg-primary not-set-class">
                                     <div [dragDirective]='class' [dragHightlight]="'drag-highlight'" (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, null, -1)">
-                                        <div><b>{{ getShortName(class.subject.name) }}</b></div>
-                                        <div>{{ class.type }}</div>
-                                        <div>{{ getGroupsAsString(class.groups) }}</div>
+                                        <div ngbTooltip="{{class.subject.name}}" #tooltip="ngbTooltip" (mousedown)="tooltip.close()">
+                                            <div><b>{{ getShortName(class.subject.name) }}</b></div>
+                                            <div>{{ class.type }}</div>
+                                            <div>{{ getGroupsAsString(class.groups) }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

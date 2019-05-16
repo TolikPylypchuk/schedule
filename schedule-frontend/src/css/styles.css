@@ -60,7 +60,7 @@
     font-size: smaller;
 }
 
-#schedule-table .placeholder {
+.placeholder {
     visibility: hidden;
     overflow: hidden;
     text-overflow: ellipsis;
