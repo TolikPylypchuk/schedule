@@ -13,6 +13,7 @@ import { UsersComponent } from "./components/users.component";
 
 import { FacultiesComponent } from "./components/faculty/faculties.component";
 import { FacultyModalComponent } from "./components/faculty/faculty-modal.component";
+import { DepartmentModalComponent } from "./components/faculty/department-modal.component";
 
 import { ClassroomsComponent } from "./components/classroom/classrooms.component";
 import { BuildingModalComponent } from "./components/classroom/building-modal.component";
@@ -29,6 +30,7 @@ import { UserModalComponent } from "./components/user-modal.component";
 		UsersComponent,
 		FacultiesComponent,
 		FacultyModalComponent,
+		DepartmentModalComponent,
 		ClassroomsComponent,
 		BuildingModalComponent,
 		ClassroomModalComponent,
@@ -51,6 +53,7 @@ import { UserModalComponent } from "./components/user-modal.component";
 		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
 		FacultyModalComponent,
+		DepartmentModalComponent,
 		SubjectModalComponent,
 		UserModalComponent
 	]

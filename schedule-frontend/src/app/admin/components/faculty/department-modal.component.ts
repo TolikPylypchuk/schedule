@@ -1,32 +1,50 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Department } from "../../../common/models/models";
-import { DepartmentService } from "../../../common/services/services";
+import { Faculty, Department } from "../../../common/models/models";
+import { FacultyService, DepartmentService } from "../../../common/services/services";
 
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: "schdedule-admin-department-modal",
 	templateUrl: "./department-modal.component.html"
 })
-export class DepartmentModalComponent {
+export class DepartmentModalComponent implements OnInit {
 	private activeModal: NgbActiveModal;
 
+	private facultyService: FacultyService;
 	private departmentService: DepartmentService;
 
+	faculties: Faculty[] = [];
+
 	department: Department = {
-        name: null,
-        faculty: null,
-        groups: null
+		name: null,
+		faculty: null,
+		groups: null
 	};
 
 	isEditing = false;
 	error = false;
 	errorText = "";
 
-	constructor(activeModal: NgbActiveModal, departmentService: DepartmentService) {
+	constructor(activeModal: NgbActiveModal,
+		facultyService: FacultyService,
+		departmentService: DepartmentService) {
 		this.activeModal = activeModal;
+		this.facultyService = facultyService;
 		this.departmentService = departmentService;
+	}
+
+	ngOnInit() {
+		this.facultyService.getFaculties()
+			.subscribe((faculties: Faculty[]) => {
+				this.faculties = faculties.sort(
+					(f1, f2) => f1.name.localeCompare(f2.name));
+				if (this.isEditing) {
+					this.department.faculty = this.faculties.find(f =>
+						f.id === this.department.faculty.id);
+				}
+			});
 	}
 
 	change(): void {
@@ -39,13 +57,13 @@ export class DepartmentModalComponent {
 			this.error = true;
 			this.errorText = "Введіть назву спеціальності.";
 			return;
-        }
-        
-        if(!this.department.faculty) {
+		}
+
+		if (!this.department.faculty) {
 			this.error = true;
 			this.errorText = "Виберіть факультет.";
 			return;
-        }
+		}
 
 		const action = this.isEditing
 			? this.departmentService.updateDepartment(this.department)
