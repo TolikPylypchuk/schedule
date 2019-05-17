@@ -1,19 +1,23 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Group } from "../../../common/models/models";
-import { GroupService } from "../../../common/services/group.service";
+import { Group, Department } from "../../../common/models/models";
+import { GroupService, DepartmentService } from "../../../common/services/services";
 
 @Component({
 	selector: "schedule-editor-group-modal",
 	templateUrl: "./group-modal.component.html"
 })
-export class GroupModalComponent {
+export class GroupModalComponent implements OnInit {
 	private activeModal: NgbActiveModal;
 
-	private groupService:  GroupService;
+	private groupService: GroupService;
+	private departmentService: DepartmentService;
 
-	group:  Group = {
+	facultyId: number;
+	departments: Department[];
+
+	group: Group = {
 		name: null,
 		numStudents: 0,
 		year: 0,
@@ -24,9 +28,24 @@ export class GroupModalComponent {
 	error = false;
 	errorText = "";
 
-	constructor(activeModal: NgbActiveModal, buildingService:  GroupService) {
+	constructor(activeModal: NgbActiveModal,
+		departmentService: DepartmentService,
+		groupService: GroupService) {
 		this.activeModal = activeModal;
-		this.groupService = buildingService;
+		this.departmentService = departmentService;
+		this.groupService = groupService;
+	}
+
+	ngOnInit() {
+		this.departmentService.getDepartmentsByFaculty(this.facultyId)
+			.subscribe(departments => {
+				this.departments = departments;
+
+				if (this.isEditing) {
+					this.group.department = this.departments.find(d =>
+						d.id === this.group.department.id);
+				}
+			});
 	}
 
 	change(): void {

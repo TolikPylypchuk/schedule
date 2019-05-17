@@ -4,9 +4,9 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { AuthService } from "../../../auth/auth";
 
-import { Group, Plan, User } from "../../../common/models/models";
+import { Group, User } from "../../../common/models/models";
 import {
-    GroupService, SubjectService, PlanService
+    GroupService
 } from "../../../common/services/services";
 
 import {
@@ -57,7 +57,7 @@ export class GroupsComponent implements OnInit {
         const modalRef = this.modalService.open(GroupModalComponent);
         const modal = modalRef.componentInstance as GroupModalComponent;
 
-        modal.group.department = this.currentUser.department;
+        modal.facultyId = this.currentUser.department.faculty.id;
         modal.group.year = getCurrentYear();
 
         modalRef.result.then(
@@ -71,6 +71,8 @@ export class GroupsComponent implements OnInit {
     editGroup(group: Group): void {
         const modalRef = this.modalService.open(GroupModalComponent);
         const modal = modalRef.componentInstance as GroupModalComponent;
+
+        modal.facultyId = this.currentUser.department.faculty.id;
 
         modal.group = {
             id: group.id,
