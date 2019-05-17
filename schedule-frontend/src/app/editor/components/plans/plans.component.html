@@ -38,7 +38,7 @@
                                                 <th>Лекції</th>
                                                 <th>Практичні</th>
                                                 <th>Лабораторні</th>
-                                                <th>Тип лекції</th>
+                                                <th>Тип проведення лекції</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -48,7 +48,7 @@
                                                 <td>{{ plan.numLectures }}</td>
                                                 <td>{{ plan.numPractices }}</td>
                                                 <td>{{ plan.numLabs }}</td>
-                                                <td>{{ plan.lectureType }}</td>
+                                                <td>{{ getLectureTypeName(plan.lectureType) }}</td>
                                                 <td class="text-right">
                                                     <button class="btn btn-sm btn-success" (click)="editPlan(plan)">
                                                         <i class="fa fa-edit" aria-hidden="true"></i>

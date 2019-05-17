@@ -2,6 +2,14 @@ import {
 	Authority, Classroom, Group, User
 } from "./models";
 
+import {
+	LectureType
+} from "./enums";
+
+export function getArrayOfNumbers(num: number): number[] {
+	return Array.apply(null, { length: num }).map(Number.call, Number);
+}
+
 export function getCurrentYear(): number {
 	const now = new Date();
 	const year = now.getFullYear();
@@ -236,6 +244,24 @@ export function getAuthorityName(authority: Authority): string {
 	return result;
 }
 
+export function getLectureTypeName(type: number) {
+	let result = "";
+
+	switch (type) {
+		case LectureType.GROUP:
+			result = "Для групи";
+			break;
+		case LectureType.DEPARTMENT:
+			result = "Для спеціальності";
+			break;
+		case LectureType.COURSE:
+			result = "Для курсу";
+			break;
+	}
+
+	return result;
+}
+
 export function compareUsersByName(u1: User, u2: User) {
 	let result = u1.lastName.localeCompare(u2.lastName);
 
@@ -254,7 +280,7 @@ export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[
 	return xs.reduce((prev, item) => {
 		(prev[item[key]] = prev[item[key]] || []).push(item);
 		return prev;
-	}, { } as any);
+	}, {} as any);
 }
 
 export function getShortName(name: string): string {

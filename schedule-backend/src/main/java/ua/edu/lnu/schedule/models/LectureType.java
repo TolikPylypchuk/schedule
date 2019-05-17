@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LectureType {
-    GROUP(1),
-    DEPARTMENT(2),
-    COURSE(3);
+    GROUP(0),
+    DEPARTMENT(1),
+    COURSE(2);
 
     private final int number;
 

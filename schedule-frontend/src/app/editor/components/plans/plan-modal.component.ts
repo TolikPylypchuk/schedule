@@ -1,7 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
+import { LectureType } from "../../../common/models/enums";
 import { Plan, Subject } from "../../../common/models/models";
+import { getLectureTypeName, getArrayOfNumbers } from "../../../common/models/functions";
 import { PlanService, SubjectService } from "../../../common/services/services";
 
 @Component({
@@ -21,8 +23,9 @@ export class PlanModalComponent implements OnInit {
 		year: 0,
 		semester: 0,
 		numLectures: 0,
-		numPractice: 0,
-		numLabs: 0
+		numPractices: 0,
+		numLabs: 0,
+		lectureType: LectureType.DEPARTMENT
 	};
 
 	subjects: Subject[] = [];
@@ -30,6 +33,8 @@ export class PlanModalComponent implements OnInit {
 
 	error = false;
 	errorText = "";
+
+	getLectureTypeName = getLectureTypeName;
 
 	constructor(
 		activeModal: NgbActiveModal,
@@ -58,6 +63,10 @@ export class PlanModalComponent implements OnInit {
 			});
 	}
 
+	getLectureTypes() {
+		return getArrayOfNumbers(3);
+	}
+
 	change(): void {
 		this.error = false;
 		this.errorText = "";
@@ -70,7 +79,7 @@ export class PlanModalComponent implements OnInit {
 			return;
 		}
 
-		if (this.plan.numLectures < 0 || this.plan.numPractice < 0 ||
+		if (this.plan.numLectures < 0 || this.plan.numPractices < 0 ||
 			this.plan.numLabs < 0) {
 			this.error = true;
 			this.errorText = "Кількість пар має бути невід'ємною.";

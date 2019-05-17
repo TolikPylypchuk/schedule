@@ -3,6 +3,7 @@ export interface EntityBase {
 }
 
 export interface Authority extends EntityBase {
+	id?: number;
 	name: string;
 }
 
@@ -56,8 +57,9 @@ export interface Group extends EntityBase {
 
 export interface Plan extends EntityBase {
 	numLectures: number;
-	numPractice: number;
+	numPractices: number;
 	numLabs: number;
+	lectureType: number;
 	year: number;
 	semester: number;
 	subject: Subject;

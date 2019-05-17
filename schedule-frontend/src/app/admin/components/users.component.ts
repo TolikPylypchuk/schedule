@@ -76,30 +76,12 @@ export class UsersComponent implements OnInit {
 		const modalRef = this.modalService.open(UserModalComponent);
 		const modal = modalRef.componentInstance as UserModalComponent;
 
-		// for (const faculty of this.faculties) {
-		// 	const lecturers = this.lecturers.get(faculty.id);
-
-		if (this.lecturers && this.lecturers.length !== 0) {
-			modal.authorities.push(this.lecturers[0].authorities.find(
-				a => a.name === "ROLE_LECTURER"));
-			// break;
-		}
-		// }
-
-		// for (const faculty of this.faculties) {
-		// 	const editors = this.editors.get(faculty.id);
-
-		if (this.editors && this.editors.length !== 0) {
-			modal.authorities.push(this.editors[0].authorities.find(
-				a => a.name === "ROLE_EDITOR"));
-			// break;
-		}
-		// }
-
-		modal.authorities.push(this.admins[0].authorities.find(
-			a => a.name === "ROLE_ADMIN"));
+		modal.authorities.push({id: 1, name: "ROLE_LECTURER"});
+		modal.authorities.push({id: 2, name: "ROLE_EDITOR"});
+		modal.authorities.push({id: 3, name: "ROLE_ADMIN"});
 
 		modal.faculties = this.faculties;
+		modal.currentFaculty = this.currentFaculty;
 
 		modalRef.result.then(
 			(user: User) => {

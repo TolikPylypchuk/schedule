@@ -10,7 +10,8 @@ import {
 } from "../../../common/services/services";
 
 import {
-    getCurrentGroupName, getCurrentYear, getCurrentSemester
+    getCurrentGroupName, getCurrentYear, getCurrentSemester,
+    getLectureTypeName
 } from "../../../common/models/functions";
 
 import { PlanModalComponent } from "./plan-modal.component";
@@ -33,6 +34,7 @@ export class PlansComponent implements OnInit {
     plans: Map<number, Plan[]> = new Map();
 
     getCurrentGroupName = getCurrentGroupName;
+    getLectureTypeName = getLectureTypeName;
 
     constructor(
         modalService: NgbModal,
@@ -59,14 +61,15 @@ export class PlansComponent implements OnInit {
                     (d1, d2) => d1.name.localeCompare(d2.name));
 
                 for (const department of departments) {
+                    let departmentPlans: Plan[] = [];
+                    this.plans.set(department.id, departmentPlans);
                     this.planService.getPlansByGroupAndYearAndSemester(
                         department.id,
                         getCurrentYear(),
                         getCurrentSemester())
                         .subscribe((plans: Plan[]) => {
-                            this.plans.set(
-                                department.id,
-                                plans.sort((p1, p2) => p1.subject.name.localeCompare(p2.subject.name)));
+                            departmentPlans = plans.sort((p1, p2) => p1.subject.name.localeCompare(p2.subject.name));
+                            this.plans.set(department.id, departmentPlans);
                         });
                 }
             });
@@ -104,8 +107,9 @@ export class PlansComponent implements OnInit {
             course: plan.course,
             subject: plan.subject,
             numLectures: plan.numLectures,
-            numPractice: plan.numPractice,
+            numPractices: plan.numPractices,
             numLabs: plan.numLabs,
+            lectureType: plan.lectureType,
             year: plan.year,
             semester: plan.semester
         };
@@ -116,7 +120,8 @@ export class PlansComponent implements OnInit {
             (newPlan: Plan) => {
                 plan.subject = newPlan.subject;
                 plan.numLectures = newPlan.numLectures;
-                plan.numPractice = newPlan.numPractice;
+                plan.numPractices = newPlan.numPractices;
+                plan.lectureType = newPlan.lectureType;
                 plan.numLabs = newPlan.numLabs;
 
                 this.plans.get(plan.department.id).sort(
