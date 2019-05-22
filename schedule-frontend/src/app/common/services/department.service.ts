@@ -46,6 +46,16 @@ export class DepartmentService {
 			.first();
 	}
 
+	getDepartmentsByRelatedLecturer(lecturerId: number): Observable<Department[]> {
+		return this.http.get(`${this.departmentsUrl}/related/${lecturerId}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Department[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
 	addDepartment(department: Department): ConnectableObservable<Response> {
 		const result = this.http.post(
 			this.departmentsUrl,

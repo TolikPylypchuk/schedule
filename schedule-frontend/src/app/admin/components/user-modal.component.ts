@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { getAuthorityName } from "../../common/models/functions";
+import { getAuthorityName, getDepartmentsAsString } from "../../common/models/functions";
 import { Authority, Faculty, User, Department } from "../../common/models/models";
 import { FacultyService, UserService, DepartmentService } from "../../common/services/services";
 
@@ -17,6 +17,7 @@ export class UserModalComponent implements OnInit {
 	private userService: UserService;
 
 	getAuthorityName = getAuthorityName;
+	getDepartmentsAsString = getDepartmentsAsString;
 
 	user: User = {
 		username: null,
@@ -26,12 +27,18 @@ export class UserModalComponent implements OnInit {
 		position: null,
 		password: "pass",
 		department: null,
-		authorities: []
+		authorities: [],
+		relatedDepartments: []
 	};
 
 	authorities: Authority[] = [];
 	faculties: Faculty[] = [];
 	departments: Department[] = [];
+
+	facultyDepartments: {
+		faculty: Faculty;
+		departments: Department[];
+	}[] = [];
 
 	currentFaculty: Faculty;
 
@@ -52,9 +59,11 @@ export class UserModalComponent implements OnInit {
 
 	ngOnInit(): void {
 		if (this.isEditing) {
-			console.log(this.user);
 			this.currentFaculty = this.faculties.find(f => f.id === this.user.department.faculty.id);
+
 			this.setDepartments();
+			this.setFacultyDepartments();
+			this.setRelatedDepartments();
 		}
 	}
 
@@ -71,6 +80,42 @@ export class UserModalComponent implements OnInit {
 				this.user.department = this.departments.find(d => d.id === this.user.department.id);
 			});
 	}
+
+	setRelatedDepartments(): void {
+		this.departmentService.getDepartmentsByRelatedLecturer(
+			this.user.id
+		).subscribe(departments => this.user.relatedDepartments = departments);
+	}
+
+	setFacultyDepartments(): void {
+		this.facultyDepartments = [];
+
+		for (const faculty of this.faculties) {
+			this.departmentService.getDepartmentsByFaculty(
+				faculty.id)
+				.subscribe((departments: Department[]) =>
+					this.facultyDepartments.push({
+						faculty: faculty,
+						departments: departments
+							.sort((d1, d2) => d1.name.localeCompare(d2.name))
+					}));
+		}
+	}
+
+	departmentChecked(department: Department): void {
+		if (this.user.relatedDepartments.includes(department)) {
+			this.user.relatedDepartments = this.user.relatedDepartments.filter(
+				d => d.id !== department.id);
+		} else {
+			this.user.relatedDepartments.push(department);
+		}
+	}
+
+	isDepartmentChecked(department: Department): boolean {
+		return !this.user.relatedDepartments ||
+			this.user.relatedDepartments.find(d => d.id === department.id) as any;
+	}
+
 
 	isAuthorityChecked(authority: Authority): boolean {
 		return !!this.user.authorities.find(a => a.id === authority.id);

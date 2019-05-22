@@ -7,6 +7,7 @@ import ua.edu.lnu.schedule.models.Department;
 import ua.edu.lnu.schedule.models.Faculty;
 import ua.edu.lnu.schedule.repositories.DepartmentRepository;
 import ua.edu.lnu.schedule.repositories.FacultyRepository;
+import ua.edu.lnu.schedule.repositories.UserRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,10 +17,16 @@ import java.util.List;
 @RequestMapping("/department")
 public class DepartmentController {
     private DepartmentRepository departments;
+    private UserRepository users;
 
     @Autowired
     public void setDepartments(DepartmentRepository departments) {
         this.departments = departments;
+    }
+
+    @Autowired
+    public void setUsers(UserRepository users) {
+        this.users = users;
     }
 
     @GetMapping
@@ -37,6 +44,14 @@ public class DepartmentController {
     public @ResponseBody
     List<Department> getByFaculty(@PathVariable("facultyId") int facultyId) {
         return this.departments.findAllByFaculty_Id(facultyId);
+    }
+
+    @GetMapping("/related/{lecturerId}")
+    public @ResponseBody
+    List<Department> getRelatedByLecturer(@PathVariable("lecturerId") int lecturerId) {
+        return this.departments.findAllByRelatedLecturersContaining(
+                this.users.findOne(lecturerId)
+        );
     }
 
     @PostMapping

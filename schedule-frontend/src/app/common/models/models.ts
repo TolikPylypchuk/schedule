@@ -82,6 +82,7 @@ export interface User extends EntityBase {
 	lastName: string;
 	position: string;
 	department: Department;
+	relatedDepartments?: Department[];
 }
 
 export interface Wish extends EntityBase {
