@@ -1,5 +1,5 @@
 import {
-	Authority, Classroom, Group, User
+	Authority, Classroom, Group, User, Department
 } from "./models";
 
 import {
@@ -198,6 +198,14 @@ export function getFrequencyAsEnumString(frequency: string) {
 	}
 
 	return result;
+}
+
+export function getDepartmentsAsString(departments: Department[]): string {
+	return departments
+		? departments.reduce(
+			(result: string, department: Department) => `${result}, ${department.name}`,
+			"").substr(2)
+		: "";
 }
 
 export function getClassroomsAsString(classrooms: Classroom[]): string {

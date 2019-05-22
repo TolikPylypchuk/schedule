@@ -126,6 +126,42 @@ public class UserController {
 				this.authorities.findByName(
 					this.userService.getAuthorityName(role)));
 	}
+
+	@GetMapping("/related/role/{role}/facultyId/{facultyId}")
+	public @ResponseBody Iterable<User> getRelatedByRoleAndFaculty(
+			@PathVariable("role") String role,
+			@PathVariable("facultyId") int facultyId) {
+		Authority authority = this.authorities.findByName(
+				this.userService.getAuthorityName(role));
+
+		return authority == null
+				? new ArrayList<>()
+				: this.users.findAllByRelatedDepartmentsInAndAuthoritiesContaining(
+				this.departments.findAllByFaculty_Id(facultyId),
+				this.authorities.findByName(
+						this.userService.getAuthorityName(role)));
+	}
+
+	@GetMapping("/role/{role}/facultyId/{facultyId}/includeRelated")
+	public @ResponseBody Iterable<User> getByRoleAndFacultyIncludeRelated(
+			@PathVariable("role") String role,
+			@PathVariable("facultyId") int facultyId) {
+		Authority authority = this.authorities.findByName(
+				this.userService.getAuthorityName(role));
+		List<User> users = new ArrayList<>();
+		if (authority != null) {
+			users = this.users.findAllByDepartmentInAndAuthoritiesContaining(
+					this.departments.findAllByFaculty_Id(facultyId),
+					this.authorities.findByName(
+							this.userService.getAuthorityName(role)));
+			users.addAll(this.users.findAllByRelatedDepartmentsInAndAuthoritiesContaining(
+					this.departments.findAllByFaculty_Id(facultyId),
+					this.authorities.findByName(
+							this.userService.getAuthorityName(role))));
+		}
+
+		return users;
+	}
 	
 	@GetMapping("/subjectId/{subjectId}")
 	public @ResponseBody Iterable<User> getBySubject(

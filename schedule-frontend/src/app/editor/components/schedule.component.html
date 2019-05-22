@@ -23,7 +23,14 @@
                 <i class="fa fa-plus-square"></i>
             </span>
         </div>
-        <div class="col-3">
+        <div class="col-3 text-right">
+            <!-- <label>
+                Тільки факультет
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </label> -->
         </div>
     </div>
     <div class="row text-center" [style.marginBottom]="availableExpanded ? '6em' : '1em'">
@@ -66,7 +73,7 @@
                                     </div>
                                 </td>
 
-                                <td *ngFor="let cell of viewClassesAll.get(viewObject.id)" class="text-center" [style.fontSize]="fontSize+'em'">
+                                <td *ngFor="let cell of viewClassesAll.get(viewObject.id)" class="text-center {{isSuitable(viewObject, cell.n)}}" [style.fontSize]="fontSize+'em'">
                                     <div [ngSwitch]="cell.frequency">
                                         <!-- NONE -->
                                         <ng-container *ngSwitchCase="0">

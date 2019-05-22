@@ -22,4 +22,4 @@ export {
 	SubjectService,
 	UserService,
 	WishService
-}
+};

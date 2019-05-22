@@ -87,6 +87,17 @@ export class UserService {
 			.first();
 	}
 
+	getLecturersByFacultyIncludeRelated(facultyId: number): Observable<User[]> {
+		return this.http.get(
+			`${this.usersUrl}/role/lecturer/facultyId/${facultyId}/includeRelated`)
+			.map(response =>
+				response.status === 200
+					? response.json() as User[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
 	getEditorsByFaculty(facultyId: number): Observable<User[]> {
 		return this.http.get(
 			`${this.usersUrl}/role/editor/facultyId/${facultyId}`)

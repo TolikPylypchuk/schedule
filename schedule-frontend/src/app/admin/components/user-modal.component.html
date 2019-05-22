@@ -105,6 +105,49 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div>Пов'язані спеціальності</div>
+                    <div>
+                        {{ getDepartmentsAsString(currentClass.departments) }}
+                        <span *ngIf="getTotalCapacity() !== 0">
+								(всього&nbsp;місць:&nbsp;{{ getTotalCapacity() }})
+							</span>
+                    </div>
+                    <div class="collapse mt-2" id="collapseDepartments">
+                        <div id="departments" role="tablist" aria-multiselectable="true">
+                            <div *ngFor="let item of availableDepartments" class="card">
+                                <div class="card-header" role="tab" id="header{{ item.building.id }}">
+                                    <h6 class="m-0">
+                                        <a data-toggle="collapse" data-parent="#classrooms" href="#collapse{{ item.building.id }}" aria-expanded="false" [attr.aria-controls]="'collapse' + item.building.id">
+												{{ item.building.name }}
+											</a>
+                                    </h6>
+                                </div>
+                                <div class="collapse" id="collapse{{ item.building.id }}" role="tabpanel" [attr.aria-labelledby]="item.building.id">
+                                    <div class="card-body">
+                                        <div *ngIf="item.classrooms.length === 0">
+                                            <p>Немає вільних аудиторій.</p>
+                                        </div>
+                                        <div *ngFor="let classroom of item.classrooms" class="form-check">
+                                            <label class="form-check-label" (change)="classroomChecked(classroom)">
+													<input type="checkbox" class="form-check-input"
+														   [attr.checked]="isClassroomChecked(classroom) ? true : null" />
+													{{ classroom.number }} (місць: {{ classroom.capacity }})
+												</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-sm btn-primary float-right" type="button" data-toggle="collapse" data-target="#collapseRelatedDepartments" aria-expanded="false" aria-controls="collapseClassrooms">
+						Додати
+					</button>
+                </div>
+            </div>
         </div>
     </div>
 

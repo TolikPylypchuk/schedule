@@ -133,7 +133,7 @@ public class User implements Serializable {
 	}
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lecturers")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "relatedLecturers")
 	public Set<Department> getRelatedDepartments() {
 		return relatedDepartments;
 	}

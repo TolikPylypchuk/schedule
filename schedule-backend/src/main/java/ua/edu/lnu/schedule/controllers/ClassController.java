@@ -22,6 +22,7 @@ import ua.edu.lnu.schedule.repositories.*;
 public class ClassController {
 	private ClassRepository classes;
 	private ClassroomRepository classrooms;
+	private ClassroomTypeRepository classroomTypes;
 	private DepartmentRepository departments;
 	private GroupRepository groups;
 	private PlanRepository plans;
@@ -36,6 +37,11 @@ public class ClassController {
 	@Autowired
 	public void setClassrooms(ClassroomRepository classrooms) {
 		this.classrooms = classrooms;
+	}
+
+	@Autowired
+	public void setClassroomTypes(ClassroomTypeRepository classroomTypes) {
+		this.classroomTypes = classroomTypes;
 	}
 	
 	@Autowired

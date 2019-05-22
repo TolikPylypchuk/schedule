@@ -36,6 +36,7 @@ export class ScheduleComponent implements OnInit {
 	private wishService: services.WishService;
 
 	@ViewChild("scheduleTable") table: ElementRef;
+
 	private fontSize = 1;
 
 	private scrollLeft = false;
@@ -53,17 +54,16 @@ export class ScheduleComponent implements OnInit {
 	currentUser: models.User;
 
 	viewToggle = ViewToggle.LECTURERS;
+	showOnlyFacultyLecturers = false;
 	showDenominator = false;
 	availableExpanded = false;
 
 	lecturers: models.User[] = [];
 	lecturersClasses: Map<number, models.Class[]> = new Map();
-	lecturersClassesAll: Map<number, ClassCell[]> = new Map();
 	lecturerWishes: Map<number, models.Wish[]> = new Map();
 
 	groups: models.Group[] = [];
 	groupsClasses: Map<number, models.Class[]> = new Map();
-	groupsClassesAll: Map<number, ClassCell[]> = new Map();
 
 	viewObjects: models.User[] | models.Group[];
 	viewClasses: Map<number, models.Class[]> = new Map();
@@ -111,7 +111,7 @@ export class ScheduleComponent implements OnInit {
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => {
 				this.currentUser = user;
-				this.userService.getLecturersByFaculty(user.department.faculty.id)
+				this.userService.getLecturersByFacultyIncludeRelated(user.department.faculty.id)
 					.subscribe((lecturers: models.User[]) => {
 						this.lecturers = lecturers.sort(compareUsersByName);
 						this.viewObjects = this.lecturers;
@@ -265,9 +265,10 @@ export class ScheduleComponent implements OnInit {
 				return "";
 		}
 	}
+
 	isSuitable(lecturer: models.User, n: number): string {
 		const wish = this.getWish(lecturer.id, this.getDay(n), this.getNumber(n));
-		return wish === null
+		return !wish
 			? ""
 			: `suitable-${wish.suitable}`;
 	}
@@ -307,9 +308,9 @@ export class ScheduleComponent implements OnInit {
 	canDrop(viewObjectId: number): boolean {
 		return !this.dragClass
 			|| this.viewToggle === ViewToggle.GROUPS
-				&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
+			&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
 			|| this.viewToggle === ViewToggle.LECTURERS
-				&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
+			&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
 	}
 
 	releaseDrop(c: models.Class): void {
@@ -328,8 +329,7 @@ export class ScheduleComponent implements OnInit {
 
 		switch (this.viewToggle) {
 			case ViewToggle.GROUPS:
-				this.updateAssosiated(c, c.groups);
-				updated = c.groups;
+				updated = this.updateForGroups(c);
 				break;
 			case ViewToggle.LECTURERS:
 				updated = this.updateForLecturers(c);
@@ -369,51 +369,18 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	updateForGroups(c: models.Class): models.Group[] {
-		let lecturers = c.lecturers;
+		this.updateAssosiated(c, c.groups);
 
-		if (this.dragPosition === -1) {
-			lecturers = [this.lecturers.find(l => l.id === this.dropViewObjectId)];
-			c.lecturers = lecturers;
+		const action = !c.id
+			? this.classService.addClass(c)
+			: c.lecturers.length > 0
+				? this.classService.updateClass(c)
+				: this.classService.deleteClass(c.id);
 
-			const classes = this.lecturersClasses.get(this.dropViewObjectId);
-			classes.push(c);
-			this.lecturersClasses.set(this.dropViewObjectId, classes);
+		action.subscribe();
+		action.connect();
 
-			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
-		} else if (this.dropPosition === -1) {
-			c.lecturers = c.lecturers.filter(l => l.id !== this.dragViewObjectId);
-
-			this.lecturersClasses.set(
-				this.dragViewObjectId,
-				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
-
-			if (c.lecturers.length === 0) {
-				c.dayOfWeek = null;
-				c.number = 0;
-				c.frequency = frequencyToString(this.dragFrequency);
-				this.availableClasses.push(c);
-			}
-		} else if (this.dragViewObjectId !== this.dropViewObjectId) {
-			lecturers.push(this.lecturers.find(l => l.id === this.dropViewObjectId));
-			c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
-
-			this.lecturersClasses.set(
-				this.dragViewObjectId,
-				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
-
-			const classes = this.lecturersClasses.get(this.dropViewObjectId);
-			classes.push(c);
-			this.lecturersClasses.set(
-				this.dropViewObjectId,
-				classes);
-		}
-
-		this.viewClasses = this.lecturersClasses;
-
-		this.updateAssosiated(c, c.lecturers);
-		this.lecturersClasses = this.viewClasses;
-
-		return [];
+		return c.groups;
 	}
 
 	updateForLecturers(c: models.Class): models.User[] {
@@ -473,11 +440,31 @@ export class ScheduleComponent implements OnInit {
 		return lecturers;
 	}
 
-	updateAssosiated(c: models.Class, assosiated: models.User[] | models.Group[]): void {
-		for (const assosiate of assosiated) {
-			this.viewClasses.set(
+	updateAssosiated(c: models.Class, assosiated: models.EntityBase[]): void {
+		let groups = [];
+		let lecturers = [];
+
+		switch (this.viewToggle) {
+			case ViewToggle.GROUPS:
+				groups = assosiated;
+				lecturers = c.lecturers;
+				break;
+			case ViewToggle.LECTURERS:
+				groups = c.groups;
+				lecturers = assosiated;
+				break;
+		}
+
+		for (const assosiate of groups) {
+			this.groupsClasses.set(
 				assosiate.id,
-				this.viewClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
+				this.groupsClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
+		}
+
+		for (const assosiate of lecturers) {
+			this.lecturersClasses.set(
+				assosiate.id,
+				this.lecturersClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
 		}
 	}
 
