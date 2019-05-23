@@ -267,6 +267,10 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	isSuitable(lecturer: models.User, n: number): string {
+		if (this.viewToggle !== ViewToggle.LECTURERS) {
+			return "";
+		}
+
 		const wish = this.getWish(lecturer.id, this.getDay(n), this.getNumber(n));
 		return !wish
 			? ""
@@ -305,16 +309,26 @@ export class ScheduleComponent implements OnInit {
 		this.showDenominator = c.frequency !== "Щотижня";
 	}
 
-	canDrop(viewObjectId: number): boolean {
+	canDrop(viewObjectId: number, dropPsition: number, dropFrequency: number): boolean {
 		return !this.dragClass
 			|| this.viewToggle === ViewToggle.GROUPS
 			&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
 			|| this.viewToggle === ViewToggle.LECTURERS
-			&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
+			&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId)
+			&& !this.dragClass.lecturers.find(l =>
+				this.lecturersClasses.get(l.id).find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
+					c.number === this.getNumber(dropPsition) &&
+					frequencyFromString(c.frequency) === dropFrequency) as any
+			)
+			&& !this.dragClass.groups.find(g =>
+				this.groupsClasses.get(g.id).find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
+					c.number === this.getNumber(dropPsition) &&
+					frequencyFromString(c.frequency) === dropFrequency) as any
+			);
 	}
 
 	releaseDrop(c: models.Class): void {
-		if (!this.canDrop(this.dropViewObjectId)) {
+		if (!this.canDrop(this.dropViewObjectId, this.dragPosition, this.dropFrequency)) {
 			this.showDenominator = false;
 			this.dragClass = null;
 			this.dragViewObjectId = null;

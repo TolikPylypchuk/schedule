@@ -110,7 +110,8 @@
 
                                     <ng-template #emptyCell let-frequency="frequency">
                                         <div dropDirective (dropEvent)="addDropItem($event, viewObject, cell.n, frequency)">
-                                            <button type="button" class="btn btn-block btn-sm btn-outline-{{ !canDrop(viewObject.id) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body" (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), viewObject, getWish(viewObject.id, getDay(cell.n), getNumber(cell.n)))">
+                                            <button type="button" class="btn btn-block btn-sm btn-outline-{{ !canDrop(viewObject.id, cell.n, frequency) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body"
+                                                (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), viewObject, getWish(viewObject.id, getDay(cell.n), getNumber(cell.n)))">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </div>
