@@ -310,25 +310,36 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	canDrop(viewObjectId: number, dropPsition: number, dropFrequency: number): boolean {
-		return !this.dragClass
-			|| this.viewToggle === ViewToggle.GROUPS
+		if (!this.dragClass) {
+			return true;
+		}
+
+		let canDrop = this.viewToggle === ViewToggle.GROUPS
 			&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
 			|| this.viewToggle === ViewToggle.LECTURERS
-			&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId)
-			&& !this.dragClass.lecturers.find(l =>
-				this.lecturersClasses.get(l.id).find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
+			&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
+		canDrop = canDrop
+			&& (!this.dragClass.lecturers || !this.dragClass.lecturers.find(l => {
+				const classes = this.lecturersClasses.get(l.id);
+				return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
 					c.number === this.getNumber(dropPsition) &&
-					frequencyFromString(c.frequency) === dropFrequency) as any
-			)
-			&& !this.dragClass.groups.find(g =>
-				this.groupsClasses.get(g.id).find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
+					(frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
+					frequencyFromString(c.frequency) === dropFrequency)) as any;
+			}));
+		canDrop = canDrop
+			&& (!this.dragClass.groups || !this.dragClass.groups.find(g => {
+				const classes = this.groupsClasses.get(g.id);
+				return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
 					c.number === this.getNumber(dropPsition) &&
-					frequencyFromString(c.frequency) === dropFrequency) as any
-			);
+					(frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
+					frequencyFromString(c.frequency) === dropFrequency)) as any;
+			}));
+
+		return canDrop;
 	}
 
 	releaseDrop(c: models.Class): void {
-		if (!this.canDrop(this.dropViewObjectId, this.dragPosition, this.dropFrequency)) {
+		if (!this.canDrop(this.dropViewObjectId, this.dropPosition, this.dropFrequency)) {
 			this.showDenominator = false;
 			this.dragClass = null;
 			this.dragViewObjectId = null;
