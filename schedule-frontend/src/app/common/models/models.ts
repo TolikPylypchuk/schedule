@@ -20,7 +20,7 @@ export interface Class extends EntityBase {
 	year: number;
 	semester: number;
 	type: string;
-	classroomType: ClassroomType;
+	classroomType?: ClassroomType;
 	subject: Subject;
 	classrooms?: Classroom[];
 	groups?: Group[];

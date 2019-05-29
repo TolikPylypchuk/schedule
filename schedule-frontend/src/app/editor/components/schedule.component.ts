@@ -290,7 +290,8 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	checkFields(c: models.Class): boolean {
-		return c.dayOfWeek
+		return c
+			&& c.dayOfWeek
 			&& c.number > 0
 			&& c.groups !== null && c.groups.length > 0
 			&& c.lecturers !== null && c.lecturers.length > 0
@@ -318,6 +319,8 @@ export class ScheduleComponent implements OnInit {
 			&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
 			|| this.viewToggle === ViewToggle.LECTURERS
 			&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
+
+		// check if available for class lecturers
 		canDrop = canDrop
 			&& (!this.dragClass.lecturers || !this.dragClass.lecturers.find(l => {
 				const classes = this.lecturersClasses.get(l.id);
@@ -326,6 +329,8 @@ export class ScheduleComponent implements OnInit {
 					(frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
 					frequencyFromString(c.frequency) === dropFrequency)) as any;
 			}));
+
+		// check if available for class groups
 		canDrop = canDrop
 			&& (!this.dragClass.groups || !this.dragClass.groups.find(g => {
 				const classes = this.groupsClasses.get(g.id);
@@ -339,7 +344,8 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	releaseDrop(c: models.Class): void {
-		if (!this.canDrop(this.dropViewObjectId, this.dropPosition, this.dropFrequency)) {
+		if (this.dropPosition !== -1 &&
+			!this.canDrop(this.dropViewObjectId, this.dropPosition, this.dropFrequency)) {
 			this.showDenominator = false;
 			this.dragClass = null;
 			this.dragViewObjectId = null;
@@ -415,9 +421,13 @@ export class ScheduleComponent implements OnInit {
 			lecturers = [this.lecturers.find(l => l.id === this.dropViewObjectId)];
 			c.lecturers = lecturers;
 
-			const classes = this.lecturersClasses.get(this.dropViewObjectId);
-			classes.push(c);
-			this.lecturersClasses.set(this.dropViewObjectId, classes);
+			this.lecturersClasses.set(this.dropViewObjectId, [...this.lecturersClasses.get(this.dropViewObjectId), c]);
+
+			for (const assosiate of c.groups) {
+				this.groupsClasses.set(
+					assosiate.id,
+					[...this.groupsClasses.get(assosiate.id), c]);
+			}
 
 			this.availableClasses = this.availableClasses.filter(cl => cl !== c);
 		} else if (this.dropPosition === -1) {
@@ -426,6 +436,12 @@ export class ScheduleComponent implements OnInit {
 			this.lecturersClasses.set(
 				this.dragViewObjectId,
 				this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
+
+			for (const assosiate of c.groups) {
+				this.groupsClasses.set(
+					assosiate.id,
+					[...this.groupsClasses.get(assosiate.id).filter(cl => cl.id !== c.id)]);
+			}
 
 			if (c.lecturers.length === 0) {
 				c.dayOfWeek = null;
