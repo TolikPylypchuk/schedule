@@ -20,21 +20,13 @@ export class ScheduleService {
 
     private viewClasses: Map<number, models.Class[]> = new Map();
     private lecturerWishes: Map<number, models.Wish[]> = new Map();
+    private viewObjects: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
     private setViewClasses;
 
-    view: BehaviorSubject<View> = new BehaviorSubject<View>({
-        toggle: ViewToggle.LECTURERS,
-        objects: [],
-        objectClasses: new Map(),
-        getObjectName: (id) => ""
-    });
-    // viewToggle: BehaviorSubject<ViewToggle> = new BehaviorSubject<ViewToggle>(ViewToggle.LECTURERS);
-    viewObjects: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+    view: BehaviorSubject<View> = new BehaviorSubject<View>(new View());
+
     viewClassesSubject: BehaviorSubject<Map<number, models.Class[]>> = new BehaviorSubject<Map<number, models.Class[]>>(new Map());
-
-    // getViewObjectName;
-
     wishes: Subject<Map<number, models.Wish[]>> = new Subject<Map<number, models.Wish[]>>();
 
     constructor(private classService: ClassService,
@@ -54,14 +46,10 @@ export class ScheduleService {
         this.view.next(new View());
         this.viewObjects.next([]);
         this.viewClassesSubject.next(new Map());
-        // this.viewToggle.next(toggle);
         let getObjectName: (obj: any) => string;
-        // let setViewClasses: (id: number) => void;
-        // let viewObjects;
 
         switch (toggle) {
             case ViewToggle.LECTURERS:
-                // viewObjects = this.getLecturers(this.facultyId);
                 getObjectName = getUserInitials;
                 this.setLecturers(this.facultyId);
                 this.setViewClasses = this.setLecturerClasses;
@@ -80,7 +68,6 @@ export class ScheduleService {
         }
 
         this.viewObjects.subscribe(objects => {
-            debugger;
             for (const obj of objects) {
                 this.setViewClasses(obj.id);
             }
@@ -93,60 +80,13 @@ export class ScheduleService {
             this.viewClassesSubject.subscribe(classes => {
                 currentView.objectClasses = classes;
                 this.view.next(currentView);
-                // this.view.next({
-                //     toggle: toggle,
-                //     objects: objects,
-                //     objectClasses: classes,
-                //     getObjectName: getObjectName
-                // });
             });
         });
-
-        // viewObjects.subscribe(objects => {
-        //     debugger;
-        //     // const observableClasses = objects.map(o => this.getLecturerClasses(o.id));
-        //     // const combined = combineLatest(observableClasses);
-        //     // combined.subscribe(classes => {
-        //     //     this.view.next({
-        //     //         toggle: toggle,
-        //     //         objects: objects,
-        //     //         objectClasses: classes,
-        //     //         getObjectName: getObjectName
-        //     //     });
-        //     // });
-        //     const viewClasses = new Map();
-        //     for (const obj of objects) {
-        //         getObjectClasses(obj.id).subscribe(objectClasses => {
-        //             viewClasses.set(obj.id, objectClasses);
-        //             this.updateViewClasses(viewClasses);
-        //         },
-        //         err => console.error(err),
-        //         () => {}
-        //         );
-        //         // const loaded = this.viewClasses;
-        //         // setViewClasses(obj.id);
-        //     }
-        //     this.viewClassesSubject.subscribe(classes => {
-        //         this.view.next({
-        //             toggle: toggle,
-        //             objects: objects,
-        //             objectClasses: classes,
-        //             getObjectName: getObjectName
-        //         });
-        //     },
-        //     err => console.error(err),
-        //     () => {}
-        //     );
-        // });
     }
 
     updateViewClasses(viewClasses: Map<number, models.Class[]>) {
         this.viewClasses = viewClasses;
         this.viewClassesSubject.next(viewClasses);
-        // debugger;
-        //         const currentView = this.view.getValue();
-        //         currentView.objectClasses = viewClasses;
-        //         this.view.next(currentView);
     }
 
     updateLecturerWishes(wishes: Map<number, models.Wish[]>) {
@@ -158,9 +98,6 @@ export class ScheduleService {
         this.userService.getLecturersByFacultyIncludeRelated(facultyId)
             .subscribe((lecturers: models.User[]) => {
                 this.viewObjects.next(lecturers.sort(compareUsersByName));
-                // const currentView = this.view.value;
-                // currentView.objects = lecturers.sort(compareUsersByName);
-                // this.view.next(currentView);
             });
     }
 
@@ -196,9 +133,6 @@ export class ScheduleService {
         this.groupService.getGroupsByFaculty(facultyId)
             .subscribe((groups: models.Group[]) => {
                 this.viewObjects.next(groups);
-                // const currentView = this.view.value;
-                // currentView.objects = groups;
-                // this.view.next(currentView);
             });
     }
 

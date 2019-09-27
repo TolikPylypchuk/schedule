@@ -46,7 +46,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     wishes: Map<number, models.Wish[]> = new Map();
 
     areLoaded: Map<number, boolean> = new Map();
-    // getViewObjectName;
+    getViewObjectName;
 
 	getClassStart = getClassStart;
     getClassEnd = getClassEnd;
@@ -91,22 +91,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 			this.viewObjects = view.objects;
 			this.viewClassesAll = viewClassesAll;
 			this.getViewObjectName = view.getObjectName;
-
-			// this.viewToggle = toggle;
-			// this.viewObjects = [];
-			// this.viewClassesAll = new Map();
-			// this.areLoaded = new Map();
 		});
-		// this.scheduleService.viewObjects.subscribe(objects => this.viewObjects = objects);
-		// this.scheduleService.viewClassesSubject.subscribe(viewClasses => {
-		// 	const viewClassesAll = new Map<number, ClassCell[]>();
-		// 	viewClasses.forEach((classes, viewObjectId) => {
-		// 		viewClassesAll.set(viewObjectId, this.getViewClasses(classes));
-		// 		this.areLoaded.set(viewObjectId, true);
-		// 	});
-
-		// 	this.viewClassesAll = viewClassesAll;
-		// });
 
 		this.scheduleService.wishes.subscribe(wishes => this.wishes = wishes);
 	}
@@ -127,10 +112,6 @@ export class ViewComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	getViewObjectName(viewObject: any): string {
-		return this.scheduleService.view.value.getObjectName(viewObject);
-	}
-
 	getClass(
 		viewObjectId: number,
 		day: number,
@@ -144,18 +125,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 				c.frequency.toLowerCase() === frequency.toLowerCase());
 	}
 
-	// getLecturerInitials(viewObject: models.User): string {
-	// 	return getUserInitials(viewObject);
-	// }
-
-	// getGroupName(viewObject: models.Group): string {
-	// 	return getCurrentGroupName(viewObject);
-	// }
-
 	getViewClasses(classes: models.Class[]): ClassCell[] | undefined {
-
-		// const classes = this.viewClasses.get(viweObjectId);
-
 		const result = getArrayOfNumbers(45).map(n => {
 			const cell: ClassCell = new ClassCell();
 			cell.n = n;
@@ -301,24 +271,10 @@ export class ViewComponent implements OnInit, OnDestroy {
 
 	startDrag(c: models.Class, viewObjectId: number, position: number): void {
         this.dragAndDropService.startDrag(c, viewObjectId, position);
-		// this.dragPosition = position;
-		// this.dragFrequency = c.frequency === "Щотижня"
-		// 	? ClassFrequency.WEEKLY
-		// 	: c.frequency === "По чисельнику"
-		// 		? ClassFrequency.NUMERATOR
-		// 		: ClassFrequency.DENOMINATOR;
-		// this.dragClass = c;
-		// this.dragViewObjectId = viewObjectId;
-		// this.showDenominator = c.frequency !== "Щотижня";
     }
 
 	addDropItem(c: models.Class, viewObjectId: number, position: number, frequency: number): void {
         this.dragAndDropService.addDropItem(c, viewObjectId, position, frequency);
-		// this.dropPosition = position;
-		// this.dropFrequency = position !== -1
-		// 	? frequency
-		// 	: frequencyFromString(c.frequency);
-		// this.dropViewObjectId = viewObjectId;
 	}
 
 	releaseDrop(c: models.Class): void {
@@ -333,25 +289,9 @@ export class ViewComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		// let updated = [];
-
 		this.updateOnDrop(c);
 
-		// switch (this.viewToggle) {
-		// 	case ViewToggle.GROUPS:
-		// 		updated = this.updateForGroups(c);
-		// 		break;
-		// 	case ViewToggle.LECTURERS:
-		// 		updated = this.updateForLecturers(c);
-		// 		break;
-		// }
-
 		const viewClassesAll = this.viewClassesAll;
-
-		// for (const updatedObject of updated) {
-		// 	viewClassesAll.set(updatedObject.id, this.getViewClasses(updatedObject.id));
-		// }
-
 		this.viewClassesAll = viewClassesAll;
 
         this.showDenominator = false;
