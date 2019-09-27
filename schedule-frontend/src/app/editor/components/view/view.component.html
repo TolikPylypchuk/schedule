@@ -1,44 +1,9 @@
-<div id="schedule-editor" class=container-fluid>
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">{{ currentUser.department.faculty.name }}</h2>
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="col-sm-0 p-0 text-center control control-left" (mouseenter)="scrollLeft=true;" (mouseleave)="scrollLeft=false;">
         </div>
-    </div>
-    <div class="row">
-        <div class="col-3 m-0 p-0">
-            <div class="text-left">
-                <button class="btn btn-sm btn-light {{ viewToggleClass(1) }}" (click)="changeViewType(1)">Викладачі</button>
-                <button class="btn btn-sm btn-light {{ viewToggleClass(0) }}" (click)="changeViewType(0)">Групи</button>
-            </div>
-        </div>
-        <div class="col-6 text-center">
-            <span class="btn" (click)="view.decreaseSize()">
-                <i class="fa fa-minus-square"></i>
-            </span>
-            <span>
-                <i class="fa fa-search"></i>
-            </span>
-            <span class="btn" (click)="view.increaseSize()">
-                <i class="fa fa-plus-square"></i>
-            </span>
-        </div>
-        <div class="col-3 text-right">
-            <!-- <label>
-                Тільки факультет
-                <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
-                </label>
-            </label> -->
-        </div>
-    </div>
-    <div class="row text-center available-classes-{{ viewExpandedClass }}">
-        <schedule-editor-view #view>
-        </schedule-editor-view>
-        <!-- <div class="col-sm-0 p-0 text-center control control-left" (mouseenter)="scrollLeft=true;" (mouseleave)="scrollLeft=false;">
-        </div>
-        <div class="col-12"> -->
-        <!-- <div #scheduleTable id="schedule-table" class="table-responsive  scroll-x">
+        <div class="col-12 p-0">
+            <div #scheduleTable id="schedule-table" class="table-responsive  scroll-x">
                 <table type="table" class="table table-bordered table-sm table-striped" id="header">
                     <thead>
                         <tr>
@@ -76,7 +41,7 @@
 
                                 <td *ngFor="let cell of viewClassesAll.get(viewObject.id)" class="text-center {{isSuitable(viewObject, cell.n)}}" [style.fontSize]="fontSize+'em'">
                                     <div [ngSwitch]="cell.frequency">
-                                        NONE
+                                        <!-- NONE -->
                                         <ng-container *ngSwitchCase="0">
                                             <ng-container *ngTemplateOutlet="emptyCell; context: { frequency: dragFrequency === 1 ? 1 : 2 }"></ng-container>
                                             <ng-container *ngIf="showDenominator; else placeholder">
@@ -88,21 +53,21 @@
                                                 </div>
                                             </ng-template>
                                         </ng-container>
-                                        WEEKLY
+                                        <!-- WEEKLY -->
                                         <ng-container *ngSwitchCase="1">
                                             <ng-container *ngTemplateOutlet="fullCell; context: { class: cell.weekly }"></ng-container>
                                         </ng-container>
-                                        NUMERATOR
+                                        <!-- NUMERATOR -->
                                         <ng-container *ngSwitchCase="2">
                                             <ng-container *ngTemplateOutlet="fullCell; context: { class: cell.numerator }"></ng-container>
                                             <ng-container *ngTemplateOutlet="emptyCell; context: { frequency: 3 }"></ng-container>
                                         </ng-container>
-                                        DENOMINATOR
+                                        <!-- DENOMINATOR -->
                                         <ng-container *ngSwitchCase="3">
                                             <ng-container *ngTemplateOutlet="emptyCell; context: { frequency: 2 }"></ng-container>
                                             <ng-container *ngTemplateOutlet="fullCell; context: { class: cell.denominator }"></ng-container>
                                         </ng-container>
-                                        BIWEEKLY
+                                        <!-- BIWEEKLY -->
                                         <ng-container *ngSwitchCase="4">
                                             <ng-container *ngTemplateOutlet="fullCell; context: { class: cell.numerator }"></ng-container>
                                             <ng-container *ngTemplateOutlet="fullCell; context: { class: cell.denominator }"></ng-container>
@@ -110,7 +75,7 @@
                                     </div>
 
                                     <ng-template #emptyCell let-frequency="frequency">
-                                        <div dropDirective (dropEvent)="addDropItem($event, viewObject, cell.n, frequency)">
+                                        <div dropDirective (dropEvent)="addDropItem($event, viewObject.id, cell.n, frequency)">
                                             <button type="button" class="btn btn-block btn-sm btn-outline-{{ !canDrop(viewObject.id, cell.n, frequency) ? 'danger' : 'primary' }}" placement="right" ngbTooltip="{{ getDayOfWeekName(getDay(cell.n)) }}, {{ getNumber(cell.n) }} пара" container="body"
                                                 (click)="addClassClicked(0, getDay(cell.n), getNumber(cell.n), viewObject, getWish(viewObject.id, getDay(cell.n), getNumber(cell.n)))">
                                                 <span class="fa fa-plus"></span>
@@ -128,7 +93,7 @@
                                             <div>{{ getClassroomsAsString(class.classrooms) }}</div>
                                             <div>{{ getLecturersAsString(class.lecturers) }}</div>
                                         </ng-template>
-                                        <div [dragDirective]='class' (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, viewObject, cell.n)">
+                                        <div [dragDirective]='class' (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class, viewObject.id, cell.n)">
                                             <button type="button" class="btn btn-block btn-sm btn-{{isClassFull(class) ? 'primary' : 'secondary'}}" placement="right" [ngbTooltip]="tooltip" #tt="ngbTooltip" (mousedown)="tt.close()" container="body" (click)="editClassClicked(class, viewObject)">
                                                 <span class="fa fa-calendar-check-o"></span>
                                             </button>
@@ -139,35 +104,9 @@
                         </tr>
                     </tbody>
                 </table>
-            </div> -->
-        <!-- </div>
+            </div>
+        </div>
         <div class="col-sm-0 p-0 text-center control control-right" (mouseenter)="scrollRight=true;" (mouseleave)="scrollRight=false;">
-        </div> -->
-    </div>
-    <div class="row">
-        <div class="col">
-            <ngb-accordion #acc="ngbAccordion" class="fixed-bottom text-sm text-center">
-                <ngb-panel id="toggle-1">
-                    <ng-template ngbPanelTitle>
-                        <div class="text-center" (click)="availableExpanded=!availableExpanded"><i class="fa fa-chevron-up"></i></div>
-                    </ng-template>
-                    <ng-template ngbPanelContent>
-                        <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, -1, 0)">
-                            <div class="d-inline-flex text-white justify-content-center">
-                                <div *ngFor="let class of availableClasses" class="m-1 bg-primary not-set-class">
-                                    <div [dragDirective]='class' [dragHightlight]="'drag-highlight'" (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class)">
-                                        <div ngbTooltip="{{class.subject.name}}" #tooltip="ngbTooltip" (mousedown)="tooltip.close()">
-                                            <div><b>{{ getShortName(class.subject.name) }}</b></div>
-                                            <div>{{ class.type }}</div>
-                                            <div>{{ getGroupsAsString(class.groups) }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
-                </ngb-panel>
-            </ngb-accordion>
         </div>
     </div>
 </div>

@@ -11,6 +11,7 @@ import { AuthModule } from "../auth/auth";
 import { EditorComponent } from "./editor.component";
 
 import { ScheduleComponent } from "./components/schedule.component";
+import { ViewComponent } from "./components/view/view.component";
 import { ClassModalComponent } from "./components/class-modal.component";
 
 import { GroupsComponent } from "./components/groups/groups.component";
@@ -18,11 +19,14 @@ import { GroupModalComponent } from "./components/groups/group-modal.component";
 
 import { PlansComponent } from "./components/plans/plans.component";
 import { PlanModalComponent } from "./components/plans/plan-modal.component";
+import { ScheduleService } from "./services/schedule.service";
+import { DragAndDropService } from "./services/drag-and-drop.service";
 
 @NgModule({
 	declarations: [
 		EditorComponent,
 		ScheduleComponent,
+		ViewComponent,
 		ClassModalComponent,
 		GroupsComponent,
 		GroupModalComponent,
@@ -43,6 +47,10 @@ import { PlanModalComponent } from "./components/plans/plan-modal.component";
 		ClassModalComponent,
 		GroupModalComponent,
 		PlanModalComponent
+	],
+	providers: [
+		ScheduleService,
+		DragAndDropService
 	]
 })
 export class EditorModule { }

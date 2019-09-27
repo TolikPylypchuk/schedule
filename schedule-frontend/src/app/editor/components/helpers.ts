@@ -13,6 +13,12 @@ export enum ViewToggle {
     LECTURERS
 }
 
+export class Cell {
+	day: number;
+	number: number;
+	frequency: ClassFrequency;
+}
+
 export class ClassCell {
 	n: number;
 	frequency: ClassFrequency;
@@ -59,4 +65,25 @@ export function frequencyToString(frequency: ClassFrequency): string {
 	}
 
 	return result;
+}
+
+export function getDay(n: number): number {
+	return Math.floor(n / 9 + 1);
+}
+
+export function getNumber(n: number): number {
+	return n % 9 + 1;
+}
+
+export function getArrayOfNumbers(num: number): number[] {
+	return Array.apply(null, { length: num }).map(Number.call, Number);
+}
+
+export function isClassFull(c: models.Class): boolean {
+	return c
+		&& c.dayOfWeek
+		&& c.number > 0
+		&& c.groups !== null && c.groups.length > 0
+		&& c.lecturers !== null && c.lecturers.length > 0
+		&& c.classrooms !== null && c.classrooms.length > 0;
 }

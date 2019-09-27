@@ -1,3 +1,7 @@
+schedule-editor-view {
+    max-width: 100%;
+}
+
 #schedule-editor {
     font-size: 1rem;
     height: 90%;
@@ -8,11 +12,11 @@
 }
 
 #schedule-editor .control.control-right {
-    margin-left: -3em;
+    margin-left: -2em;
 }
 
 #schedule-editor .control.control-left {
-    margin-right: -3em;
+    margin-right: -2em;
 }
 
 #schedule-editor .control {
@@ -30,6 +34,7 @@
 }
 
 #schedule-table {
+    overflow: auto;
     width: 100%;
     height: 100%;
 }
@@ -58,6 +63,14 @@
 
 #schedule-table .fa {
     font-size: smaller;
+}
+
+.avilable-classes-collapsed {
+    margin-bottom: 1em;
+}
+
+.avilable-classes-expanded {
+    margin-bottom: 6em;
 }
 
 .placeholder {
