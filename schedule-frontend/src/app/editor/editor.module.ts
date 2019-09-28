@@ -21,6 +21,7 @@ import { PlansComponent } from "./components/plans/plans.component";
 import { PlanModalComponent } from "./components/plans/plan-modal.component";
 import { ScheduleService } from "./services/schedule.service";
 import { DragAndDropService } from "./services/drag-and-drop.service";
+import { ViewService } from "./services/view.service";
 
 @NgModule({
 	declarations: [
@@ -50,6 +51,7 @@ import { DragAndDropService } from "./services/drag-and-drop.service";
 	],
 	providers: [
 		ScheduleService,
+		ViewService,
 		DragAndDropService
 	]
 })

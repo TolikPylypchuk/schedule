@@ -5,12 +5,9 @@ import { ClassModalComponent } from "../class-modal.component";
 
 import * as models from "../../../common/models/models";
 import {
-	getCurrentYear, getCurrentSemester,
-	getUserInitials, getCurrentGroupName,
-	getClassStart, getClassEnd, getDayOfWeekNumber,
-	compareUsersByName, getDayOfWeekName,
-	getUsersAsString, getGroupsAsString, getClassroomsAsString,
-	getShortName
+	getClassStart, getClassEnd,
+	getDayOfWeekNumber,	getDayOfWeekName,
+	getUsersAsString, getGroupsAsString, getClassroomsAsString
 } from "../../../common/models/functions";
 
 import {
@@ -18,7 +15,9 @@ import {
 	frequencyFromString, frequencyToString, isClassFull, getDay, getNumber, getArrayOfNumbers
 } from "../helpers";
 import { DragAndDropService } from "../../services/drag-and-drop.service";
+import { ViewService } from "../../services/view.service";
 import { ScheduleService } from "../../services/schedule.service";
+import { MovingCell } from "../../models/models";
 
 @Component({
 	selector: "schedule-editor-view",
@@ -27,7 +26,6 @@ import { ScheduleService } from "../../services/schedule.service";
 
 export class ViewComponent implements OnInit, OnDestroy {
     private modalService: NgbModal;
-    private dragAndDropService: DragAndDropService;
 
     @ViewChild("scheduleTable")
     private table: ElementRef;
@@ -41,7 +39,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 
 	viewObjects: models.User[] | models.Group[] = [];
 	viewClasses: Map<number, models.Class[]> = new Map();
-    viewClassesAll: Map<number, ClassCell[]> = new Map();
+    viewCells: Map<number, ClassCell[]> = new Map();
 
     wishes: Map<number, models.Wish[]> = new Map();
 
@@ -62,12 +60,9 @@ export class ViewComponent implements OnInit, OnDestroy {
     isClassFull = isClassFull;
 
 	constructor(modalService: NgbModal,
-		dragAndDropService: DragAndDropService,
+		private dragAndDropService: DragAndDropService,
+		private viewService: ViewService,
 		private scheduleService: ScheduleService) {
-        this.modalService = modalService;
-		this.dragAndDropService = dragAndDropService;
-		this.scheduleService = scheduleService;
-
 		setInterval(() => {
 			if (this.scrollRight) {
 				this.table.nativeElement.scrollBy(10, 0);
@@ -80,24 +75,27 @@ export class ViewComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		this.scheduleService.view.subscribe(view => {
-			const viewClassesAll = new Map<number, ClassCell[]>();
-			view.objectClasses.forEach((classes, viewObjectId) => {
-				viewClassesAll.set(viewObjectId, this.getViewClasses(classes));
-				this.areLoaded.set(viewObjectId, true);
-			});
-
+		this.viewService.view.subscribe(view => {
+			this.viewCells = new Map();
 			this.viewToggle = view.toggle;
 			this.viewObjects = view.objects;
-			this.viewClassesAll = viewClassesAll;
 			this.getViewObjectName = view.getObjectName;
 		});
 
-		this.scheduleService.wishes.subscribe(wishes => this.wishes = wishes);
+		this.viewService.updatedViewClasses.subscribe(updatedClasses => {
+			const viewCells = this.viewCells;
+			updatedClasses.forEach((classes, viewObjectId) => {
+				viewCells.set(viewObjectId, this.getViewClasses(classes));
+				this.areLoaded.set(viewObjectId, true);
+			});
+
+			this.viewCells = viewCells;
+		});
+		this.viewService.wishes.subscribe(wishes => this.wishes = wishes);
 	}
 
 	ngOnDestroy(): void {
-		this.scheduleService.view.unsubscribe();
+		this.viewService.view.unsubscribe();
 	}
 
 	decreaseSize(): void {
@@ -154,8 +152,10 @@ export class ViewComponent implements OnInit, OnDestroy {
 		return result;
     }
 
-	canDrop(viewObjectId: number, dropPsition: number, dropFrequency: number): boolean {
-        return true;
+	canDrop(viewObjectId: number, dropPosition: number, dropFrequency: number): boolean {
+		const dropCell = new MovingCell(viewObjectId, dropPosition, dropFrequency);
+
+		return this.scheduleService.canDrop(dropCell);
     }
 
 	isSuitable(lecturer: models.User, n: number): string {
@@ -270,63 +270,47 @@ export class ViewComponent implements OnInit, OnDestroy {
     }
 
 	startDrag(c: models.Class, viewObjectId: number, position: number): void {
-        this.dragAndDropService.startDrag(c, viewObjectId, position);
+        this.scheduleService.startDrag(c, viewObjectId, position);
     }
 
 	addDropItem(c: models.Class, viewObjectId: number, position: number, frequency: number): void {
-        this.dragAndDropService.addDropItem(c, viewObjectId, position, frequency);
+        this.scheduleService.addDropItem(c, viewObjectId, position, frequency);
 	}
 
 	releaseDrop(c: models.Class): void {
-        const viewObjectId = this.dragAndDropService.dropViewObjectId;
-        const position = this.dragAndDropService.dropPosition;
-        const frequency = this.dragAndDropService.dropFrequency;
-
-		if (position !== -1 && !this.canDrop(viewObjectId, position, frequency)) {
-            this.showDenominator = false;
-            this.dragAndDropService.releaseDrop();
-
-			return;
-		}
-
-		this.updateOnDrop(c);
-
-		const viewClassesAll = this.viewClassesAll;
-		this.viewClassesAll = viewClassesAll;
-
+		this.scheduleService.releaseDrop(c);
         this.showDenominator = false;
-        this.dragAndDropService.releaseDrop();
 	}
 
 	updateOnDrop(c: models.Class): void {
-        let viewObjects = [];
-		switch (this.viewToggle) {
-			case ViewToggle.GROUPS:
-                viewObjects = this.viewObjects as models.Group[];
-				break;
-			case ViewToggle.LECTURERS:
-				break;
-		}
-        const viewObjectId = this.dragAndDropService.dropViewObjectId;
+        // let viewObjects = [];
+		// switch (this.viewToggle) {
+		// 	case ViewToggle.GROUPS:
+        //         viewObjects = this.viewObjects as models.Group[];
+		// 		break;
+		// 	case ViewToggle.LECTURERS:
+		// 		break;
+		// }
+        // const viewObjectId = this.dragAndDropService.dropViewObjectId;
 
-		if (this.dragAndDropService.addToView) {
-			viewObjects = [viewObjects.find(l => l.id === viewObjectId)];
-			c = this.updateDroppedClass(c, viewObjects);
+		// if (this.dragAndDropService.addToView) {
+		// 	viewObjects = [viewObjects.find(l => l.id === viewObjectId)];
+		// 	c = this.updateDroppedClass(c, viewObjects);
 
-			this.viewClasses.set(viewObjectId, [...this.viewClasses.get(viewObjectId), c]);
-		} else if (this.dragAndDropService.removeFromView) {
-			c.lecturers = c.lecturers.filter(l => l.id !== this.dragAndDropService.dragViewObjectId);
+		// 	this.viewClasses.set(viewObjectId, [...this.viewClasses.get(viewObjectId), c]);
+		// } else if (this.dragAndDropService.removeFromView) {
+		// 	c.lecturers = c.lecturers.filter(l => l.id !== this.dragAndDropService.dragViewObjectId);
 
-			this.viewClasses.set(
-				this.dragAndDropService.dragViewObjectId,
-				this.viewClasses.get(this.dragAndDropService.dragViewObjectId).filter(cl => cl.id !== c.id));
+		// 	this.viewClasses.set(
+		// 		this.dragAndDropService.dragViewObjectId,
+		// 		this.viewClasses.get(this.dragAndDropService.dragViewObjectId).filter(cl => cl.id !== c.id));
 
-			if (c.lecturers.length === 0) {
-				c.dayOfWeek = null;
-				c.number = 0;
-				c.frequency = frequencyToString(this.dragAndDropService.dragFrequency);
-			}
-		} else if (this.dragAndDropService.dragViewObjectId !== this.dragAndDropService.dropViewObjectId) {
+		// 	if (c.lecturers.length === 0) {
+		// 		c.dayOfWeek = null;
+		// 		c.number = 0;
+		// 		c.frequency = frequencyToString(this.dragAndDropService.dragFrequency);
+		// 	}
+		// } else if (this.dragAndDropService.dragViewObjectId !== this.dragAndDropService.dropViewObjectId) {
 			// viewObjects.push(viewObjects.find(l => l.id === viewObjectId));
 			// c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
 			// this.lecturersClasses.set(
@@ -338,7 +322,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 			// this.lecturersClasses.set(
 			// 	this.dropViewObjectId,
 			// 	classes);
-		}
+		// }
 
 		// const action = !c.id
 		// 	? this.classService.addClass(c)
@@ -357,18 +341,18 @@ export class ViewComponent implements OnInit, OnDestroy {
 		// return lecturers;
     }
 
-    updateDroppedClass(c: models.Class, updatedViewObjects: any[]): models.Class {
-        c = this.dragAndDropService.updateDroppedClass(c);
+    // updateDroppedClass(c: models.Class, updatedViewObjects: any[]): models.Class {
+    //     c = this.dragAndDropService.updateDroppedClass(c);
 
-		switch (this.viewToggle) {
-			case ViewToggle.GROUPS:
-                c.groups = updatedViewObjects as models.Group[];
-				break;
-			case ViewToggle.LECTURERS:
-				c.lecturers = updatedViewObjects as models.User[];
-				break;
-		}
+	// 	switch (this.viewToggle) {
+	// 		case ViewToggle.GROUPS:
+    //             c.groups = updatedViewObjects as models.Group[];
+	// 			break;
+	// 		case ViewToggle.LECTURERS:
+	// 			c.lecturers = updatedViewObjects as models.User[];
+	// 			break;
+	// 	}
 
-        return c;
-    }
+    //     return c;
+    // }
 }

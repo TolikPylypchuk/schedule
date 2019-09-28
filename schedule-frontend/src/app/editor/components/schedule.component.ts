@@ -110,40 +110,6 @@ export class ScheduleComponent implements OnInit {
 		this.view.showDenominator = c.frequency !== "Щотижня";
 	}
 
-	canDrop(viewObjectId: number, dropPsition: number, dropFrequency: number): boolean {
-		if (!this.dragClass) {
-			return true;
-		}
-
-		const canDrop = false;
-		// let canDrop = this.viewToggle === ViewToggle.GROUPS
-		// 	&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
-		// 	|| this.viewToggle === ViewToggle.LECTURERS
-		// 	&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
-
-		// // check if available for class lecturers
-		// canDrop = canDrop
-		// 	&& (!this.dragClass.lecturers || !this.dragClass.lecturers.find(l => {
-		// 		const classes = this.lecturersClasses.get(l.id);
-		// 		return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
-		// 			c.number === this.getNumber(dropPsition) &&
-		// 			(frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
-		// 			frequencyFromString(c.frequency) === dropFrequency)) as any;
-		// 	}));
-
-		// // check if available for class groups
-		// canDrop = canDrop
-		// 	&& (!this.dragClass.groups || !this.dragClass.groups.find(g => {
-		// 		const classes = this.groupsClasses.get(g.id);
-		// 		return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
-		// 			c.number === this.getNumber(dropPsition) &&
-		// 			(frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
-		// 			frequencyFromString(c.frequency) === dropFrequency)) as any;
-		// 	}));
-
-		return canDrop;
-	}
-
 	releaseDrop(c: models.Class): void {
 		// if (this.dropPosition !== -1 &&
 		// 	!this.canDrop(this.dropViewObjectId, this.dropPosition, this.dropFrequency)) {

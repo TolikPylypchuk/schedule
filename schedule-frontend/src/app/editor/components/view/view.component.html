@@ -39,7 +39,7 @@
                                     </div>
                                 </td>
 
-                                <td *ngFor="let cell of viewClassesAll.get(viewObject.id)" class="text-center {{isSuitable(viewObject, cell.n)}}" [style.fontSize]="fontSize+'em'">
+                                <td *ngFor="let cell of viewCells.get(viewObject.id)" class="text-center {{isSuitable(viewObject, cell.n)}}" [style.fontSize]="fontSize+'em'">
                                     <div [ngSwitch]="cell.frequency">
                                         <!-- NONE -->
                                         <ng-container *ngSwitchCase="0">

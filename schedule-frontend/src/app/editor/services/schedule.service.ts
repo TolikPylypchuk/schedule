@@ -1,40 +1,54 @@
 import { Injectable } from "@angular/core";
-import { ViewToggle } from "../components/helpers";
+import { ViewToggle, getDay, getNumber, frequencyFromString, ClassFrequency, frequencyToString } from "../components/helpers";
 import { Observable } from "rxjs/Observable";
 import * as models from "../../common/models/models";
 import { ClassService, UserService, WishService, GroupService } from "../../common/services/services";
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {
     getCurrentYear,
     getCurrentSemester,
     compareUsersByName,
     getUserInitials,
-    getCurrentGroupName
+    getCurrentGroupName,
+    getDayOfWeekNumber,
+    getDayOfWeekName
 } from "../../common/models/functions";
-import { View } from "../models/view";
+import { ViewService } from "./view.service";
+import { DragAndDropService } from "./drag-and-drop.service";
+import { View, Cell, MovingCell } from "../models/models";
 
 @Injectable()
 export class ScheduleService {
     private facultyId: number;
 
-    private viewClasses: Map<number, models.Class[]> = new Map();
-    private lecturerWishes: Map<number, models.Wish[]> = new Map();
-    private viewObjects: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+    view: View;
+    viewClasses: models.Class[];
 
-    private setViewClasses;
+    constructor(
+        private classService: ClassService,
+        private viewService: ViewService,
+        private dragAndDropService: DragAndDropService) {
+        this.viewService.view.subscribe(view => {
+            this.view = view;
+        });
+        this.viewService.updatedViewClasses.subscribe(() => {
+            this.viewClasses = this.getAggregatedClasses();
+        });
+    }
 
-    view: BehaviorSubject<View> = new BehaviorSubject<View>(new View());
+    private getAggregatedClasses(): models.Class[] {
+        let viewClasses = [];
+        if (!this.viewClasses as any) {
+            return viewClasses;
+        }
 
-    viewClassesSubject: BehaviorSubject<Map<number, models.Class[]>> = new BehaviorSubject<Map<number, models.Class[]>>(new Map());
-    wishes: Subject<Map<number, models.Wish[]>> = new Subject<Map<number, models.Wish[]>>();
+        for (const obj of this.view.objects) {
+            const objectClasses = this.viewService.currentClasses.get(obj.id);
+            if (objectClasses as any && objectClasses.length > 0) {
+                viewClasses = viewClasses.concat(objectClasses.filter(c => !viewClasses.includes(c)));
+            }
+        }
 
-    constructor(private classService: ClassService,
-        private userService: UserService,
-        private wishService: WishService,
-        private groupService: GroupService) {
-        this.classService = classService;
-        this.userService = userService;
+        return viewClasses;
     }
 
     setFaculty(facultyId: number): void {
@@ -42,139 +56,166 @@ export class ScheduleService {
     }
 
     setView(toggle: ViewToggle) {
-        this.viewClasses = new Map();
-        this.view.next(new View());
-        this.viewObjects.next([]);
-        this.viewClassesSubject.next(new Map());
-        let getObjectName: (obj: any) => string;
+        this.viewService.setView(toggle, this.facultyId);
+    }
 
-        switch (toggle) {
+    canDrop(dropCell: MovingCell): boolean {
+        const dragClass = this.dragAndDropService.dragClass;
+
+        if (!dragClass) {
+            return true;
+        }
+
+        const checkCell = new Cell(dropCell);
+
+        return this.isViewObjectSuitable(dropCell.viewObjectId, dragClass) &&
+            this.areClassLecturersAvailable(dragClass, checkCell) &&
+            this.areClassGroupsAvailable(dragClass, checkCell) &&
+            this.areClassRoomsAvailable(dragClass, checkCell);
+        // let canDrop = this.viewToggle === ViewToggle.GROUPS
+        // 	&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
+        // 	|| this.viewToggle === ViewToggle.LECTURERS
+        // 	&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
+
+        // check if available for class lecturers
+        // canDrop = canDrop
+        //     && (!this.dragClass.lecturers || !this.dragClass.lecturers.find(l => {
+        //         const classes = this.lecturersClasses.get(l.id);
+        //         return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
+        //             c.number === this.getNumber(dropPsition) &&
+        //             (frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
+        //                 frequencyFromString(c.frequency) === dropFrequency)) as any;
+        //     }));
+
+        // // check if available for class groups
+        // canDrop = canDrop
+        //     && (!this.dragClass.groups || !this.dragClass.groups.find(g => {
+        //         const classes = this.groupsClasses.get(g.id);
+        //         return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
+        //             c.number === this.getNumber(dropPsition) &&
+        //             (frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
+        //                 frequencyFromString(c.frequency) === dropFrequency)) as any;
+        //     }));
+
+        // return canDrop;
+    }
+
+    isViewObjectSuitable(objectId: number, dragClass: models.Class): boolean {
+        let viewObjects = [];
+        switch (this.view.toggle) {
             case ViewToggle.LECTURERS:
-                getObjectName = getUserInitials;
-                this.setLecturers(this.facultyId);
-                this.setViewClasses = this.setLecturerClasses;
-                this.viewObjects.subscribe((lecturers: models.User[]) => {
-                    for (const lecturer of lecturers) {
-                        this.setLecturerWishes(lecturer.id);
-                    }
-                });
+                viewObjects = dragClass.subject.lecturers;
                 break;
             case ViewToggle.GROUPS:
-                getObjectName = getCurrentGroupName;
-                this.setGroups(this.facultyId);
-                this.setViewClasses = this.setGroupClasses;
-                this.setGroups(this.facultyId);
+                viewObjects = dragClass.groups;
                 break;
         }
 
-        this.viewObjects.subscribe(objects => {
-            for (const obj of objects) {
-                this.setViewClasses(obj.id);
-            }
-
-            const currentView = Object.assign(this.view.value, {
-                toggle: toggle,
-                objects: objects,
-                getObjectName: getObjectName
-            });
-            this.viewClassesSubject.subscribe(classes => {
-                currentView.objectClasses = classes;
-                this.view.next(currentView);
-            });
-        });
+        return viewObjects.some(obj => obj.id === objectId);
     }
 
-    updateViewClasses(viewClasses: Map<number, models.Class[]>) {
-        this.viewClasses = viewClasses;
-        this.viewClassesSubject.next(viewClasses);
+    isClassAffixed(c: models.Class, checkCell: Cell): boolean {
+        return getDayOfWeekNumber(c.dayOfWeek) === getDay(checkCell.day) &&
+            c.number === getNumber(checkCell.number) &&
+            (frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
+                frequencyFromString(c.frequency) === checkCell.frequency);
     }
 
-    updateLecturerWishes(wishes: Map<number, models.Wish[]>) {
-        this.lecturerWishes = wishes;
-        this.wishes.next(wishes);
+    areClassLecturersAvailable(dragClass: models.Class, checkCell: Cell): boolean {
+        const lecturers = dragClass.lecturers;
+
+        return lecturers as any || !lecturers.some(lecturer => !this.isLecturerAvailable(lecturer, checkCell));
     }
 
-    setLecturers(facultyId: number): void {
-        this.userService.getLecturersByFacultyIncludeRelated(facultyId)
-            .subscribe((lecturers: models.User[]) => {
-                this.viewObjects.next(lecturers.sort(compareUsersByName));
-            });
+    isLecturerAvailable(lecturer: models.User, checkCell: Cell): boolean {
+        return !this.viewClasses.some(c =>
+            c.lecturers.includes(lecturer) && this.isClassAffixed(c, checkCell));
     }
 
-    getLecturers(facultyId: number): Observable<models.User[]> {
-        return this.userService.getLecturersByFacultyIncludeRelated(facultyId);
+    areClassGroupsAvailable(dragClass: models.Class, checkCell: Cell): boolean {
+        const groups = dragClass.groups;
+
+        return groups as any || !groups.some(group => !this.isGroupAvailable(group, checkCell));
     }
 
-    setLecturerClasses(lecturerId: number): void {
-        const viewClasses = this.viewClasses;
-        this.classService.getClassesByLecturerAndYearAndSemester(
-            lecturerId,
-            getCurrentYear(),
-            getCurrentSemester())
-            .subscribe((classes: models.Class[]) => {
-                viewClasses.set(lecturerId, classes);
-                this.updateViewClasses(viewClasses);
-            });
+    isGroupAvailable(group: models.Group, checkCell: Cell): boolean {
+        return !this.viewClasses.some(c =>
+            c.groups.includes(group) && this.isClassAffixed(c, checkCell));
     }
 
-    setLecturerWishes(lecturerId: number) {
-        const lecturerWishes = this.lecturerWishes;
-        this.wishService.getWishesByLecturerAndYearAndSemester(
-            lecturerId,
-            getCurrentYear(),
-            getCurrentSemester())
-            .subscribe((wishes: models.Wish[]) => {
-                lecturerWishes.set(lecturerId, wishes);
-                this.updateLecturerWishes(lecturerWishes);
-            });
+    areClassRoomsAvailable(dragClass: models.Class, checkCell: Cell): boolean {
+        const classroorms = dragClass.classrooms;
+
+        return classroorms as any || !classroorms.some(classroorm => !this.isRoomAvailable(classroorm, checkCell));
     }
 
-    setGroups(facultyId: number): void {
-        this.groupService.getGroupsByFaculty(facultyId)
-            .subscribe((groups: models.Group[]) => {
-                this.viewObjects.next(groups);
-            });
+    isRoomAvailable(classroorm: models.Classroom, checkCell: Cell): boolean {
+        return !this.viewClasses.some(c =>
+            c.classrooms.includes(classroorm) && this.isClassAffixed(c, checkCell));
     }
 
-    getGroups(facultyId: number): Observable<models.Group[]> {
-        return this.groupService.getGroupsByFaculty(facultyId);
+	startDrag(c: models.Class, viewObjectId: number, position: number): void {
+        this.dragAndDropService.startDrag(c, viewObjectId, position);
     }
 
-    setGroupClasses(groupId: number): void {
-        const classes = this.viewClasses;
-        this.classService.getClassesByGroupAndYearAndSemester(
-            groupId,
-            getCurrentYear(),
-            getCurrentSemester())
-            .subscribe((groupClasses: models.Class[]) => {
-                classes.set(groupId, groupClasses);
-                this.updateViewClasses(classes);
-                // this.availableClasses = this.availableClasses.filter(c =>
-                //     !(c.groups.find(x => x.id === groupId)
-                //         && classes.find(x => x.subject.id === c.subject.id
-                //             && x.type === c.type))
-                // );
-            });
-    }
+	addDropItem(c: models.Class, viewObjectId: number, position: number, frequency: number): void {
+        this.dragAndDropService.addDropItem(c, viewObjectId, position, frequency);
+	}
 
-    onModalClose(changedClass: models.Class, viewObjectId: number): void {
-        if (typeof (changedClass) === "number") {
-            this.viewClasses.set(
-                viewObjectId,
-                this.viewClasses.get(viewObjectId).filter(
-                    c => c.id !== changedClass));
-        } else if (changedClass) {
-            const c = this.viewClasses.get(viewObjectId).find(
-                lc => lc.id === changedClass.id);
-            c.frequency = changedClass.frequency;
-            c.type = changedClass.type;
-            c.classroomType = changedClass.classroomType;
-            c.subject = changedClass.subject;
-            c.classrooms = changedClass.classrooms;
-            c.groups = changedClass.groups;
-            c.lecturers = changedClass.lecturers;
+	releaseDrop(c: models.Class): void {
+        const dropCell = this.dragAndDropService.getDropCell();
+
+		if (dropCell.position !== -1 && !this.canDrop(dropCell)) {
+            this.dragAndDropService.releaseDrop();
+			return;
         }
 
-        // this.updateViewClasses();
-    }
+        let updateFor = [];
+        switch (this.view.toggle) {
+            case ViewToggle.LECTURERS:
+                updateFor = c.lecturers;
+                break;
+            case ViewToggle.GROUPS:
+                updateFor = c.groups;
+                break;
+        }
+
+        const movedClass = Object.assign(c, {
+            dayOfWeek: getDayOfWeekName(getDay(dropCell.position)),
+            number: getNumber(dropCell.position),
+            frequency: frequencyToString(dropCell.frequency)
+        });
+
+        if (this.dragAndDropService.addToView()) {
+            // ...
+        } else if (this.dragAndDropService.removeFromView()) {
+            // ...
+        } else if (this.dragAndDropService.changeViewObject()) {
+            // ...
+        }
+
+        const updatedClasses = new Map<number, models.Class[]>();
+        for (const obj of updateFor) {
+            updatedClasses.set(obj.id, this.viewService.currentClasses.get(obj.id).map(x => {
+                return x.id === movedClass.id
+                    ? movedClass
+                    : x;
+            }));
+        }
+		const action = !movedClass.id
+        ? this.classService.addClass(movedClass)
+        : movedClass.lecturers.length > 0
+            ? this.classService.updateClass(movedClass)
+            : this.classService.deleteClass(movedClass.id);
+
+        action.subscribe(() => this.viewService.updateViewClasses(updatedClasses));
+        action.connect();
+		// this.updateOnDrop(c);
+
+		// const viewCells = this.viewCells;
+		// this.viewCells = viewCells;
+
+        // this.showDenominator = false;
+        this.dragAndDropService.releaseDrop();
+	}
 }

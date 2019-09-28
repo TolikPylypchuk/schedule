@@ -2,67 +2,59 @@ import { Injectable } from "@angular/core";
 import { Class } from "../../common/models/models";
 import { ClassFrequency, frequencyFromString, frequencyToString, getDay, getNumber } from "../components/helpers";
 import { getDayOfWeekName } from "../../common/models/functions";
+import { MovingCell, Cell } from "../models/models";
 
 @Injectable()
 export class DragAndDropService {
-	dragPosition: number;
-	dragFrequency: number;
-	dragClass: Class;
-	dragViewObjectId: number;
+	private dragCell: MovingCell;
+	private dropCell: MovingCell;
 
-	dropPosition: number;
-	dropFrequency: number;
-    dropViewObjectId: number;
+	dragClass: Class;
 
 	startDrag(c: Class, viewObjectId: number, position: number): void {
-		this.dragPosition = position;
-		this.dragFrequency = c.frequency === "Щотижня"
-			? ClassFrequency.WEEKLY
-			: c.frequency === "По чисельнику"
-				? ClassFrequency.NUMERATOR
-				: ClassFrequency.DENOMINATOR;
+		const classFrequency = frequencyFromString(c.frequency);
 		this.dragClass = c;
-		this.dragViewObjectId = viewObjectId;
+		this.dragCell = {
+			viewObjectId: viewObjectId,
+			position: position,
+			frequency: classFrequency
+		};
 	}
 
 	addDropItem(c: Class, viewObjectId: number, position: number, frequency: number): void {
-		this.dropPosition = position;
-		this.dropFrequency = position !== -1
-			? frequency
-			: frequencyFromString(c.frequency);
-		this.dropViewObjectId = viewObjectId;
+		this.dropCell = {
+			viewObjectId: viewObjectId,
+			position: position,
+			frequency: position !== -1
+				? frequency
+				: frequencyFromString(c.frequency)
+		};
 	}
 
 	releaseDrop(): void {
 		this.dragClass = null;
-        this.dragViewObjectId = null;
-        this.dragPosition = null;
-        this.dragFrequency = null;
+		this.dragCell = null;
+		this.dropCell = null;
+	}
 
-        this.dropViewObjectId = null;
-        this.dropPosition = null;
-        this.dropFrequency = null;
-    }
+	getDropCell(): MovingCell {
+		return this.dropCell;
+	}
 
-	updateDroppedClass(c: Class): Class {
-		if (this.dropPosition !== -1) {
-			c.dayOfWeek = getDayOfWeekName(getDay(this.dropPosition));
-			c.number = getNumber(this.dropPosition);
-			c.frequency = frequencyToString(this.dropFrequency);
-		}
-
-		return c;
-    }
+	getDragCell(): MovingCell {
+		return this.dragCell;
+	}
 
     addToView(): boolean {
-        return this.dragPosition === -1;
+        return this.dragCell.position === -1;
     }
 
     removeFromView(): boolean {
-        return this.dropPosition === -1;
+        return this.dropCell.position === -1;
     }
 
-    changeViewObject(): boolean {
-        return !this.addToView && !this.removeFromView && this.dragViewObjectId !== this.dropViewObjectId;
+	changeViewObject(): boolean {
+		return !this.addToView && !this.removeFromView &&
+			this.dragCell.viewObjectId !== this.dropCell.viewObjectId;
     }
 }

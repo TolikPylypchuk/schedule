@@ -13,12 +13,6 @@ export enum ViewToggle {
     LECTURERS
 }
 
-export class Cell {
-	day: number;
-	number: number;
-	frequency: ClassFrequency;
-}
-
 export class ClassCell {
 	n: number;
 	frequency: ClassFrequency;
