@@ -44,7 +44,9 @@
                         <div class="text-center" (click)="availableExpanded=!availableExpanded"><i class="fa fa-chevron-up"></i></div>
                     </ng-template>
                     <ng-template ngbPanelContent>
-                        <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, -1, 0)">
+                        <schedule-editor-available-classes>
+                        </schedule-editor-available-classes>
+                        <!-- <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, -1, 0)">
                             <div class="d-inline-flex text-white justify-content-center">
                                 <div *ngFor="let class of availableClasses" class="m-1 bg-primary not-set-class">
                                     <div [dragDirective]='class' [dragHightlight]="'drag-highlight'" (releaseDrop)="releaseDrop(class)" (startDrag)="startDrag(class)">
@@ -56,7 +58,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </ng-template>
                 </ngb-panel>
             </ngb-accordion>

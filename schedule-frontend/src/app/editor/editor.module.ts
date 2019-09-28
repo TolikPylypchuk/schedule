@@ -22,12 +22,15 @@ import { PlanModalComponent } from "./components/plans/plan-modal.component";
 import { ScheduleService } from "./services/schedule.service";
 import { DragAndDropService } from "./services/drag-and-drop.service";
 import { ViewService } from "./services/view.service";
+import { AvailableClassesComponent } from "./components/available_classes/available-classes.component";
+import { AvailableClassesService } from "./services/available-classes.service";
 
 @NgModule({
 	declarations: [
 		EditorComponent,
 		ScheduleComponent,
 		ViewComponent,
+		AvailableClassesComponent,
 		ClassModalComponent,
 		GroupsComponent,
 		GroupModalComponent,
@@ -47,12 +50,15 @@ import { ViewService } from "./services/view.service";
 	entryComponents: [
 		ClassModalComponent,
 		GroupModalComponent,
-		PlanModalComponent
+		PlanModalComponent,
+		ViewComponent,
+		AvailableClassesComponent
 	],
 	providers: [
 		ScheduleService,
 		ViewService,
-		DragAndDropService
+		DragAndDropService,
+		AvailableClassesService
 	]
 })
 export class EditorModule { }

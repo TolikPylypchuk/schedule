@@ -1,5 +1,5 @@
 import {
-	Authority, Classroom, Group, User, Department
+	Authority, Classroom, Group, User, Department, Class
 } from "./models";
 
 import {
@@ -282,6 +282,10 @@ export function compareUsersByName(u1: User, u2: User) {
 	}
 
 	return result;
+}
+
+export function compareClassesByShortName(c1: Class, c2: Class) {
+	return getShortName(c1.subject.name).localeCompare(getShortName(c2.subject.name));
 }
 
 export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[] {

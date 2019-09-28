@@ -80,8 +80,6 @@ export class ViewComponent implements OnInit, OnDestroy {
 		this.viewService.context.subscribe(context => {
 			this.context = context;
 			this.viewCells = new Map();
-			// this.viewToggle = context.toggle;
-			// this.viewObjects = context.objects;
 		});
 
 		this.viewService.updatedViewClasses.subscribe(updatedClasses => {

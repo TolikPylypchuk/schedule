@@ -15,6 +15,7 @@ import {
 import { ViewService } from "./view.service";
 import { DragAndDropService } from "./drag-and-drop.service";
 import { Cell, MovingCell, ViewContext } from "../models/models";
+import { AvailableClassesService } from "./available-classes.service";
 
 @Injectable()
 export class ScheduleService {
@@ -26,7 +27,8 @@ export class ScheduleService {
     constructor(
         private classService: ClassService,
         private viewService: ViewService,
-        private dragAndDropService: DragAndDropService) {
+        private dragAndDropService: DragAndDropService,
+        private availableClassesService: AvailableClassesService) {
         this.viewService.context.subscribe(viewContext => {
             this.viewContext = viewContext;
         });
@@ -57,6 +59,7 @@ export class ScheduleService {
 
     setView(toggle: ViewToggle) {
         this.viewService.setView(toggle, this.facultyId);
+        this.availableClassesService.setAvailableClasses(this.facultyId);
     }
 
     canDrop(dropCell: MovingCell): boolean {
