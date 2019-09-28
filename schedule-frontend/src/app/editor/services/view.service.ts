@@ -9,19 +9,14 @@ import {
     getCurrentYear,
     getCurrentSemester,
     compareUsersByName,
-    getUserInitials,
-    getCurrentGroupName
 } from "../../common/models/functions";
-import { View } from "../models/models";
+import { ViewContext, LecturersContext, GroupsContext } from "../models/models";
 
 @Injectable()
 export class ViewService {
     private lecturerWishes: Map<number, models.Wish[]> = new Map();
-    private viewObjects: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    private setViewClasses: (objrctId: number) => void;
-    private currentView: View;
 
-    view: BehaviorSubject<View> = new BehaviorSubject<View>(new View());
+    context: BehaviorSubject<ViewContext>;
     currentClasses: Map<number, models.Class[]> = new Map();
     updatedViewClasses: BehaviorSubject<Map<number, models.Class[]>> = new BehaviorSubject<Map<number, models.Class[]>>(new Map());
 
@@ -31,54 +26,32 @@ export class ViewService {
         private userService: UserService,
         private wishService: WishService,
         private groupService: GroupService) {
+            this.context = new BehaviorSubject<ViewContext>(new LecturersContext(this.userService, this.classService));
     }
 
     setView(toggle: ViewToggle, facultyId: number) {
-        if (this.view.observers.length > 0) {
-            this.currentClasses = new Map();
-            this.view.next(new View());
-            this.viewObjects.next([]);
-            this.updatedViewClasses.next(new Map());
-        }
-
-        let getObjectName: (obj: any) => string;
-
+        let context: ViewContext;
         switch (toggle) {
             case ViewToggle.LECTURERS:
-                getObjectName = getUserInitials;
-                this.setLecturers(facultyId);
-                this.setViewClasses = this.setLecturerClasses;
-                this.viewObjects.subscribe((lecturers: models.User[]) => {
-                    for (const lecturer of lecturers) {
-                        this.setLecturerWishes(lecturer.id);
-                    }
-                });
+                context = new LecturersContext(this.userService, this.classService);
                 break;
             case ViewToggle.GROUPS:
-                getObjectName = getCurrentGroupName;
-                this.setGroups(facultyId);
-                this.setViewClasses = this.setGroupClasses;
+                context = new GroupsContext(this.groupService, this.classService);
                 break;
         }
 
-        this.viewObjects.subscribe(objects => {
+        context.getContextObjects(facultyId).subscribe(objects => {
+            context.objects = context.sortContextObjects(objects);
+            this.context.next(context);
+
             for (const obj of objects) {
-                this.setViewClasses(obj.id);
+                context.getContextClassesForObject(obj.id)
+                .subscribe(classes => {
+                    this.currentClasses.set(obj.id, classes);
+                    this.updateViewClasses(this.currentClasses);
+                });
             }
-
-            this.currentView = Object.assign(this.view.value, {
-                toggle: toggle,
-                objects: objects,
-                getObjectName: getObjectName
-            });
-
-            this.updateView();
         });
-
-        // this.updatedViewClasses.subscribe(classes => {
-        //     this.currentView.objectClasses = classes;
-        //     this.updateView();
-        // });
     }
 
     updateViewClasses(updatedClasses: Map<number, models.Class[]>) {
@@ -93,28 +66,6 @@ export class ViewService {
         this.wishes.next(wishes);
     }
 
-    private updateView(): void {
-        this.view.next(this.currentView);
-    }
-
-    private setLecturers(facultyId: number): void {
-        this.userService.getLecturersByFacultyIncludeRelated(facultyId)
-            .subscribe((lecturers: models.User[]) => {
-                this.viewObjects.next(lecturers.sort(compareUsersByName));
-            });
-    }
-
-    private setLecturerClasses(lecturerId: number): void {
-        this.classService.getClassesByLecturerAndYearAndSemester(
-            lecturerId,
-            getCurrentYear(),
-            getCurrentSemester())
-            .subscribe((classes: models.Class[]) => {
-                this.currentClasses.set(lecturerId, classes);
-                this.updateViewClasses(this.currentClasses);
-            });
-    }
-
     private setLecturerWishes(lecturerId: number) {
         const lecturerWishes = this.lecturerWishes;
         this.wishService.getWishesByLecturerAndYearAndSemester(
@@ -124,24 +75,6 @@ export class ViewService {
             .subscribe((wishes: models.Wish[]) => {
                 lecturerWishes.set(lecturerId, wishes);
                 this.updateLecturerWishes(lecturerWishes);
-            });
-    }
-
-    private setGroups(facultyId: number): void {
-        this.groupService.getGroupsByFaculty(facultyId)
-            .subscribe((groups: models.Group[]) => {
-                this.viewObjects.next(groups);
-            });
-    }
-
-    private setGroupClasses(groupId: number): void {
-        this.classService.getClassesByGroupAndYearAndSemester(
-            groupId,
-            getCurrentYear(),
-            getCurrentSemester())
-            .subscribe((groupClasses: models.Class[]) => {
-                this.currentClasses.set(groupId, groupClasses);
-                this.updateViewClasses(this.currentClasses);
             });
     }
 

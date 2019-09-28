@@ -1,9 +1,13 @@
-import { View } from "./view";
 import { Cell } from "./cell";
 import { MovingCell } from "./moving-cell";
+import { ViewContext } from "./view-context";
+import { LecturersContext } from "./lecturers-context";
+import { GroupsContext } from "./groups-context";
 
 export {
-    View,
     Cell,
-    MovingCell
+    MovingCell,
+    ViewContext,
+    LecturersContext,
+    GroupsContext
 };

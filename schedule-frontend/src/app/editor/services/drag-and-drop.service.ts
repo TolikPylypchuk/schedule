@@ -54,7 +54,6 @@ export class DragAndDropService {
     }
 
 	changeViewObject(): boolean {
-		return !this.addToView && !this.removeFromView &&
-			this.dragCell.viewObjectId !== this.dropCell.viewObjectId;
+		return this.dragCell.viewObjectId !== this.dropCell.viewObjectId;
     }
 }

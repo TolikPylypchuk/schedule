@@ -17,7 +17,8 @@ import {
 import { DragAndDropService } from "../../services/drag-and-drop.service";
 import { ViewService } from "../../services/view.service";
 import { ScheduleService } from "../../services/schedule.service";
-import { MovingCell } from "../../models/models";
+import { MovingCell, ViewContext, LecturersContext } from "../../models/models";
+import { DayOfWeek } from "../../../common/models/enums";
 
 @Component({
 	selector: "schedule-editor-view",
@@ -34,17 +35,18 @@ export class ViewComponent implements OnInit, OnDestroy {
     private scrollRight = false;
     private fontSize = 1;
 
-    showDenominator = false;
-    viewToggle = ViewToggle.LECTURERS;
+	showDenominator = false;
 
-	viewObjects: models.User[] | models.Group[] = [];
+	context: ViewContext;
+
+    // viewToggle = ViewToggle.LECTURERS;
+	// viewObjects: any[] = [];
 	viewClasses: Map<number, models.Class[]> = new Map();
     viewCells: Map<number, ClassCell[]> = new Map();
 
     wishes: Map<number, models.Wish[]> = new Map();
 
     areLoaded: Map<number, boolean> = new Map();
-    getViewObjectName;
 
 	getClassStart = getClassStart;
     getClassEnd = getClassEnd;
@@ -75,11 +77,11 @@ export class ViewComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		this.viewService.view.subscribe(view => {
+		this.viewService.context.subscribe(context => {
+			this.context = context;
 			this.viewCells = new Map();
-			this.viewToggle = view.toggle;
-			this.viewObjects = view.objects;
-			this.getViewObjectName = view.getObjectName;
+			// this.viewToggle = context.toggle;
+			// this.viewObjects = context.objects;
 		});
 
 		this.viewService.updatedViewClasses.subscribe(updatedClasses => {
@@ -95,7 +97,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		this.viewService.view.unsubscribe();
+		this.viewService.context.unsubscribe();
 	}
 
 	decreaseSize(): void {
@@ -121,6 +123,10 @@ export class ViewComponent implements OnInit, OnDestroy {
 			c => getDayOfWeekNumber(c.dayOfWeek) === day &&
 				c.number === num &&
 				c.frequency.toLowerCase() === frequency.toLowerCase());
+	}
+
+	getViewObjectName(obj: any): string {
+		return this.context.getContextObjectName(obj);
 	}
 
 	getViewClasses(classes: models.Class[]): ClassCell[] | undefined {
@@ -159,7 +165,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     }
 
 	isSuitable(lecturer: models.User, n: number): string {
-		if (this.viewToggle !== ViewToggle.LECTURERS) {
+		if (this.context.toggle !== ViewToggle.LECTURERS) {
 			return "";
 		}
 
@@ -168,7 +174,11 @@ export class ViewComponent implements OnInit, OnDestroy {
 		return !wish
 			? ""
 			: `suitable-${wish.suitable}`;
-    }
+	}
+
+	getCellClass(position: number) {
+		return getNumber(position) === 9 ? "right-border" : "";
+	}
 
 	getWish(lecturerId: number, day: number, classNum: number): models.Wish {
 		let wish: models.Wish = null;
@@ -190,7 +200,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 			ClassModalComponent, { size: "lg" });
         const modal = modalRef.componentInstance as ClassModalComponent;
 
-        switch (this.viewToggle) {
+        switch (this.context.toggle) {
             case ViewToggle.LECTURERS:
                 modal.contextLecturer = viewObject as models.User;
                 modal.contextGroup = null;
@@ -254,7 +264,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 		modal.currentClass.number = num;
 		modal.wish = wish;
 
-		switch (this.viewToggle) {
+		switch (this.context.toggle) {
 			case ViewToggle.GROUPS:
 				break;
 			case ViewToggle.LECTURERS:
@@ -270,7 +280,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     }
 
 	startDrag(c: models.Class, viewObjectId: number, position: number): void {
-        this.scheduleService.startDrag(c, viewObjectId, position);
+		this.scheduleService.startDrag(c, viewObjectId, position);
+		this.showDenominator = frequencyFromString(c.frequency) !== ClassFrequency.WEEKLY;
     }
 
 	addDropItem(c: models.Class, viewObjectId: number, position: number, frequency: number): void {

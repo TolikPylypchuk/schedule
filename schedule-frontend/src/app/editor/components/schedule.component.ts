@@ -67,8 +67,8 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.view.viewToggle = ViewToggle.LECTURERS;
-		this.view.getViewObjectName = getUserInitials;
+		// this.view.viewToggle = ViewToggle.LECTURERS;
+		// this.view.getViewObjectName = getUserInitials;
 
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => {
@@ -87,7 +87,8 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	viewToggleClass(toggle: ViewToggle): string {
-		return toggle === this.view.viewToggle ? "active" : "";
+		const context = this.scheduleService.viewContext;
+		return toggle === context.toggle ? "active" : "";
 	}
 
 	viewExpandedClass(): string {
@@ -249,30 +250,30 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	updateAssosiated(c: models.Class, assosiated: models.EntityBase[]): void {
-		let groups = [];
-		let lecturers = [];
+		// let groups = [];
+		// let lecturers = [];
 
-		switch (this.view.viewToggle) {
-			case ViewToggle.GROUPS:
-				groups = assosiated;
-				lecturers = c.lecturers;
-				break;
-			case ViewToggle.LECTURERS:
-				groups = c.groups;
-				lecturers = assosiated;
-				break;
-		}
+		// switch (this.view.context.toggle) {
+		// 	case ViewToggle.GROUPS:
+		// 		groups = assosiated;
+		// 		lecturers = c.lecturers;
+		// 		break;
+		// 	case ViewToggle.LECTURERS:
+		// 		groups = c.groups;
+		// 		lecturers = assosiated;
+		// 		break;
+		// }
 
-		for (const assosiate of groups) {
-			this.groupsClasses.set(
-				assosiate.id,
-				this.groupsClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
-		}
+		// for (const assosiate of groups) {
+		// 	this.groupsClasses.set(
+		// 		assosiate.id,
+		// 		this.groupsClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
+		// }
 
-		for (const assosiate of lecturers) {
-			this.lecturersClasses.set(
-				assosiate.id,
-				this.lecturersClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
-		}
+		// for (const assosiate of lecturers) {
+		// 	this.lecturersClasses.set(
+		// 		assosiate.id,
+		// 		this.lecturersClasses.get(assosiate.id).map(cl => cl.id === c.id ? c : cl));
+		// }
 	}
 }

@@ -3,3 +3,11 @@ export enum LectureType {
     DEPARTMENT,
     COURSE
 }
+
+export enum DayOfWeek {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY
+}
