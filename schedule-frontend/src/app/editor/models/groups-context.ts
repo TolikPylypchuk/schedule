@@ -28,7 +28,7 @@ export class GroupsContext implements ViewContext {
     }
 
     setClassContextObject(c: Class, groups: Group[]): Class {
-        return Object.assign(c, { groups: groups });
+        return Object.assign({}, { ...c, groups: groups });
     }
 
     getSuitableObjects(c: Class): Group[] {
@@ -41,5 +41,24 @@ export class GroupsContext implements ViewContext {
 
     sortContextObjects(groups: Group[]): Group[] {
         return groups;
+    }
+
+    addClassContextObjectToView(c: Class, group: Group): Class {
+        const current = c.groups;
+        if (!current) {
+            return this.setClassContextObject(c, [group]);
+        } else if (!current.includes(group)) {
+            return this.setClassContextObject(c, [...current, group]);
+        } else {
+            return c;
+        }
+    }
+
+    removeClassContextObjectFromView(c: Class, group: Group): Class {
+        return c;
+    }
+
+    shouldAddToAvailableClasses(c: Class): boolean {
+        return false;
     }
 }

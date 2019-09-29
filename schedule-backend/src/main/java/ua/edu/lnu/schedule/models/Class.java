@@ -168,7 +168,7 @@ public class Class implements Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "classroom_type", nullable = false)
+	@JoinColumn(name = "classroom_type", nullable = true)
 	public ClassroomType getClassroomType() {
 		return this.classroomType;
 	}

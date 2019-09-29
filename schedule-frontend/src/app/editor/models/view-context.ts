@@ -13,4 +13,7 @@ export interface ViewContext {
     getSuitableObjects(c: Class): any[];
     getContextObjectName(obj: any): string;
     sortContextObjects(objects: any[]): any[];
+    addClassContextObjectToView(c: Class, obj: any): Class;
+    removeClassContextObjectFromView(c: Class, obj: any): Class;
+    shouldAddToAvailableClasses(c: Class): boolean;
 }

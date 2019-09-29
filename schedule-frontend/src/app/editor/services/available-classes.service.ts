@@ -22,6 +22,6 @@ export class AvailableClassesService {
     }
 
     updateAvailableClasses(classes: Class[]): void {
-        this.classes.next(classes);
+        this.classes.next(classes.sort(compareClassesByShortName));
     }
 }

@@ -28,7 +28,7 @@ export class LecturersContext implements ViewContext {
     }
 
     setClassContextObject(c: Class, lecturers: User[]): Class {
-        return Object.assign(c, { lecturers: lecturers });
+        return Object.assign({}, { ...c, lecturers: lecturers });
     }
 
     getSuitableObjects(c: Class): User[] {
@@ -41,5 +41,28 @@ export class LecturersContext implements ViewContext {
 
     sortContextObjects(lecturers: User[]): User[] {
         return lecturers.sort(compareUsersByName);
+    }
+
+    addClassContextObjectToView(c: Class, lecturer: User): Class {
+        const current = c.lecturers;
+        if (!current) {
+            return this.setClassContextObject(c, [lecturer]);
+        } else {
+            return this.setClassContextObject(c, [...current, lecturer]);
+        }
+    }
+
+    removeClassContextObjectFromView(c: Class, lecturer: User): Class {
+        const current = c.lecturers;
+        if (!current) {
+            return c;
+        } else {
+            const updated = current.filter(l => l.id !== lecturer.id);
+            return this.setClassContextObject(c, updated.length > 0 ? updated : null);
+        }
+    }
+
+    shouldAddToAvailableClasses(c: Class): boolean {
+        return !c.lecturers || c.lecturers.length === 0;
     }
 }

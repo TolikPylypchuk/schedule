@@ -1,14 +1,10 @@
 import { Injectable } from "@angular/core";
-import { ViewToggle, getDay, getNumber, frequencyFromString, ClassFrequency, frequencyToString } from "../components/helpers";
-import { Observable } from "rxjs/Observable";
+import { ViewToggle,
+    getDay, getNumber,
+    frequencyFromString, ClassFrequency, frequencyToString } from "../components/helpers";
 import * as models from "../../common/models/models";
-import { ClassService, UserService, WishService, GroupService } from "../../common/services/services";
+import { ClassService } from "../../common/services/services";
 import {
-    getCurrentYear,
-    getCurrentSemester,
-    compareUsersByName,
-    getUserInitials,
-    getCurrentGroupName,
     getDayOfWeekNumber,
     getDayOfWeekName
 } from "../../common/models/functions";
@@ -119,7 +115,7 @@ export class ScheduleService {
     areClassLecturersAvailable(dragClass: models.Class, checkCell: Cell): boolean {
         const lecturers = dragClass.lecturers;
 
-        return lecturers as any || !lecturers.some(lecturer => !this.isLecturerAvailable(lecturer, checkCell));
+        return !lecturers || !lecturers.some(lecturer => !this.isLecturerAvailable(lecturer, checkCell));
     }
 
     isLecturerAvailable(lecturer: models.User, checkCell: Cell): boolean {
@@ -130,7 +126,7 @@ export class ScheduleService {
     areClassGroupsAvailable(dragClass: models.Class, checkCell: Cell): boolean {
         const groups = dragClass.groups;
 
-        return groups as any || !groups.some(group => !this.isGroupAvailable(group, checkCell));
+        return !groups || !groups.some(group => !this.isGroupAvailable(group, checkCell));
     }
 
     isGroupAvailable(group: models.Group, checkCell: Cell): boolean {
@@ -141,7 +137,7 @@ export class ScheduleService {
     areClassRoomsAvailable(dragClass: models.Class, checkCell: Cell): boolean {
         const classroorms = dragClass.classrooms;
 
-        return classroorms as any || !classroorms.some(classroorm => !this.isRoomAvailable(classroorm, checkCell));
+        return !classroorms || !classroorms.some(classroorm => !this.isRoomAvailable(classroorm, checkCell));
     }
 
     isRoomAvailable(classroorm: models.Classroom, checkCell: Cell): boolean {
@@ -149,93 +145,141 @@ export class ScheduleService {
             c.classrooms.includes(classroorm) && this.isClassAffixed(c, checkCell));
     }
 
-	startDrag(c: models.Class, viewObjectId: number, position: number): void {
+    startDrag(c: models.Class, viewObjectId: number, position: number): void {
         this.dragAndDropService.startDrag(c, viewObjectId, position);
     }
 
-	addDropItem(c: models.Class, viewObjectId: number, position: number, frequency: number): void {
+    addDropItem(c: models.Class, viewObjectId: number, position: number, frequency: number): void {
         this.dragAndDropService.addDropItem(c, viewObjectId, position, frequency);
-	}
+    }
 
-	releaseDrop(c: models.Class): void {
+    releaseDrop(c: models.Class): void {
         const dropCell = this.dragAndDropService.getDropCell();
         const dragCell = this.dragAndDropService.getDragCell();
 
-		if (dropCell.position !== -1 && !this.canDrop(dropCell)) {
+        if (dropCell.position !== -1 && !this.canDrop(dropCell)) {
             this.dragAndDropService.releaseDrop();
-			return;
+            return;
         }
 
-        const movedClass = Object.assign(c, {
+        const movedClass = Object.assign({}, {
+            ...c,
             dayOfWeek: getDayOfWeekName(getDay(dropCell.position)),
             number: getNumber(dropCell.position),
             frequency: frequencyToString(dropCell.frequency),
-            // lecturers: updated.lecturers,
-            // groups: updated.groups,
-            // classrooms: updated.classrooms
         });
-        let updatedClasses = new Map<number, models.Class[]>();
+
         if (this.dragAndDropService.addToView()) {
-            // ...
+            this.addToView(c, movedClass, dragCell, dropCell);
         } else if (this.dragAndDropService.removeFromView()) {
-            // ...
+            this.removeFromView(c, movedClass, dragCell, dropCell);
         } else if (this.dragAndDropService.changeViewObject()) {
-            updatedClasses = this.changeViewObject(movedClass, dragCell, dropCell);
+            this.moveThroughViewObjects(movedClass, dragCell, dropCell);
         } else {
-            updatedClasses = this.changePosition(movedClass);
+            this.moveOnView(movedClass);
         }
 
-        // const updated = this.viewContext.setClassContextObject(c, classViewObjectsUpdated);
-
-        // const updatedClasses = new Map<number, models.Class[]>();
-        // for (const obj of updateClassesFor) {
-        //     updatedClasses.set(obj.id, this.viewService.currentClasses.get(obj.id).map(x => {
-        //         return x.id === movedClass.id
-        //             ? movedClass
-        //             : x;
-        //     }));
-        // }
-		const action = !movedClass.id
-        ? this.classService.addClass(movedClass)
-        : movedClass.lecturers.length > 0
-            ? this.classService.updateClass(movedClass)
-            : this.classService.deleteClass(movedClass.id);
-
-        action.subscribe(() => this.viewService.updateViewClasses(updatedClasses));
-        action.connect();
-
         this.dragAndDropService.releaseDrop();
+    }
+
+    private addToView(
+        dragClass: models.Class,
+        movedClass: models.Class,
+        dragCell: MovingCell,
+        dropCell: MovingCell) {
+        const dropViewObject = this.viewContext.objects.find(obj => obj.id === dropCell.viewObjectId);
+        const updated = this.viewContext.addClassContextObjectToView(movedClass, dropViewObject);
+
+        const action = this.classService.addClass(updated);
+        action.subscribe(() => {
+            const updatedClasses = this.changeViewObject(updated, dragCell, dropCell);
+            const updateAvailableClasses = this.availableClassesService.classes.value
+                .filter(cl => cl !== dragClass);
+
+                this.updateView(updatedClasses, updateAvailableClasses);
+            });
+            action.connect();
+    }
+
+    private removeFromView(
+        dragClass: models.Class,
+        movedClass: models.Class,
+        dragCell: MovingCell,
+        dropCell: MovingCell) {
+        const dragViewObject = this.viewContext.objects.find(obj => obj.id === dragCell.viewObjectId);
+        const updated = this.viewContext.removeClassContextObjectFromView(movedClass, dragViewObject);
+        const updateAvailableClasses = this.availableClassesService.classes.value;
+        const updatedClasses = this.changeViewObject(dragClass, dragCell, dropCell);
+        if (this.viewContext.shouldAddToAvailableClasses(updated)) {
+            const action = this.classService.deleteClass(movedClass.id);
+            action.subscribe(() => {
+                this.updateView(updatedClasses, [...updateAvailableClasses, updated]);
+            });
+            action.connect();
+        } else {
+            const action = this.classService.updateClass(updated);
+            action.subscribe(() => {
+                this.updateView(updatedClasses, updateAvailableClasses);
+            });
+            action.connect();
+        }
+    }
+
+    private moveThroughViewObjects(
+        movedClass: models.Class,
+        dragCell: MovingCell,
+        dropCell: MovingCell) {
+        const dropViewObject = this.viewContext.objects.find(obj => obj.id === dropCell.viewObjectId);
+        const dragViewObject = this.viewContext.objects.find(obj => obj.id === dragCell.viewObjectId);
+        const contextObjects = [
+            ...this.viewContext.getClassContextObjects(movedClass).filter(obj => obj !== dragViewObject),
+            dropViewObject
+        ];
+        const updated = this.viewContext.setClassContextObject(movedClass, contextObjects);
+
+        const updatedClasses = this.changeViewObject(updated, dragCell, dropCell);
+        const updateAvailableClasses = this.availableClassesService.classes.value;
+
+        const action = this.classService.updateClass(updated);
+        action.subscribe(() => {
+            this.updateView(updatedClasses, updateAvailableClasses);
+        });
+        action.connect();
+    }
+
+    private moveOnView(movedClass: models.Class) {
+        const action = this.classService.updateClass(movedClass);
+        const updatedClasses = this.changePosition(movedClass);
+        const updateAvailableClasses = this.availableClassesService.classes.value;
+        action.subscribe(() => {
+            this.updateView(updatedClasses, updateAvailableClasses);
+        });
+        action.connect();
     }
 
     private changeViewObject(
         movedClass: models.Class,
         dragCell: MovingCell,
         dropCell: MovingCell): Map<number, models.Class[]> {
-        const updateClassesFor = this.viewContext.getClassContextObjects(movedClass);
-        let classViewObjectsUpdated = this.viewContext.getClassContextObjects(movedClass);
+        let updateClassesFor = [];
 
-        const dropViewObject = this.viewContext.objects.find(obj => obj.id === dropCell.viewObjectId);
-        const dragViewObject = this.viewContext.objects.find(obj => obj.id === dragCell.viewObjectId);
-        classViewObjectsUpdated = classViewObjectsUpdated.map(x => {
-            return x.id === dragViewObject.id ? dropViewObject : x;
-        });
-
-        const updatedClass = this.viewContext.setClassContextObject(movedClass, classViewObjectsUpdated);
-
-        updateClassesFor.push(dropViewObject);
+        updateClassesFor = this.viewContext.getClassContextObjects(movedClass);
 
         const updatedClasses = new Map<number, models.Class[]>();
         const currentClasses = this.viewService.currentClasses;
 
         for (const obj of updateClassesFor) {
             let classes = currentClasses.get(obj.id);
+            if (!classes) {
+                classes = [];
+            }
 
             if (obj.id === dragCell.viewObjectId) {
-                classes = classes.filter(c => c.id !== updatedClass.id);
+                classes = classes.filter(c => c.id !== movedClass.id);
             } else if (obj.id === dropCell.viewObjectId) {
-                classes = [...classes, updatedClass];
+                classes = [...classes, movedClass];
             } else {
-                classes = classes.map(c => c.id === updatedClass.id ? updatedClass : c);
+                classes = classes.map(c => c.id === movedClass.id ? movedClass : c);
             }
 
             updatedClasses.set(obj.id, classes);
@@ -248,15 +292,19 @@ export class ScheduleService {
         movedClass: models.Class): Map<number, models.Class[]> {
         const updateClassesFor = this.viewContext.getClassContextObjects(movedClass);
 
-        const updatedClass = movedClass;
         const updatedClasses = new Map<number, models.Class[]>();
         const currentClasses = this.viewService.currentClasses;
 
         for (const obj of updateClassesFor) {
-            const classes = currentClasses.get(obj.id).map(c => c.id === updatedClass.id ? updatedClass : c);
+            const classes = currentClasses.get(obj.id).map(c => c.id === movedClass.id ? movedClass : c);
             updatedClasses.set(obj.id, classes);
         }
 
         return updatedClasses;
+    }
+
+    private updateView(viewClasses: Map<number, models.Class[]>, availableClasses: models.Class[]) {
+        this.viewService.updateViewClasses(viewClasses);
+        this.availableClassesService.updateAvailableClasses(availableClasses);
     }
 }
