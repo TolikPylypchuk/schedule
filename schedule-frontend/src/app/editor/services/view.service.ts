@@ -16,11 +16,12 @@ import { ViewContext, LecturersContext, GroupsContext } from "../models/models";
 export class ViewService {
     private lecturerWishes: Map<number, models.Wish[]> = new Map();
 
-    context: BehaviorSubject<ViewContext>;
     currentClasses: Map<number, models.Class[]> = new Map();
-    updatedViewClasses: BehaviorSubject<Map<number, models.Class[]>> = new BehaviorSubject<Map<number, models.Class[]>>(new Map());
 
-    wishes: Subject<Map<number, models.Wish[]>> = new Subject<Map<number, models.Wish[]>>();
+    context: BehaviorSubject<ViewContext>;
+    updatedViewClasses: BehaviorSubject<Map<number, models.Class[]>> = new BehaviorSubject(new Map());
+
+    wishes: BehaviorSubject<Map<number, models.Wish[]>> = new BehaviorSubject(new Map());
 
     constructor(private classService: ClassService,
         private userService: UserService,

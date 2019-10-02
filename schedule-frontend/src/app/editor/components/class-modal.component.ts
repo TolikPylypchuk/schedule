@@ -12,6 +12,7 @@ import {
 	compareUsersByName, getFrequencyAsEnumString
 } from "../../common/models/functions";
 import { AuthService } from "../../auth/services/auth.service";
+import { Action } from "../models/models";
 
 @Component({
 	selector: "schedule-editor-class-modal",
@@ -259,11 +260,12 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	groupChecked(group: models.Group): void {
-		if (this.currentClass.groups.includes(group)) {
-			this.currentClass.groups = this.currentClass.groups.filter(
+		const groups = [...this.currentClass.groups];
+		if (groups.includes(group)) {
+			this.currentClass.groups = groups.filter(
 				g => g.id !== group.id);
 		} else {
-			this.currentClass.groups.push(group);
+			this.currentClass.groups = [...groups, group];
 		}
 	}
 
@@ -272,11 +274,12 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	lecturerChecked(lecturer: models.User): void {
-		if (this.currentClass.lecturers.includes(lecturer)) {
-			this.currentClass.lecturers = this.currentClass.lecturers.filter(
+		const lecturers = [...this.currentClass.lecturers];
+		if (lecturers.includes(lecturer)) {
+			this.currentClass.lecturers = lecturers.filter(
 				l => l.id !== lecturer.id);
 		} else {
-			this.currentClass.lecturers.push(lecturer);
+			this.currentClass.lecturers = [...lecturers, lecturer];
 		}
 	}
 
@@ -299,18 +302,15 @@ export class ClassModalComponent implements OnInit {
 	}
 
 	submit(): void {
-		// if (!this.isClassValid()) {
-		// 	this.errorText = "Заповніть усі поля.";
-		// 	this.error = true;
-		// 	return;
-		// }
-
-		const action = this.isEditing && this.currentClass.id
+		const action = this.isEditing
 			? this.classService.updateClass(this.currentClass)
 			: this.classService.addClass(this.currentClass);
 
 		action.subscribe(
-			() => this.activeModal.close(this.currentClass),
+			() => this.activeModal.close({
+				action: this.isEditing ? Action.UPDATE : Action.CREATE,
+				changedClass: this.currentClass
+			}),
 			() => this.errorText =
 				"Під час створення пари сталася помилка. " +
 				"Спробуйте ще раз.");
@@ -328,7 +328,10 @@ export class ClassModalComponent implements OnInit {
 		const result = this.classService.deleteClass(this.currentClass.id);
 
 		result.subscribe(
-			() => this.activeModal.close(this.currentClass.id),
+			() => this.activeModal.close({
+				action: Action.DELETE,
+				changedClass: this.currentClass
+			}),
 			() => this.errorText =
 				"Під час видалення пари сталася помилка. " +
 				"Спробуйте ще раз.");

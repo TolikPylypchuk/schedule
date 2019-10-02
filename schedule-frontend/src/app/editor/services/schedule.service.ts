@@ -10,7 +10,7 @@ import {
 } from "../../common/models/functions";
 import { ViewService } from "./view.service";
 import { DragAndDropService } from "./drag-and-drop.service";
-import { Cell, MovingCell, ViewContext } from "../models/models";
+import { Cell, MovingCell, ViewContext, Action } from "../models/models";
 import { AvailableClassesService } from "./available-classes.service";
 
 @Injectable()
@@ -71,32 +71,6 @@ export class ScheduleService {
             this.areClassLecturersAvailable(dragClass, checkCell) &&
             this.areClassGroupsAvailable(dragClass, checkCell) &&
             this.areClassRoomsAvailable(dragClass, checkCell);
-        // let canDrop = this.viewToggle === ViewToggle.GROUPS
-        // 	&& !!this.dragClass.groups.find(l => l.id === viewObjectId)
-        // 	|| this.viewToggle === ViewToggle.LECTURERS
-        // 	&& !!this.dragClass.subject.lecturers.find(l => l.id === viewObjectId);
-
-        // check if available for class lecturers
-        // canDrop = canDrop
-        //     && (!this.dragClass.lecturers || !this.dragClass.lecturers.find(l => {
-        //         const classes = this.lecturersClasses.get(l.id);
-        //         return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
-        //             c.number === this.getNumber(dropPsition) &&
-        //             (frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
-        //                 frequencyFromString(c.frequency) === dropFrequency)) as any;
-        //     }));
-
-        // // check if available for class groups
-        // canDrop = canDrop
-        //     && (!this.dragClass.groups || !this.dragClass.groups.find(g => {
-        //         const classes = this.groupsClasses.get(g.id);
-        //         return !!classes && classes.find(c => getDayOfWeekNumber(c.dayOfWeek) === this.getDay(dropPsition) &&
-        //             c.number === this.getNumber(dropPsition) &&
-        //             (frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
-        //                 frequencyFromString(c.frequency) === dropFrequency)) as any;
-        //     }));
-
-        // return canDrop;
     }
 
     isViewObjectSuitable(objectId: number, dragClass: models.Class): boolean {
@@ -106,8 +80,8 @@ export class ScheduleService {
     }
 
     isClassAffixed(c: models.Class, checkCell: Cell): boolean {
-        return getDayOfWeekNumber(c.dayOfWeek) === getDay(checkCell.day) &&
-            c.number === getNumber(checkCell.number) &&
+        return getDayOfWeekNumber(c.dayOfWeek) === checkCell.day &&
+            c.number === checkCell.number &&
             (frequencyFromString(c.frequency) === ClassFrequency.WEEKLY ||
                 frequencyFromString(c.frequency) === checkCell.frequency);
     }
@@ -120,7 +94,7 @@ export class ScheduleService {
 
     isLecturerAvailable(lecturer: models.User, checkCell: Cell): boolean {
         return !this.viewClasses.some(c =>
-            c.lecturers.includes(lecturer) && this.isClassAffixed(c, checkCell));
+            c.lecturers.some(l => l.id === lecturer.id) && this.isClassAffixed(c, checkCell));
     }
 
     areClassGroupsAvailable(dragClass: models.Class, checkCell: Cell): boolean {
@@ -131,7 +105,7 @@ export class ScheduleService {
 
     isGroupAvailable(group: models.Group, checkCell: Cell): boolean {
         return !this.viewClasses.some(c =>
-            c.groups.includes(group) && this.isClassAffixed(c, checkCell));
+            c.groups.some(g => g.id === group.id) && this.isClassAffixed(c, checkCell));
     }
 
     areClassRoomsAvailable(dragClass: models.Class, checkCell: Cell): boolean {
@@ -170,9 +144,9 @@ export class ScheduleService {
         });
 
         if (this.dragAndDropService.addToView()) {
-            this.addToView(c, movedClass, dragCell, dropCell);
+            this.addToView(c, movedClass, dropCell);
         } else if (this.dragAndDropService.removeFromView()) {
-            this.removeFromView(c, movedClass, dragCell, dropCell);
+            this.removeFromView(c, dragCell);
         } else if (this.dragAndDropService.changeViewObject()) {
             this.moveThroughViewObjects(movedClass, dragCell, dropCell);
         } else {
@@ -182,17 +156,63 @@ export class ScheduleService {
         this.dragAndDropService.releaseDrop();
     }
 
+    closeClassModal(
+        action: Action,
+        originalClass: models.Class,
+        changedClass: models.Class) {
+        let addFor = [];
+        let removeFor = [];
+        let updateFor = [];
+        let updateAvailable = this.availableClassesService.classes.value;
+        const originalObjects = this.viewContext.getClassContextObjects(originalClass);
+        const changedObjects = this.viewContext.getClassContextObjects(changedClass);
+        switch (action) {
+            case Action.CREATE:
+                addFor = originalObjects;
+                const groupIds = changedClass.groups.map(g => g.id);
+                updateAvailable = updateAvailable.filter(c => {
+                    return !(c.subject.id === changedClass.subject.id &&
+                    c.type === changedClass.type &&
+                    c.groups.length === groupIds.length &&
+                    !c.groups.some(g => !groupIds.includes(g.id)));
+                });
+                break;
+            case Action.UPDATE:
+                addFor = changedObjects.filter(obj => !originalObjects.some(x => x.id === obj.id));
+                removeFor = originalObjects.filter(obj => !changedObjects.some(x => x.id === obj.id));
+                updateFor = changedObjects.filter(obj => originalObjects.some(x => x.id === obj.id));
+                updateAvailable = updateAvailable.filter(c => {
+                    return !(c.subject.id === changedClass.subject.id &&
+                    c.type === changedClass.type &&
+                    c.groups.length === groupIds.length &&
+                    !c.groups.some(g => !groupIds.includes(g.id)));
+                });
+                if (this.viewContext.shouldAddToAvailableClassesOnUpdate(changedClass)) {
+                    updateAvailable = [...updateAvailable, changedClass];
+                }
+                break;
+            case Action.DELETE:
+                removeFor = changedObjects;
+                if (this.viewContext.shouldAddToAvailableClassesOnUpdate(changedClass)) {
+                    updateAvailable = [...updateAvailable, changedClass];
+                }
+                break;
+        }
+
+        const updatedClasses = this.changeViewObject(changedClass, addFor, removeFor, updateFor);
+        this.updateView(updatedClasses, updateAvailable);
+    }
+
     private addToView(
         dragClass: models.Class,
         movedClass: models.Class,
-        dragCell: MovingCell,
         dropCell: MovingCell) {
         const dropViewObject = this.viewContext.objects.find(obj => obj.id === dropCell.viewObjectId);
         const updated = this.viewContext.addClassContextObjectToView(movedClass, dropViewObject);
 
         const action = this.classService.addClass(updated);
         action.subscribe(() => {
-            const updatedClasses = this.changeViewObject(updated, dragCell, dropCell);
+            const updatedClasses = this.changeViewObject(updated, [dropViewObject], [], []);
             const updateAvailableClasses = this.availableClassesService.classes.value
                 .filter(cl => cl !== dragClass);
 
@@ -203,15 +223,14 @@ export class ScheduleService {
 
     private removeFromView(
         dragClass: models.Class,
-        movedClass: models.Class,
-        dragCell: MovingCell,
-        dropCell: MovingCell) {
+        dragCell: MovingCell) {
         const dragViewObject = this.viewContext.objects.find(obj => obj.id === dragCell.viewObjectId);
-        const updated = this.viewContext.removeClassContextObjectFromView(movedClass, dragViewObject);
+        const updated = this.viewContext.removeClassContextObjectFromView(dragClass, dragViewObject);
         const updateAvailableClasses = this.availableClassesService.classes.value;
-        const updatedClasses = this.changeViewObject(dragClass, dragCell, dropCell);
-        if (this.viewContext.shouldAddToAvailableClasses(updated)) {
-            const action = this.classService.deleteClass(movedClass.id);
+        const updatedClasses = this.changeViewObject(updated, [], [dragViewObject], []);
+
+        if (this.viewContext.shouldAddToAvailableClassesOnDrop(updated)) {
+            const action = this.classService.deleteClass(updated.id);
             action.subscribe(() => {
                 this.updateView(updatedClasses, [...updateAvailableClasses, updated]);
             });
@@ -231,13 +250,15 @@ export class ScheduleService {
         dropCell: MovingCell) {
         const dropViewObject = this.viewContext.objects.find(obj => obj.id === dropCell.viewObjectId);
         const dragViewObject = this.viewContext.objects.find(obj => obj.id === dragCell.viewObjectId);
-        const contextObjects = [
-            ...this.viewContext.getClassContextObjects(movedClass).filter(obj => obj !== dragViewObject),
-            dropViewObject
-        ];
-        const updated = this.viewContext.setClassContextObject(movedClass, contextObjects);
 
-        const updatedClasses = this.changeViewObject(updated, dragCell, dropCell);
+        const addFor: models.EntityBase[] = [dropViewObject];
+        const removeFor: models.EntityBase[] = [dragViewObject];
+        const updateFor: models.EntityBase[] = [
+            ...this.viewContext.getClassContextObjects(movedClass).filter(obj => obj.id !== dragViewObject.id)
+        ];
+        const updated = this.viewContext.setClassContextObject(movedClass, [...updateFor, ...addFor]);
+
+        const updatedClasses = this.changeViewObject(updated, addFor, removeFor, updateFor);
         const updateAvailableClasses = this.availableClassesService.classes.value;
 
         const action = this.classService.updateClass(updated);
@@ -259,28 +280,35 @@ export class ScheduleService {
 
     private changeViewObject(
         movedClass: models.Class,
-        dragCell: MovingCell,
-        dropCell: MovingCell): Map<number, models.Class[]> {
-        let updateClassesFor = [];
-
-        updateClassesFor = this.viewContext.getClassContextObjects(movedClass);
-
+        addFor: models.EntityBase[],
+        removeFor: models.EntityBase[],
+        updateFor: models.EntityBase[]): Map<number, models.Class[]> {
         const updatedClasses = new Map<number, models.Class[]>();
         const currentClasses = this.viewService.currentClasses;
 
-        for (const obj of updateClassesFor) {
+        for (const obj of addFor) {
             let classes = currentClasses.get(obj.id);
-            if (!classes) {
-                classes = [];
-            }
+            classes = !classes
+            ? [movedClass]
+            : [...classes, movedClass];
 
-            if (obj.id === dragCell.viewObjectId) {
-                classes = classes.filter(c => c.id !== movedClass.id);
-            } else if (obj.id === dropCell.viewObjectId) {
-                classes = [...classes, movedClass];
-            } else {
-                classes = classes.map(c => c.id === movedClass.id ? movedClass : c);
-            }
+            updatedClasses.set(obj.id, classes);
+        }
+
+        for (const obj of updateFor) {
+            let classes = currentClasses.get(obj.id);
+            classes = !classes
+                ? []
+                : classes.map(c => c.id === movedClass.id ? movedClass : c);
+
+            updatedClasses.set(obj.id, classes);
+        }
+
+        for (const obj of removeFor) {
+            let classes = currentClasses.get(obj.id);
+            classes = !classes
+            ? []
+            : classes.filter(c => c.id !== movedClass.id);
 
             updatedClasses.set(obj.id, classes);
         }

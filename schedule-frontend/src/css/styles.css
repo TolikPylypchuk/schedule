@@ -52,6 +52,10 @@ schedule-editor-view {
     background-color: #FACCCC;
 }
 
+#schedule-table button.available-false {
+    visibility: hidden;
+}
+
 #schedule-table .btn-sm {
     padding: 0.2em 0.1em;
     line-height: 1.2rem;

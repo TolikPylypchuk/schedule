@@ -17,8 +17,9 @@ import {
 import { DragAndDropService } from "../../services/drag-and-drop.service";
 import { ViewService } from "../../services/view.service";
 import { ScheduleService } from "../../services/schedule.service";
-import { MovingCell, ViewContext, LecturersContext } from "../../models/models";
+import { MovingCell, ViewContext, LecturersContext, Cell } from "../../models/models";
 import { DayOfWeek } from "../../../common/models/enums";
+import { ClassModel } from "../../models/class-model";
 
 @Component({
 	selector: "schedule-editor-view",
@@ -26,8 +27,6 @@ import { DayOfWeek } from "../../../common/models/enums";
 })
 
 export class ViewComponent implements OnInit, OnDestroy {
-    private modalService: NgbModal;
-
     @ViewChild("scheduleTable")
     private table: ElementRef;
 
@@ -61,8 +60,8 @@ export class ViewComponent implements OnInit, OnDestroy {
 
     isClassFull = isClassFull;
 
-	constructor(modalService: NgbModal,
-		private dragAndDropService: DragAndDropService,
+	constructor(
+		private modalService: NgbModal,
 		private viewService: ViewService,
 		private scheduleService: ScheduleService) {
 		setInterval(() => {
@@ -79,12 +78,15 @@ export class ViewComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this.viewService.context.subscribe(context => {
 			this.context = context;
+			this.viewClasses = new Map();
 			this.viewCells = new Map();
 		});
 
 		this.viewService.updatedViewClasses.subscribe(updatedClasses => {
+			const viewClasses = this.viewClasses;
 			const viewCells = this.viewCells;
 			updatedClasses.forEach((classes, viewObjectId) => {
+				viewClasses.set(viewObjectId, classes);
 				viewCells.set(viewObjectId, this.getViewClasses(classes));
 				this.areLoaded.set(viewObjectId, true);
 			});
@@ -112,18 +114,18 @@ export class ViewComponent implements OnInit, OnDestroy {
 
 	getClass(
 		viewObjectId: number,
-		day: number,
+		day: string,
 		num: number,
 		frequency: string): models.Class | undefined {
 		const classes = this.viewClasses.get(viewObjectId);
 
 		return classes.find(
-			c => getDayOfWeekNumber(c.dayOfWeek) === day &&
+			c => c.dayOfWeek === day &&
 				c.number === num &&
 				c.frequency.toLowerCase() === frequency.toLowerCase());
 	}
 
-	getViewObjectName(obj: any): string {
+	getViewObjectName(obj: models.EntityBase): string {
 		return this.context.getContextObjectName(obj);
 	}
 
@@ -178,6 +180,10 @@ export class ViewComponent implements OnInit, OnDestroy {
 		return getNumber(position) === 9 ? "right-border" : "";
 	}
 
+	getCellAvailableClass(viewObjectId: number, position: number, frequency: number): string {
+		return `available-${this.canDrop(viewObjectId, position, frequency)}`;
+	}
+
 	getWish(lecturerId: number, day: number, classNum: number): models.Wish {
 		let wish: models.Wish = null;
 		const wishes = this.wishes.get(lecturerId);
@@ -193,89 +199,51 @@ export class ViewComponent implements OnInit, OnDestroy {
 
 	editClassClicked(
 		classObject: models.Class,
-		viewObject: models.User | models.Group): void {
-		const modalRef = this.modalService.open(
-			ClassModalComponent, { size: "lg" });
-        const modal = modalRef.componentInstance as ClassModalComponent;
-
-        switch (this.context.toggle) {
-            case ViewToggle.LECTURERS:
-                modal.contextLecturer = viewObject as models.User;
-                modal.contextGroup = null;
-                break;
-            case ViewToggle.GROUPS:
-                modal.contextLecturer = null;
-                modal.contextGroup = viewObject as models.Group;
-                break;
-        }
-
-		const frequency = classObject.frequency;
-
-		const reverseFrequencyName = frequency === "По чисельнику"
-			? "По знаменнику"
-			: "По чисельнику";
-
-		modal.currentClass = classObject;
-
-		modal.isEditing = true;
-		modal.frequencySet = classObject.frequency !== "Щотижня" &&
-			this.getClass(viewObject.id, this.getDayOfWeekNumber(classObject.dayOfWeek), classObject.number, reverseFrequencyName) as any;
-
-		modalRef.result.then(
-			(changedClass: models.Class | number) => {
-				if (typeof (changedClass) === "number") {
-					this.viewClasses.set(
-						viewObject.id,
-						this.viewClasses.get(viewObject.id).filter(
-							c => c.id !== changedClass));
-				} else if (changedClass) {
-					const c = this.viewClasses.get(viewObject.id).find(
-						lc => lc.id === changedClass.id);
-					c.frequency = changedClass.frequency;
-					c.type = changedClass.type;
-					c.classroomType = changedClass.classroomType;
-					c.subject = changedClass.subject;
-					c.classrooms = changedClass.classrooms;
-					c.groups = changedClass.groups;
-					c.lecturers = changedClass.lecturers;
-				}
-			},
-			() => { });
+		viewObject: models.EntityBase): void {
+		this.openModal(viewObject, classObject, true);
 	}
 
 	addClassClicked(
 		frequency: ClassFrequency,
 		day: number,
 		num: number,
-		viewObject: models.User | models.Group,
+		viewObject: models.EntityBase,
 		wish: models.Wish): void {
-		const modalRef = this.modalService.open(
-			ClassModalComponent, { size: "lg" });
-		const modal = modalRef.componentInstance as ClassModalComponent;
-		modal.currentClass.frequency = frequency === ClassFrequency.NONE
-			? "Щотижня"
-			: frequency === ClassFrequency.NUMERATOR
-				? "По чисельнику"
-				: "По знаменнику";
-		modal.frequencySet = frequency !== ClassFrequency.NONE;
-		modal.currentClass.dayOfWeek = getDayOfWeekName(day);
-		modal.currentClass.number = num;
-		modal.wish = wish;
+			const contextObjects = [viewObject];
+			const originalClass = this.context.setClassContextObject(new ClassModel(), contextObjects);
+			originalClass.dayOfWeek = getDayOfWeekName(day);
+			originalClass.number = num;
+			originalClass.frequency = frequency === ClassFrequency.NONE
+				? frequencyToString(ClassFrequency.WEEKLY)
+				: frequencyToString(frequency);
 
-		switch (this.context.toggle) {
-			case ViewToggle.GROUPS:
-				break;
-			case ViewToggle.LECTURERS:
-				modal.contextLecturer = viewObject as models.User;
-				modal.currentClass.lecturers = [viewObject as models.User];
-				break;
-		}
+			this.openModal(viewObject, originalClass, false);
+    }
+
+	openModal(
+		viewObject: models.EntityBase,
+		originalClass: models.Class,
+		isEditing: boolean) {
+		const modalRef = this.modalService.open(ClassModalComponent, { size: "lg" });
+		const modal = modalRef.componentInstance as ClassModalComponent;
+		const frequency = frequencyFromString(originalClass.frequency);
+		const reverseFrequencyName = frequencyToString(
+			frequency === ClassFrequency.NUMERATOR
+				? ClassFrequency.DENOMINATOR
+				: ClassFrequency.NUMERATOR);
+
+		this.context.setModalContext(modal, viewObject);
+		modal.frequencySet = frequency !== ClassFrequency.WEEKLY &&
+			this.getClass(viewObject.id, originalClass.dayOfWeek, originalClass.number, reverseFrequencyName) as any;
+		modal.currentClass = { ...originalClass };
+		modal.isEditing = isEditing;
 
 		modalRef.result.then(
-			(newClass: models.Class) =>
-				this.viewClasses.get(viewObject.id).push(newClass),
-			() => { });
-    }
+			result => {
+				this.scheduleService.closeClassModal(result.action, originalClass, result.changedClass);
+			},
+			() => {});
+	}
 
 	startDrag(c: models.Class, viewObjectId: number, position: number): void {
 		this.scheduleService.startDrag(c, viewObjectId, position);
@@ -290,78 +258,4 @@ export class ViewComponent implements OnInit, OnDestroy {
 		this.scheduleService.releaseDrop(c);
         this.showDenominator = false;
 	}
-
-	updateOnDrop(c: models.Class): void {
-        // let viewObjects = [];
-		// switch (this.viewToggle) {
-		// 	case ViewToggle.GROUPS:
-        //         viewObjects = this.viewObjects as models.Group[];
-		// 		break;
-		// 	case ViewToggle.LECTURERS:
-		// 		break;
-		// }
-        // const viewObjectId = this.dragAndDropService.dropViewObjectId;
-
-		// if (this.dragAndDropService.addToView) {
-		// 	viewObjects = [viewObjects.find(l => l.id === viewObjectId)];
-		// 	c = this.updateDroppedClass(c, viewObjects);
-
-		// 	this.viewClasses.set(viewObjectId, [...this.viewClasses.get(viewObjectId), c]);
-		// } else if (this.dragAndDropService.removeFromView) {
-		// 	c.lecturers = c.lecturers.filter(l => l.id !== this.dragAndDropService.dragViewObjectId);
-
-		// 	this.viewClasses.set(
-		// 		this.dragAndDropService.dragViewObjectId,
-		// 		this.viewClasses.get(this.dragAndDropService.dragViewObjectId).filter(cl => cl.id !== c.id));
-
-		// 	if (c.lecturers.length === 0) {
-		// 		c.dayOfWeek = null;
-		// 		c.number = 0;
-		// 		c.frequency = frequencyToString(this.dragAndDropService.dragFrequency);
-		// 	}
-		// } else if (this.dragAndDropService.dragViewObjectId !== this.dragAndDropService.dropViewObjectId) {
-			// viewObjects.push(viewObjects.find(l => l.id === viewObjectId));
-			// c.lecturers = lecturers.filter(l => l.id !== this.dragViewObjectId);
-			// this.lecturersClasses.set(
-			// 	this.dragViewObjectId,
-			// 	this.lecturersClasses.get(this.dragViewObjectId).filter(cl => cl.id !== c.id));
-
-			// const classes = this.lecturersClasses.get(this.dropViewObjectId);
-			// classes.push(c);
-			// this.lecturersClasses.set(
-			// 	this.dropViewObjectId,
-			// 	classes);
-		// }
-
-		// const action = !c.id
-		// 	? this.classService.addClass(c)
-		// 	: c.lecturers.length > 0
-		// 		? this.classService.updateClass(c)
-		// 		: this.classService.deleteClass(c.id);
-
-		// action.subscribe();
-		// action.connect();
-
-
-		// this.view.viewClasses = this.lecturersClasses;
-
-		// this.lecturersClasses = this.view.viewClasses;
-
-		// return lecturers;
-    }
-
-    // updateDroppedClass(c: models.Class, updatedViewObjects: any[]): models.Class {
-    //     c = this.dragAndDropService.updateDroppedClass(c);
-
-	// 	switch (this.viewToggle) {
-	// 		case ViewToggle.GROUPS:
-    //             c.groups = updatedViewObjects as models.Group[];
-	// 			break;
-	// 		case ViewToggle.LECTURERS:
-	// 			c.lecturers = updatedViewObjects as models.User[];
-	// 			break;
-	// 	}
-
-    //     return c;
-    // }
 }

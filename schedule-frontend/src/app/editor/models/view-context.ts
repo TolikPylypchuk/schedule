@@ -1,19 +1,22 @@
-import { Class } from "../../common/models/models";
+import { Class, EntityBase } from "../../common/models/models";
 import { ViewToggle } from "../components/helpers";
 import { Observable } from "rxjs/Observable";
+import { ClassModalComponent } from "../editor";
 
 export interface ViewContext {
     toggle: ViewToggle;
-    objects: any[];
+    objects: EntityBase[];
 
-    getContextObjects(facultyId: number): Observable<any[]>;
+    getContextObjects(facultyId: number): Observable<EntityBase[]>;
     getContextClassesForObject(objectId: number): Observable<Class[]>;
-    getClassContextObjects(c: Class): any[];
-    setClassContextObject(c: Class, contextObjects: any[]): Class;
-    getSuitableObjects(c: Class): any[];
-    getContextObjectName(obj: any): string;
-    sortContextObjects(objects: any[]): any[];
-    addClassContextObjectToView(c: Class, obj: any): Class;
-    removeClassContextObjectFromView(c: Class, obj: any): Class;
-    shouldAddToAvailableClasses(c: Class): boolean;
+    getClassContextObjects(c: Class): EntityBase[];
+    setClassContextObject(c: Class, contextObjects: EntityBase[]): Class;
+    getSuitableObjects(c: Class): EntityBase[];
+    getContextObjectName(obj: EntityBase): string;
+    sortContextObjects(objects: EntityBase[]): EntityBase[];
+    addClassContextObjectToView(c: Class, obj: EntityBase): Class;
+    removeClassContextObjectFromView(c: Class, obj: EntityBase): Class;
+    shouldAddToAvailableClassesOnDrop(c: Class): boolean;
+    shouldAddToAvailableClassesOnUpdate(c: Class): boolean;
+    setModalContext(modal: ClassModalComponent, obj: EntityBase): void;
 }

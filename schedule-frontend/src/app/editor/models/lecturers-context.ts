@@ -4,6 +4,7 @@ import { getUserInitials, getCurrentYear, getCurrentSemester, compareUsersByName
 import { ViewToggle } from "../components/helpers";
 import { UserService, ClassService } from "../../common/services/services";
 import { Observable } from "rxjs/Observable";
+import { ClassModalComponent } from "../editor";
 
 export class LecturersContext implements ViewContext {
     toggle = ViewToggle.LECTURERS;
@@ -24,7 +25,7 @@ export class LecturersContext implements ViewContext {
     }
 
     getClassContextObjects(c: Class): User[] {
-        return c.lecturers;
+        return c.lecturers ? [...c.lecturers] : [];
     }
 
     setClassContextObject(c: Class, lecturers: User[]): Class {
@@ -32,7 +33,7 @@ export class LecturersContext implements ViewContext {
     }
 
     getSuitableObjects(c: Class): User[] {
-        return c.subject.lecturers;
+        return [...c.subject.lecturers];
     }
 
     getContextObjectName(lecturer: User): string {
@@ -62,7 +63,15 @@ export class LecturersContext implements ViewContext {
         }
     }
 
-    shouldAddToAvailableClasses(c: Class): boolean {
+    shouldAddToAvailableClassesOnDrop(c: Class): boolean {
         return !c.lecturers || c.lecturers.length === 0;
+    }
+
+    shouldAddToAvailableClassesOnUpdate(c: Class): boolean {
+        return !c.lecturers || c.lecturers.length === 0;
+    }
+
+    setModalContext(modal: ClassModalComponent, lecturer: User): void {
+        modal.contextLecturer = lecturer;
     }
 }

@@ -4,6 +4,7 @@ import { getCurrentGroupName, getCurrentYear, getCurrentSemester } from "../../c
 import { ViewToggle } from "../components/helpers";
 import { GroupService, ClassService } from "../../common/services/services";
 import { Observable } from "rxjs/Observable";
+import { ClassModalComponent } from "../editor";
 
 export class GroupsContext implements ViewContext {
     toggle = ViewToggle.GROUPS;
@@ -24,7 +25,7 @@ export class GroupsContext implements ViewContext {
     }
 
     getClassContextObjects(c: Class): Group[] {
-        return c.groups;
+        return c.groups ? [...c.groups] : [];
     }
 
     setClassContextObject(c: Class, groups: Group[]): Class {
@@ -32,7 +33,7 @@ export class GroupsContext implements ViewContext {
     }
 
     getSuitableObjects(c: Class): Group[] {
-        return c.groups;
+        return c.groups ? [...c.groups] : [];
     }
 
     getContextObjectName(group: Group): string {
@@ -58,7 +59,15 @@ export class GroupsContext implements ViewContext {
         return c;
     }
 
-    shouldAddToAvailableClasses(c: Class): boolean {
+    shouldAddToAvailableClassesOnDrop(c: Class): boolean {
         return false;
+    }
+
+    shouldAddToAvailableClassesOnUpdate(c: Class): boolean {
+        return !c.groups || c.groups.length === 0;
+    }
+
+    setModalContext(modal: ClassModalComponent, group: Group): void {
+        modal.contextGroup = group;
     }
 }
