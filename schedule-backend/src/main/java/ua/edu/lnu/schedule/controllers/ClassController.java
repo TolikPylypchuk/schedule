@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
+import ua.edu.lnu.schedule.models.enums.*;
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.repositories.*;
 
@@ -194,6 +195,38 @@ public class ClassController {
 
 		return generateForFaculty(facultyId, year, semester);
 	}
+
+	@GetMapping("/generate/{filter}/faculty/{faculty}/year/{year}/semester/{semester}")
+	public @ResponseBody Iterable<Class> getGeneratedByFaculty(
+			@PathVariable("filter") int contextFilter,
+			@PathVariable("faculty") int facultyId,
+			@PathVariable("year") int year,
+			@PathVariable("semester") int semester) {
+
+		List<Class> generated = generateForFaculty(facultyId, year, semester);
+		List<Class> filtered = new ArrayList<>();
+		for(Class c: generated) {
+			List<Group> groups = new ArrayList<>(c.getGroups());
+			List<Class> groupClasses = this.classes.findAllByGroupsInAndSubjectAndTypeAndYearAndSemester(
+					groups, c.getSubject(), c.getType(), year, Semester.fromNumber(semester));
+			if(groupClasses.size() > 0) {
+				switch (ViewContextType.fromNumber(contextFilter)) {
+					case GROUPS:
+						continue;
+					case LECTURERS:
+						if(groupClasses.stream().anyMatch(groupClass -> groupClass.getLecturers().size() > 0)) {
+							continue;
+						}
+					case CLASSROOMS:
+						continue;
+				}
+			}
+
+			filtered.add(c);
+		}
+
+		return filtered;
+	}
 	
 	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Class c)
@@ -317,11 +350,11 @@ public class ClassController {
 
                 switch (lectureType) {
                     case GROUP:
-                        classes.addAll(generateForSingleGroup(template, groupList));
+                        classes.addAll(generateForSingleGroup(template.clone(), groupList));
                         break;
                     case DEPARTMENT:
                         template.setGroups(new HashSet<>(groupList));
-                        classes.add(template);
+                        classes.add(template.clone());
                         break;
                     case COURSE:
                         List<Group> courseGroups = this.groups.findAllByDepartmentInAndYear(
@@ -329,7 +362,7 @@ public class ClassController {
                                 year - plan.getCourse() + 1
                         );
                         template.setGroups(new HashSet<>(courseGroups));
-                        classes.add(template);
+                        classes.add(template.clone());
                         break;
                 }
             }

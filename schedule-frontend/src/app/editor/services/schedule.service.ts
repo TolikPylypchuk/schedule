@@ -55,7 +55,7 @@ export class ScheduleService {
 
     setView(toggle: ViewToggle) {
         this.viewService.setView(toggle, this.facultyId);
-        this.availableClassesService.setAvailableClasses(this.facultyId);
+        this.availableClassesService.setAvailableClasses(toggle, this.facultyId);
     }
 
     canDrop(dropCell: MovingCell): boolean {

@@ -3,6 +3,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Class } from "../../common/models/models";
 import { ClassService } from "../../common/services/services";
 import { getCurrentYear, getCurrentSemester, compareClassesByShortName } from "../../common/models/functions";
+import { ViewToggle } from "../components/helpers";
 
 @Injectable()
 export class AvailableClassesService {
@@ -11,8 +12,9 @@ export class AvailableClassesService {
     constructor(private classService: ClassService) {
     }
 
-    setAvailableClasses(facultyId: number): void {
-        this.classService.getGeneratedClassesByFacultyAndYearAndSemester(
+    setAvailableClasses(toggle: ViewToggle, facultyId: number): void {
+        this.classService.getGeneratedClassesByContextAndFacultyAndYearAndSemester(
+            toggle,
             facultyId,
             getCurrentYear(),
             getCurrentSemester()

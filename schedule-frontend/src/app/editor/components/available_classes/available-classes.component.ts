@@ -11,7 +11,7 @@ import { frequencyFromString } from "../helpers";
     templateUrl: "./available-classes.component.html"
 })
 
-export class AvailableClassesComponent implements OnInit, OnDestroy {
+export class AvailableClassesComponent implements OnInit {
     private availableClasses: Class[] = [];
 
     getShortName = getShortName;
@@ -24,10 +24,6 @@ export class AvailableClassesComponent implements OnInit, OnDestroy {
         this.availableClassesService.classes.subscribe(classes => {
             this.availableClasses = classes;
         });
-    }
-
-    ngOnDestroy() {
-        this.availableClassesService.classes.unsubscribe();
     }
 
 	startDrag(c: Class): void {

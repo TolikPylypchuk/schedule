@@ -21,11 +21,11 @@ public enum LectureType {
 
     @JsonCreator
     public static LectureType fromNumber(int number) {
-        return number == 1
+        return number == 0
                 ? GROUP
-                : number == 2
+                : number == 1
                 ? DEPARTMENT
-                : number == 3
+                : number == 2
                 ? COURSE
                 : null;
     }

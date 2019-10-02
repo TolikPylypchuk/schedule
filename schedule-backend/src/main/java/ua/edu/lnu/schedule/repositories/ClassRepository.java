@@ -12,6 +12,8 @@ public interface ClassRepository extends CrudRepository<Class, Integer> {
 	List<Class> findAllByGroupsContaining(Group group);
 	List<Class> findAllByGroupsContainingAndYearAndSemester(
 		Group group, int year, Semester semester);
+	List<Class> findAllByGroupsInAndSubjectAndTypeAndYearAndSemester(
+			List<Group> groups, Subject subject, Class.Type type, int year, Semester semester);
 	
 	List<Class> findAllByClassroomsContaining(Classroom classroom);
 	List<Class> findAllByClassroomsContainingAndYearAndSemester(
