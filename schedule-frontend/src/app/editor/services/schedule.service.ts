@@ -116,7 +116,7 @@ export class ScheduleService {
 
     isRoomAvailable(classroorm: models.Classroom, checkCell: Cell): boolean {
         return !this.viewClasses.some(c =>
-            c.classrooms.includes(classroorm) && this.isClassAffixed(c, checkCell));
+            c.classrooms.some(room => room.id === classroorm.id) && this.isClassAffixed(c, checkCell));
     }
 
     startDrag(c: models.Class, viewObjectId: number, position: number): void {

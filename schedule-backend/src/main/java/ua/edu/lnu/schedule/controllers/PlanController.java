@@ -6,29 +6,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ua.edu.lnu.schedule.models.Department;
 import ua.edu.lnu.schedule.models.Group;
 import ua.edu.lnu.schedule.models.Plan;
-import ua.edu.lnu.schedule.models.Semester;
+import ua.edu.lnu.schedule.models.enums.Semester;
+import ua.edu.lnu.schedule.repositories.DepartmentRepository;
 import ua.edu.lnu.schedule.repositories.GroupRepository;
+import ua.edu.lnu.schedule.repositories.PlanDetailsRepository;
 import ua.edu.lnu.schedule.repositories.PlanRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/plans")
 public class PlanController {
 	private PlanRepository plans;
+	private PlanDetailsRepository planDetails;
 	private GroupRepository groups;
+	private DepartmentRepository departments;
 
 	@Autowired
 	public void setPlans(PlanRepository plans) {
 		this.plans = plans;
 	}
 
+    @Autowired
+    public void setPlanDetails(PlanDetailsRepository planDetails) {
+        this.planDetails = planDetails;
+    }
+
 	@Autowired
 	public void setGroups(GroupRepository groups) {
 		this.groups = groups;
+	}
+
+	@Autowired
+	public void setDepartments(DepartmentRepository departments) {
+		this.departments = departments;
 	}
 
 	@GetMapping
@@ -52,7 +68,8 @@ public class PlanController {
 	@GetMapping("/departmentId/{departmentId}")
 	public @ResponseBody Iterable<Plan> getByDepartment(
 			@PathVariable("departmentId") int departmentId) {
-		return this.plans.findAllByDepartment_Id(departmentId);
+		Department department = this.departments.findOne(departmentId);
+		return this.plans.findAllByDepartmentsContaining(department);
 	}
 
 	@GetMapping("/groupId/{groupId}")
@@ -60,7 +77,7 @@ public class PlanController {
 			@PathVariable("groupId") int groupId) {
 		Group group = this.groups.findOne(groupId);
 
-		return this.plans.findAllByDepartment_Id(group.getDepartment().getId());
+		return this.plans.findAllByDepartmentsContaining(group.getDepartment());
 	}
 
 	@GetMapping("/groupId/{groupId}/year/{year}/semester/{semester}")
@@ -70,9 +87,22 @@ public class PlanController {
 			@PathVariable("semester") int semester) {
 		Group group = this.groups.findOne(groupId);
 
-		return this.plans.findAllByDepartment_IdAndSemesterAndYear(
-				group.getDepartment().getId(), Semester.fromNumber(semester), year);
+		List<Plan> plans = this.plans.findAllByDepartmentsContainingAndSemesterAndYear(
+				group.getDepartment(), Semester.fromNumber(semester), year);
+		return plans;
 	}
+
+    @GetMapping("/departmentId/{departmentId}/year/{year}/semester/{semester}")
+    public @ResponseBody Iterable<Plan> getByDepartmentYearSemester(
+            @PathVariable("departmentId") int departmentId,
+            @PathVariable("year") int year,
+            @PathVariable("semester") int semester) {
+        Department department = this.departments.findOne(departmentId);
+
+        List<Plan> plans = this.plans.findAllByDepartmentsContainingAndSemesterAndYear(
+                department, Semester.fromNumber(semester), year);
+        return plans;
+    }
 
 	@GetMapping("/subjectId/{subjectId}")
 	public @ResponseBody Iterable<Plan> getBySubject(
@@ -92,6 +122,9 @@ public class PlanController {
 	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Plan plan)
 			throws URISyntaxException {
+	    this.planDetails.save(plan.getLectureDetails());
+	    this.planDetails.save(plan.getPracticeDetails());
+	    this.planDetails.save(plan.getLabDetails());
 		this.plans.save(plan);
 
 		return ResponseEntity.created(

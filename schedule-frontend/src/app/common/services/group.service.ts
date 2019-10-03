@@ -70,6 +70,18 @@ export class GroupService {
 			.first();
 	}
 
+	getGroupsByFacultyAndCourse(
+		facultyId: number, course: number): Observable<Group[]> {
+		return this.http.get(
+			`${this.groupsUrl}/facultyId/${facultyId}/course/${course}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
 	getGroupsByFacultyAndYearSince(
 		facultyId: number, year: number): Observable<Group[]> {
 		return this.http.get(

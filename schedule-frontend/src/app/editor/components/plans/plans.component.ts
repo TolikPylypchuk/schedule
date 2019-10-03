@@ -1,54 +1,39 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { AuthService } from "../../../auth/auth";
 
-import { Group, Plan, User, Department } from "../../../common/models/models";
+import { Group, Plan, User, Department, PlanDetails } from "../../../common/models/models";
 import {
-    DepartmentService, SubjectService, PlanService
+    DepartmentService, PlanService
 } from "../../../common/services/services";
 
 import {
     getCurrentGroupName, getCurrentYear, getCurrentSemester,
-    getLectureTypeName
+    getClassSpreadingName
 } from "../../../common/models/functions";
 
 import { PlanModalComponent } from "./plan-modal.component";
+import { frequencyToString, ClassFrequency, frequencyFromString } from "../helpers";
 
 @Component({
     selector: "schedule-editor-plans",
     templateUrl: "./plans.component.html"
 })
 export class PlansComponent implements OnInit {
-    private modalService: NgbModal;
-
-    private router: Router;
-    private authService: AuthService;
-    private departmentService: DepartmentService;
-    private subjectService: SubjectService;
-    private planService: PlanService;
 
     currentUser: User;
     departments: Department[];
     plans: Map<number, Plan[]> = new Map();
 
     getCurrentGroupName = getCurrentGroupName;
-    getLectureTypeName = getLectureTypeName;
+    getClassSpreadingName = getClassSpreadingName;
 
     constructor(
-        modalService: NgbModal,
-        router: Router,
-        authService: AuthService,
-        departmentService: DepartmentService,
-        subjectService: SubjectService,
-        planService: PlanService) {
-        this.modalService = modalService;
-        this.router = router;
-        this.authService = authService;
-        this.departmentService = departmentService;
-        this.subjectService = subjectService;
-        this.planService = planService;
+        private modalService: NgbModal,
+        private authService: AuthService,
+        private departmentService: DepartmentService,
+        private planService: PlanService) {
     }
 
     ngOnInit(): void {
@@ -63,7 +48,7 @@ export class PlansComponent implements OnInit {
                 for (const department of departments) {
                     let departmentPlans: Plan[] = [];
                     this.plans.set(department.id, departmentPlans);
-                    this.planService.getPlansByGroupAndYearAndSemester(
+                    this.planService.getPlansByDepartmentAndYearAndSemester(
                         department.id,
                         getCurrentYear(),
                         getCurrentSemester())
@@ -80,10 +65,11 @@ export class PlansComponent implements OnInit {
     }
 
     addPlan(department: Department, course: number): void {
-        const modalRef = this.modalService.open(PlanModalComponent);
+        const modalRef = this.modalService.open(PlanModalComponent, { size: "lg" });
         const modal = modalRef.componentInstance as PlanModalComponent;
 
-        modal.plan.department = department;
+        modal.departments = this.departments;
+        modal.contextDepartment = department;
         modal.plan.course = course;
         modal.plan.year = getCurrentYear();
         modal.plan.semester = getCurrentSemester();
@@ -97,35 +83,42 @@ export class PlansComponent implements OnInit {
             () => { });
     }
 
-    editPlan(plan: Plan): void {
-        const modalRef = this.modalService.open(PlanModalComponent);
+    editPlan(plan: Plan, department: Department): void {
+        const modalRef = this.modalService.open(PlanModalComponent, { size: "lg" });
         const modal = modalRef.componentInstance as PlanModalComponent;
+        modal.departments = this.departments;
+        modal.contextDepartment = department;
 
-        modal.plan = {
-            id: plan.id,
-            department: plan.department,
-            course: plan.course,
-            subject: plan.subject,
-            numLectures: plan.numLectures,
-            numPractices: plan.numPractices,
-            numLabs: plan.numLabs,
-            lectureType: plan.lectureType,
-            year: plan.year,
-            semester: plan.semester
-        };
+        modal.plan = {...plan};
+        //     id: plan.id,
+        //     department: plan.department,
+        //     course: plan.course,
+        //     subject: plan.subject,
+        //     // numLectures: plan.numLectures,
+        //     // numPractices: plan.numPractices,
+        //     // numLabs: plan.numLabs,
+        //     // lectureType: plan.lectureType,
+        //     year: plan.year,
+        //     semester: plan.semester,
+        //     lectureDetails: plan.lectureDetails,
+        //     practiceDetails: plan.practiceDetails,
+        //     labDetails: plan.labDetails
+        // };
 
         modal.isEditing = true;
 
         modalRef.result.then(
             (newPlan: Plan) => {
                 plan.subject = newPlan.subject;
-                plan.numLectures = newPlan.numLectures;
-                plan.numPractices = newPlan.numPractices;
-                plan.lectureType = newPlan.lectureType;
-                plan.numLabs = newPlan.numLabs;
+                // plan.numLectures = newPlan.numLectures;
+                // plan.numPractices = newPlan.numPractices;
+                // plan.lectureType = newPlan.lectureType;
+                // plan.numLabs = newPlan.numLabs;
 
-                this.plans.get(plan.department.id).sort(
-                    (p1, p2) => p1.subject.name.localeCompare(p2.subject.name));
+                for (const planDepartment of plan.departments) {
+                    this.plans.get(planDepartment.id).sort(
+                        (p1, p2) => p1.subject.name.localeCompare(p2.subject.name));
+                }
             },
             () => { });
     }
@@ -134,12 +127,21 @@ export class PlansComponent implements OnInit {
         const action = this.planService.deletePlan(plan.id);
 
         action.subscribe(
-            () =>
+            () => {
+                for (const department of plan.departments) {
                 this.plans.set(
-                    plan.department.id,
-                    this.plans.get(plan.department.id).filter(p => p.id !== plan.id)),
+                    department.id,
+                    this.plans.get(department.id).filter(p => p.id !== plan.id));
+                }
+            },
             () => { });
 
         action.connect();
+    }
+
+    getSpreading(details: PlanDetails): string {
+        return frequencyFromString(details.frequency) !== ClassFrequency.NONE
+            ? getClassSpreadingName(details.spreading)
+            : "";
     }
 }

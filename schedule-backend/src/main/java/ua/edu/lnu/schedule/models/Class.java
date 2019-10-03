@@ -9,11 +9,13 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import ua.edu.lnu.schedule.models.enums.Semester;
 
 @Entity
 @Table(name = "classes")
 public class Class implements Serializable {
 	public enum Frequency {
+		NONE("Немає"),
 		WEEKLY("Щотижня"),
 		BIWEEKLY("Через тиждень"),
 		NUMERATOR("По чисельнику"),
@@ -35,6 +37,9 @@ public class Class implements Serializable {
 			Frequency result = null;
 			
 			switch (text.toLowerCase(Locale.forLanguageTag("uk-UA"))) {
+				case "немає":
+					result = Frequency.NONE;
+					break;
 				case "щотижня":
 					result = Frequency.WEEKLY;
 					break;
@@ -43,6 +48,9 @@ public class Class implements Serializable {
 					break;
 				case "по знаменнику":
 					result = Frequency.DENOMINATOR;
+					break;
+				case "через тиждень":
+					result = Frequency.BIWEEKLY;
 					break;
 			}
 			

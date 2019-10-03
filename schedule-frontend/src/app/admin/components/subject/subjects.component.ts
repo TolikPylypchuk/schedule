@@ -59,13 +59,15 @@ export class SubjectsComponent implements OnInit {
 		modal.subject = {
 			id: subject.id,
 			name: subject.name,
-			lecturers: subject.lecturers
+			lecturers: subject.lecturers,
+			requiredClassroomType: subject.requiredClassroomType
 		};
 
 		modalRef.result.then(
 			(updatedSubject: Subject) => {
 				subject.name = updatedSubject.name;
 				subject.lecturers = updatedSubject.lecturers;
+				subject.requiredClassroomType = updatedSubject.requiredClassroomType;
 			},
 			() => { });
 	}

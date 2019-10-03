@@ -10,7 +10,8 @@ export enum ClassFrequency {
 
 export enum ViewToggle {
     GROUPS,
-    LECTURERS
+	LECTURERS,
+	CLASSROOMS
 }
 
 export class ClassCell {
@@ -42,23 +43,20 @@ export function frequencyFromString(frequency: string): ClassFrequency {
 }
 
 export function frequencyToString(frequency: ClassFrequency): string {
-	let result = "";
 	switch (frequency) {
+		case ClassFrequency.NONE:
+			return "Немає";
 		case ClassFrequency.WEEKLY:
-		result = "Щотижня";
-		break;
+			return "Щотижня";
 		case ClassFrequency.NUMERATOR:
-		result = "По чисельнику";
-		break;
+			return "По чисельнику";
 		case ClassFrequency.DENOMINATOR:
-		result = "По знаменнику";
-        break;
+			return "По знаменнику";
         case ClassFrequency.BIWEEKLY:
-        result = "Через тиждень";
-        break;
+			return "Через тиждень";
+		default:
+			return "";
 	}
-
-	return result;
 }
 
 export function getDay(n: number): number {

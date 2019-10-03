@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.enums.Semester;
 
 public interface ClassRepository extends CrudRepository<Class, Integer> {
 	List<Class> findAllByGroupsContaining(Group group);

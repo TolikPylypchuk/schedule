@@ -38,19 +38,26 @@
                                                 <th>Лекції</th>
                                                 <th>Практичні</th>
                                                 <th>Лабораторні</th>
-                                                <th>Тип проведення лекції</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let plan of getPlans(department.id, course)">
                                                 <td>{{ plan.subject.name }}</td>
-                                                <td>{{ plan.numLectures }}</td>
-                                                <td>{{ plan.numPractices }}</td>
-                                                <td>{{ plan.numLabs }}</td>
-                                                <td>{{ getLectureTypeName(plan.lectureType) }}</td>
+                                                <td>
+                                                    <div>{{ plan.lectureDetails.frequency }}</div>
+                                                    <div>{{ getSpreading(plan.lectureDetails) }}</div>
+                                                </td>
+                                                <td>
+                                                    <div>{{ plan.practiceDetails.frequency }}</div>
+                                                    <div>{{ getSpreading(plan.practiceDetails) }}</div>
+                                                </td>
+                                                <td>
+                                                    <div>{{ plan.labDetails.frequency }}</div>
+                                                    <div>{{ getSpreading(plan.labDetails) }}</div>
+                                                </td>
                                                 <td class="text-right">
-                                                    <button class="btn btn-sm btn-success" (click)="editPlan(plan)">
+                                                    <button class="btn btn-sm btn-success" (click)="editPlan(plan, department)">
                                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-danger" (click)="deletePlan(plan)">

@@ -4,6 +4,7 @@ import { ViewContext } from "./view-context";
 import { LecturersContext } from "./lecturers-context";
 import { GroupsContext } from "./groups-context";
 import { Action } from "./enums/action";
+import { ClassroomsContext } from "./classrooms-context";
 
 export {
     Cell,
@@ -11,5 +12,6 @@ export {
     ViewContext,
     LecturersContext,
     GroupsContext,
+    ClassroomsContext,
     Action
 };

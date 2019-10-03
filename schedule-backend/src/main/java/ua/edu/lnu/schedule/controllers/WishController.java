@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ua.edu.lnu.schedule.models.Semester;
+import ua.edu.lnu.schedule.models.enums.Semester;
 import ua.edu.lnu.schedule.models.Wish;
 import ua.edu.lnu.schedule.repositories.WishRepository;
 

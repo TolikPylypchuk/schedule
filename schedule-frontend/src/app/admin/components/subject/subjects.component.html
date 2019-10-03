@@ -13,6 +13,7 @@
                     <tr>
                         <th>Назва</th>
                         <th>Викладачі</th>
+                        <th>Необхідний тип аудиторії</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -23,6 +24,9 @@
                         </td>
                         <td>
                             {{ getUsersAsString(subject.lecturers) }}
+                        </td>
+                        <td>
+                            {{ subject.requiredClassroomType.type }}
                         </td>
                         <td class="text-right">
                             <button class="btn btn-sm btn-success" (click)="editSubjectClicked(subject)">

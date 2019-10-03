@@ -1,6 +1,10 @@
 package ua.edu.lnu.schedule.models;
 
+import ua.edu.lnu.schedule.models.enums.ClassSpreading;
+import ua.edu.lnu.schedule.models.enums.Semester;
+
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -14,11 +18,16 @@ public class Plan implements Serializable {
 	private int course;
 	private Semester semester;
 	private int year;
-	private LectureType lectureType;
+	private ClassSpreading classSpreading;
+
+	private PlanDetails lectureDetails;
+	private PlanDetails practiceDetails;
+	private PlanDetails labDetails;
 
 	private Subject subject;
 	private boolean isCoreSubject;
-	private Department department;
+	private Set<Department> departments;
+/*	private Department department;*/
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,22 +95,43 @@ public class Plan implements Serializable {
 	}
 
 	@Column(name = "lecture_type", nullable = false)
-	public LectureType getLectureType() {
-		return this.lectureType;
+	public ClassSpreading getClassSpreading() {
+		return this.classSpreading;
 	}
 
-	public void setLectureType(LectureType lectureType) {
-		this.lectureType = lectureType;
+	public void setClassSpreading(ClassSpreading classSpreading) {
+		this.classSpreading = classSpreading;
 	}
 
-/*	@Column(name = "is_core_subject", nullable = false)
-	public int getYear() {
-		return this.year;
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "lecture_details")
+	public PlanDetails getLectureDetails() {
+		return lectureDetails;
 	}
 
-	public void setYear(int year) {
-		this.year = year;
-	}*/
+	public void setLectureDetails(PlanDetails lectureDetails) {
+		this.lectureDetails = lectureDetails;
+	}
+
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "practice_details")
+	public PlanDetails getPracticeDetails() {
+		return practiceDetails;
+	}
+
+	public void setPracticeDetails(PlanDetails practiceDetails) {
+		this.practiceDetails = practiceDetails;
+	}
+
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "lab_details")
+	public PlanDetails getLabDetails() {
+		return labDetails;
+	}
+
+	public void setLabDetails(PlanDetails labDetails) {
+		this.labDetails = labDetails;
+	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "subject", nullable = false)
@@ -113,7 +143,23 @@ public class Plan implements Serializable {
 		this.subject = subject;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "plan_departments",
+	joinColumns = {
+			@JoinColumn(name = "plan", nullable = false)
+	},
+	inverseJoinColumns = {
+			@JoinColumn(name = "department", nullable = false)
+	})
+	public Set<Department> getDepartments() {
+		return this.departments;
+	}
+
+	public void setDepartments(Set<Department> departments) {
+		this.departments = departments;
+	}
+
+/*	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "department", nullable = false)
 	public Department getDepartment() {
 		return this.department;
@@ -121,5 +167,5 @@ public class Plan implements Serializable {
 
 	public void setDepartment(Department department) {
 		this.department = department;
-	}
+	}*/
 }

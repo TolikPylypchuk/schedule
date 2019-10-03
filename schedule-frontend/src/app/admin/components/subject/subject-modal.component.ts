@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { Faculty, Subject, User } from "../../../common/models/models";
+import { Faculty, Subject, User, ClassroomType } from "../../../common/models/models";
 import {
-	FacultyService, SubjectService, UserService
+	FacultyService, SubjectService, UserService, ClassroomTypeService
 } from "../../../common/services/services";
 
 import {
@@ -15,21 +15,20 @@ import {
 	templateUrl: "./subject-modal.component.html"
 })
 export class SubjectModalComponent implements OnInit {
-	private activeModal: NgbActiveModal;
-
-	private facultySerivce: FacultyService;
-	private subjectService: SubjectService;
-	private userService: UserService;
-
 	getUserInitials = getUserInitials;
 	getUsersAsString = getUsersAsString;
 
 	subject: Subject = {
 		name: null,
-		lecturers: []
+		lecturers: [],
+		requiredClassroomType: {
+			id: 1,
+			type: "Будь-яка"
+		}
 	};
 
 	faculties: Faculty[] = [];
+	classroomTypes: ClassroomType[] = [];
 	lecturers: Map<number, User[]> = new Map();
 
 	isEditing = false;
@@ -37,15 +36,11 @@ export class SubjectModalComponent implements OnInit {
 	errorText = "";
 
 	constructor(
-		activeModal: NgbActiveModal,
-		facultySerivce: FacultyService,
-		subjectService: SubjectService,
-		userService: UserService) {
-		this.activeModal = activeModal;
-
-		this.facultySerivce = facultySerivce;
-		this.subjectService = subjectService;
-		this.userService = userService;
+		private activeModal: NgbActiveModal,
+		private facultySerivce: FacultyService,
+		private subjectService: SubjectService,
+		private userService: UserService,
+		private classroomTypeService: ClassroomTypeService) {
 	}
 
 	ngOnInit(): void {
@@ -60,6 +55,11 @@ export class SubjectModalComponent implements OnInit {
 						faculty.id,
 						lecturers.sort(compareUsersByName)));
 			}
+		});
+		this.classroomTypeService.getClassroomTypes()
+		.subscribe(types => {
+			this.classroomTypes = types;
+			this.subject.requiredClassroomType = types[0];
 		});
 	}
 

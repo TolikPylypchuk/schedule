@@ -1,4 +1,4 @@
-export enum LectureType {
+export enum ClassSpreading {
     GROUP,
     DEPARTMENT,
     COURSE
@@ -10,4 +10,10 @@ export enum DayOfWeek {
     WEDNESDAY,
     THURSDAY,
     FRIDAY
+}
+
+export enum ClassType {
+    LECTURE,
+    PRACTICE,
+    LAB
 }

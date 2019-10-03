@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.Classroom;
 import ua.edu.lnu.schedule.models.ClassroomType;
-import ua.edu.lnu.schedule.models.Semester;
+import ua.edu.lnu.schedule.models.enums.Semester;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomRepository;
 import ua.edu.lnu.schedule.repositories.ClassroomTypeRepository;

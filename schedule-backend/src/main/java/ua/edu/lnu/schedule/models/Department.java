@@ -14,7 +14,7 @@ public class Department implements Serializable {
 
     private Faculty faculty;
     private Set<Group> groups;
-    private Set<Plan> plans;
+//    private Set<Plan> plans;
     private Set<User> lecturers;
     private Set<User> relatedLecturers;
 
@@ -57,15 +57,15 @@ public class Department implements Serializable {
         this.groups = groups;
     }
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
-    public Set<Plan> getPlans() {
-        return this.plans;
-    }
-
-    public void setPlans(Set<Plan> plans) {
-        this.plans = plans;
-    }
+//    @JsonIgnore
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
+//    public Set<Plan> getPlans() {
+//        return this.plans;
+//    }
+//
+//    public void setPlans(Set<Plan> plans) {
+//        this.plans = plans;
+//    }
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")

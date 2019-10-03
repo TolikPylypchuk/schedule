@@ -1,16 +1,16 @@
-package ua.edu.lnu.schedule.models;
+package ua.edu.lnu.schedule.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum LectureType {
+public enum ClassSpreading {
     GROUP(0),
     DEPARTMENT(1),
     COURSE(2);
 
     private final int number;
 
-    LectureType(int number) {
+    ClassSpreading(int number) {
         this.number = number;
     }
 
@@ -20,7 +20,7 @@ public enum LectureType {
     }
 
     @JsonCreator
-    public static LectureType fromNumber(int number) {
+    public static ClassSpreading fromNumber(int number) {
         return number == 0
                 ? GROUP
                 : number == 1

@@ -1,5 +1,7 @@
 package ua.edu.lnu.schedule.models;
 
+import ua.edu.lnu.schedule.models.enums.Semester;
+
 import java.io.Serializable;
 import java.sql.Time;
 import java.time.DayOfWeek;

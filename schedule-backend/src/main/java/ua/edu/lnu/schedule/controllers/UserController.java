@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.enums.Semester;
 import ua.edu.lnu.schedule.models.viewmodels.ChangePasswordModel;
 import ua.edu.lnu.schedule.repositories.*;
 import ua.edu.lnu.schedule.security.services.UserService;

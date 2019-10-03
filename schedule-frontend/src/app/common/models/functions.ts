@@ -3,7 +3,7 @@ import {
 } from "./models";
 
 import {
-	LectureType
+	ClassSpreading, ClassType
 } from "./enums";
 
 export function getArrayOfNumbers(num: number): number[] {
@@ -252,22 +252,35 @@ export function getAuthorityName(authority: Authority): string {
 	return result;
 }
 
-export function getLectureTypeName(type: number) {
+export function getClassSpreadingName(type: number) {
 	let result = "";
 
 	switch (type) {
-		case LectureType.GROUP:
+		case ClassSpreading.GROUP:
 			result = "Для групи";
 			break;
-		case LectureType.DEPARTMENT:
+		case ClassSpreading.DEPARTMENT:
 			result = "Для спеціальності";
 			break;
-		case LectureType.COURSE:
+		case ClassSpreading.COURSE:
 			result = "Для курсу";
 			break;
 	}
 
 	return result;
+}
+
+export function getClassTypeName(type: number) {
+	switch (type) {
+		case ClassType.LECTURE:
+		return "Лекція";
+		case ClassType.PRACTICE:
+		return "Практична";
+		case ClassType.LAB:
+		return "Лабораторна";
+		default:
+		return "";
+	}
 }
 
 export function compareUsersByName(u1: User, u2: User) {
@@ -286,6 +299,10 @@ export function compareUsersByName(u1: User, u2: User) {
 
 export function compareClassesByShortName(c1: Class, c2: Class) {
 	return getShortName(c1.subject.name).localeCompare(getShortName(c2.subject.name));
+}
+
+export function compareClassrooms(c1: Classroom, c2: Classroom) {
+	return c1.number.localeCompare(c2.number);
 }
 
 export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[] {

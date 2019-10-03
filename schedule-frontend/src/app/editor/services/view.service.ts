@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { ViewToggle } from "../components/helpers";
 import { Observable } from "rxjs/Observable";
 import * as models from "../../common/models/models";
-import { ClassService, UserService, WishService, GroupService } from "../../common/services/services";
+import { ClassService, UserService, WishService, GroupService, ClassroomService } from "../../common/services/services";
 import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {
@@ -10,7 +10,7 @@ import {
     getCurrentSemester,
     compareUsersByName,
 } from "../../common/models/functions";
-import { ViewContext, LecturersContext, GroupsContext } from "../models/models";
+import { ViewContext, LecturersContext, GroupsContext, ClassroomsContext } from "../models/models";
 
 @Injectable()
 export class ViewService {
@@ -26,7 +26,8 @@ export class ViewService {
     constructor(private classService: ClassService,
         private userService: UserService,
         private wishService: WishService,
-        private groupService: GroupService) {
+        private groupService: GroupService,
+        private classroomService: ClassroomService) {
             this.context = new BehaviorSubject<ViewContext>(new LecturersContext(this.userService, this.classService));
     }
 
@@ -39,6 +40,8 @@ export class ViewService {
             case ViewToggle.GROUPS:
                 context = new GroupsContext(this.groupService, this.classService);
                 break;
+            case ViewToggle.CLASSROOMS:
+                context = new ClassroomsContext(this.classroomService, this.classService);
         }
 
         context.getContextObjects(facultyId).subscribe(objects => {
@@ -77,26 +80,5 @@ export class ViewService {
                 lecturerWishes.set(lecturerId, wishes);
                 this.updateLecturerWishes(lecturerWishes);
             });
-    }
-
-    onModalClose(changedClass: models.Class, viewObjectId: number): void {
-        if (typeof (changedClass) === "number") {
-            this.currentClasses.set(
-                viewObjectId,
-                this.currentClasses.get(viewObjectId).filter(
-                    c => c.id !== changedClass));
-        } else if (changedClass) {
-            const c = this.currentClasses.get(viewObjectId).find(
-                lc => lc.id === changedClass.id);
-            c.frequency = changedClass.frequency;
-            c.type = changedClass.type;
-            c.classroomType = changedClass.classroomType;
-            c.subject = changedClass.subject;
-            c.classrooms = changedClass.classrooms;
-            c.groups = changedClass.groups;
-            c.lecturers = changedClass.lecturers;
-        }
-
-        // this.updateViewClasses();
     }
 }

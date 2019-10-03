@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.enums.Semester;
 import ua.edu.lnu.schedule.repositories.ClassRepository;
 import ua.edu.lnu.schedule.repositories.DepartmentRepository;
 import ua.edu.lnu.schedule.repositories.GroupRepository;
@@ -96,6 +97,23 @@ public class GroupController {
 		return this.groups.findAllByDepartmentInAndYear(this.departments.findAllByFaculty_Id(facultyId), year);
 	}
 
+	@GetMapping("/facultyId/{facultyId}/course/{course}")
+	public @ResponseBody Iterable<Group> getByFacultyAndCourse(
+			@PathVariable("facultyId") int facultyId,
+			@PathVariable("course") int course) {
+		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("uk-UA"));
+		Semester currentSemester =
+				Semester.fromNumber(calendar.get(Calendar.MONTH) < 6 ? 2 : 1);
+
+		int currentYear = currentSemester == Semester.FIRST
+				? calendar.get(Calendar.YEAR)
+				: calendar.get(Calendar.YEAR) - 1;
+
+		return this.groups.findAllByDepartmentInAndYear(
+				this.departments.findAllByFaculty_Id(facultyId), currentYear - course + 1);
+	}
+
+
 	@GetMapping("/facultyId/{facultyId}/since/{year}")
 	public @ResponseBody Iterable<Group> getByFacultyAndYearSince(
 			@PathVariable("facultyId") int facultyId,
@@ -158,7 +176,9 @@ public class GroupController {
 		return this.groups
 				.findAllByDepartmentIn(this.departments.findAllByFaculty_Id(facultyId)).stream()
 				.filter(group -> plans.stream()
-						.anyMatch(plan -> Objects.equals(plan.getDepartment(), group.getDepartment())
+						.anyMatch(plan ->
+								plan.getDepartments().stream().anyMatch(department ->
+										Objects.equals(department, group.getDepartment()))
 								&& Objects.equals(plan.getCourse(), (currentYear - group.getYear() + 1))))
 				.filter(group -> potentialClasses.stream()
 						.flatMap(c -> c.getGroups().stream())
