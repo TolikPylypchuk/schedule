@@ -13,10 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ua.edu.lnu.schedule.infrastructure.CalendarHelper;
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.enums.*;
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.repositories.*;
+import ua.edu.lnu.schedule.restrictions.IRestrictionChecker;
+import ua.edu.lnu.schedule.restrictions.RestrictionCheckResult;
+import ua.edu.lnu.schedule.restrictions.ScheduleRestrictionChecker;
+import ua.edu.lnu.schedule.restrictions.schedule.*;
+import ua.edu.lnu.schedule.restrictions.single.ClassroomCapacityRestriction;
+import ua.edu.lnu.schedule.restrictions.single.JuniorTimeRestriction;
+import ua.edu.lnu.schedule.restrictions.single.SeniorTimeRestriction;
 
 @RestController
 @RequestMapping("/classes")
@@ -28,9 +36,9 @@ public class ClassController {
 	private GroupRepository groups;
 	private PlanRepository plans;
 	private UserRepository users;
-	
-	
-	@Autowired
+    private AuthorityRepository authorities;
+
+    @Autowired
 	public void setClasses(ClassRepository classes) {
 		this.classes = classes;
 	}
@@ -64,8 +72,13 @@ public class ClassController {
 	public void setUsers(UserRepository users) {
 		this.users = users;
 	}
-	
-	@GetMapping
+
+    @Autowired
+    public void setAuthorities(AuthorityRepository authorities) {
+        this.authorities = authorities;
+    }
+
+    @GetMapping
 	public @ResponseBody Iterable<Class> getAll() {
 		return this.classes.findAll();
 	}
@@ -227,6 +240,54 @@ public class ClassController {
 
 		return filtered;
 	}
+
+    @GetMapping("/check/faculty/{facultyId}")
+    public @ResponseBody Iterable<Pair<RestrictionCheckResult, String>> getCheckResult(
+            @PathVariable int facultyId
+    ) {
+        ScheduleRestrictionChecker checker = new ScheduleRestrictionChecker();
+        checker.addScheduleRestriction(new BuildingChangeRestriction());
+        checker.addScheduleRestriction(new ClassAllocationRestriction());
+        checker.addScheduleRestriction(new ClassTypeRestriction());
+        checker.addScheduleRestriction(new CountPerDayRestriction());
+        checker.addScheduleRestriction(new UniformityRestriction());
+        checker.addScheduleRestriction(new WindowCountRestriction());
+
+        checker.addSingleRestriction(new ClassroomCapacityRestriction());
+        checker.addSingleRestriction(new JuniorTimeRestriction());
+        checker.addSingleRestriction(new SeniorTimeRestriction());
+
+        List<Group> groups = this.groups.findAllByDepartmentIn(
+                this.departments.findAllByFaculty_Id(facultyId));
+
+        for(Group group : groups) {
+            List<Class> classes = this.classes.findAllByGroupsContainingAndYearAndSemester(
+                    group, CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
+
+            String name = group.getName().replace(
+                    "0",
+                    new Integer(CalendarHelper.CurrentYear() - group.getYear() + 1).toString());
+            checker.saveResult(name, classes);
+        }
+
+        checker.resetRestrictions();
+        checker.addScheduleRestriction(new BuildingChangeRestriction());
+        checker.addScheduleRestriction(new CountPerDayRestriction());
+        checker.addScheduleRestriction(new WindowCountRestriction());
+        List<User> lecturers = this.users.findAllByDepartmentInAndAuthoritiesContaining(
+                this.departments.findAllByFaculty_Id(facultyId),
+                this.authorities.findByName(Authority.Name.ROLE_LECTURER));
+
+        for(User lecturer : lecturers) {
+            List<Class> classes = this.classes.findAllByLecturersContainingAndYearAndSemester(
+                    lecturer, CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
+
+            String name = lecturer.getLastName() + " " + lecturer.getFirstName().substring(0, 1) + ".";
+            checker.saveResult(name, classes);
+        }
+
+        return checker.getCheckResults().values();
+    }
 	
 	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Class c)

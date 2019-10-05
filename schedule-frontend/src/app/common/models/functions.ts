@@ -110,7 +110,7 @@ export function getClassEnd(num: number): string {
 			result = "18:00";
 			break;
 		case 7:
-			result = "19:35";
+			result = "19:25";
 			break;
 		case 8:
 			result = "20:55";
