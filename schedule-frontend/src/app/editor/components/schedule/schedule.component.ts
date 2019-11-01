@@ -2,23 +2,26 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 
 import { ClassModalComponent } from "./class-modal.component";
 
-import { AuthService } from "../../auth/auth";
+import { AuthService } from "../../../auth/auth";
 
-import * as models from "../../common/models/models";
-import * as services from "../../common/services/services";
+import * as models from "../../../common/models/models";
+import * as services from "../../../common/services/services";
 import {
 	getCurrentYear, getCurrentSemester,
 	getUserInitials, getDayOfWeekName,
 	getUsersAsString, getGroupsAsString, getClassroomsAsString,
 	getShortName
-} from "../../common/models/functions";
+} from "../../../common/models/functions";
 
 import {
 	ClassCell, ClassFrequency, ViewToggle,
 	frequencyFromString, frequencyToString, isClassFull
-} from "./helpers";
+} from "../helpers";
 import { ViewComponent } from "./view/view.component";
-import { ScheduleService } from "../services/schedule.service";
+import { ScheduleService } from "../../services/schedule.service";
+import { AnalyserComponent } from "./analyser/analyser.component";
+import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
+import { ScheduleCheckResult } from "../../models/models";
 
 @Component({
 	selector: "schedule-editor-schedule",
@@ -51,6 +54,8 @@ export class ScheduleComponent implements OnInit {
 
 	availableClasses: models.Class[] = [];
 
+	checkResult: ScheduleCheckResult;
+
 	getDayOfWeekName = getDayOfWeekName;
 	getLecturersAsString = getUsersAsString;
 	getGroupsAsString = getGroupsAsString;
@@ -58,12 +63,10 @@ export class ScheduleComponent implements OnInit {
 	getShortName = getShortName;
 
 	constructor(
+		private modalService: NgbModal,
 		private authService: AuthService,
 		private classService: services.ClassService,
 		private scheduleService: ScheduleService) {
-		this.authService = authService;
-		this.classService = classService;
-		this.scheduleService = scheduleService;
 	}
 
 	ngOnInit(): void {
@@ -76,13 +79,13 @@ export class ScheduleComponent implements OnInit {
 				this.scheduleService.setFaculty(user.department.faculty.id);
 				this.scheduleService.setView(ViewToggle.LECTURERS);
 
-				this.classService.getGeneratedClassesByFacultyAndYearAndSemester(
-					user.department.faculty.id,
-					getCurrentYear(),
-					getCurrentSemester()
-				).subscribe((classes: models.Class[]) => {
-					this.availableClasses = classes;
-				});
+				// this.classService.getGeneratedClassesByFacultyAndYearAndSemester(
+				// 	user.department.faculty.id,
+				// 	getCurrentYear(),
+				// 	getCurrentSemester()
+				// ).subscribe((classes: models.Class[]) => {
+				// 	this.availableClasses = classes;
+				// });
 			});
 	}
 
@@ -97,6 +100,17 @@ export class ScheduleComponent implements OnInit {
 
 	changeViewType(toggle: ViewToggle) {
 		this.scheduleService.setView(toggle);
+	}
+
+	checkSchedule() {
+		this.scheduleService.getCheckResult()
+			.subscribe(checkResult => {
+				const modalRef = this.modalService.open(AnalyserComponent);
+				const modal = modalRef.componentInstance as AnalyserComponent;
+				modal.checkResults = checkResult;
+				modalRef.result.then(() => this.checkResult = modal.combinedResult(),
+				() => this.checkResult = modal.combinedResult());
+			});
 	}
 
 	startDrag(c: models.Class): void {

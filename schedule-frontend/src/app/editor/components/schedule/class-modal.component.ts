@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import * as models from "../../common/models/models";
-import * as services from "../../common/services/services";
+import * as models from "../../../common/models/models";
+import * as services from "../../../common/services/services";
 
 import {
 	getCurrentYear, getCurrentSemester,
@@ -10,9 +10,9 @@ import {
 	getCurrentGroupName, getUsersAsString,
 	getDayOfWeekNumber, getClassroomsAsString,
 	compareUsersByName, getFrequencyAsEnumString
-} from "../../common/models/functions";
-import { AuthService } from "../../auth/services/auth.service";
-import { Action } from "../models/models";
+} from "../../../common/models/functions";
+import { AuthService } from "../../../auth/services/auth.service";
+import { Action } from "../../models/models";
 
 @Component({
 	selector: "schedule-editor-class-modal",

@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { AvailableClassesService } from "../../services/available-classes.service";
+import { AvailableClassesService } from "../../../services/available-classes.service";
 import { ThrowStmt } from "@angular/compiler";
-import { Class } from "../../../common/models/models";
-import { getShortName, getGroupsAsString } from "../../../common/models/functions";
-import { ScheduleService } from "../../services/schedule.service";
-import { frequencyFromString } from "../helpers";
+import { Class } from "../../../../common/models/models";
+import { getShortName, getGroupsAsString } from "../../../../common/models/functions";
+import { ScheduleService } from "../../../services/schedule.service";
+import { frequencyFromString } from "../../helpers";
 
 @Component({
 	selector: "schedule-editor-available-classes",

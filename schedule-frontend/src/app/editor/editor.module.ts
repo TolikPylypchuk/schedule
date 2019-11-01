@@ -10,9 +10,9 @@ import { AuthModule } from "../auth/auth";
 
 import { EditorComponent } from "./editor.component";
 
-import { ScheduleComponent } from "./components/schedule.component";
-import { ViewComponent } from "./components/view/view.component";
-import { ClassModalComponent } from "./components/class-modal.component";
+import { ScheduleComponent } from "./components/schedule/schedule.component";
+import { ViewComponent } from "./components/schedule/view/view.component";
+import { ClassModalComponent } from "./components/schedule/class-modal.component";
 
 import { GroupsComponent } from "./components/groups/groups.component";
 import { GroupModalComponent } from "./components/groups/group-modal.component";
@@ -22,8 +22,9 @@ import { PlanModalComponent } from "./components/plans/plan-modal.component";
 import { ScheduleService } from "./services/schedule.service";
 import { DragAndDropService } from "./services/drag-and-drop.service";
 import { ViewService } from "./services/view.service";
-import { AvailableClassesComponent } from "./components/available_classes/available-classes.component";
+import { AvailableClassesComponent } from "./components/schedule/available_classes/available-classes.component";
 import { AvailableClassesService } from "./services/available-classes.service";
+import { AnalyserComponent } from "./components/schedule/analyser/analyser.component";
 
 @NgModule({
 	declarations: [
@@ -35,7 +36,8 @@ import { AvailableClassesService } from "./services/available-classes.service";
 		GroupsComponent,
 		GroupModalComponent,
 		PlansComponent,
-		PlanModalComponent
+		PlanModalComponent,
+		AnalyserComponent
 	],
 	imports: [
 		BrowserModule,
@@ -52,7 +54,8 @@ import { AvailableClassesService } from "./services/available-classes.service";
 		GroupModalComponent,
 		PlanModalComponent,
 		ViewComponent,
-		AvailableClassesComponent
+		AvailableClassesComponent,
+		AnalyserComponent
 	],
 	providers: [
 		ScheduleService,

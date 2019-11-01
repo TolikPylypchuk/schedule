@@ -109,3 +109,14 @@ export interface Wish extends EntityBase {
 	semester: number;
 	lecturer: User;
 }
+
+export interface RestrictionCheckResult {
+	restriction: string;
+    checkPassed: boolean;
+    message: string;
+}
+
+export interface CheckResult {
+	key: RestrictionCheckResult;
+	value: string;
+}

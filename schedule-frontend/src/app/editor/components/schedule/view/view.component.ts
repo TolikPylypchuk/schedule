@@ -3,23 +3,23 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { ClassModalComponent } from "../class-modal.component";
 
-import * as models from "../../../common/models/models";
+import * as models from "../../../../common/models/models";
 import {
 	getClassStart, getClassEnd,
 	getDayOfWeekNumber,	getDayOfWeekName,
 	getUsersAsString, getGroupsAsString, getClassroomsAsString
-} from "../../../common/models/functions";
+} from "../../../../common/models/functions";
 
 import {
 	ClassCell, ClassFrequency, ViewToggle,
 	frequencyFromString, frequencyToString, isClassFull, getDay, getNumber, getArrayOfNumbers
-} from "../helpers";
-import { DragAndDropService } from "../../services/drag-and-drop.service";
-import { ViewService } from "../../services/view.service";
-import { ScheduleService } from "../../services/schedule.service";
-import { MovingCell, ViewContext, LecturersContext, Cell } from "../../models/models";
-import { DayOfWeek } from "../../../common/models/enums";
-import { ClassModel } from "../../models/class-model";
+} from "../../helpers";
+import { DragAndDropService } from "../../../services/drag-and-drop.service";
+import { ViewService } from "../../../services/view.service";
+import { ScheduleService } from "../../../services/schedule.service";
+import { MovingCell, ViewContext, LecturersContext, Cell } from "../../../models/models";
+import { DayOfWeek } from "../../../../common/models/enums";
+import { ClassModel } from "../../../models/class-model";
 
 @Component({
 	selector: "schedule-editor-view",

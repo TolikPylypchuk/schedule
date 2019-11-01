@@ -12,6 +12,7 @@ import { ViewService } from "./view.service";
 import { DragAndDropService } from "./drag-and-drop.service";
 import { Cell, MovingCell, ViewContext, Action } from "../models/models";
 import { AvailableClassesService } from "./available-classes.service";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class ScheduleService {
@@ -47,6 +48,10 @@ export class ScheduleService {
         }
 
         return viewClasses;
+    }
+
+    getCheckResult(): Observable<models.CheckResult[]> {
+        return this.classService.checkSchedule(this.facultyId);
     }
 
     setFaculty(facultyId: number): void {

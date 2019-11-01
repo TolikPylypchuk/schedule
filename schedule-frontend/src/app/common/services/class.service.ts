@@ -3,7 +3,7 @@ import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
-import { Class } from "../models/models";
+import { Class, CheckResult } from "../models/models";
 import { handleError, getHeaders } from "../functions";
 import { ViewToggle } from "../../editor/components/helpers";
 
@@ -183,5 +183,15 @@ export class ClassService {
 			.catch(handleError)
 			.first()
 			.publish();
+	}
+
+	checkSchedule(facultyId: number): Observable<CheckResult[]> {
+		return this.http.get(`${this.classesUrl}/check/faculty/${facultyId}`)
+		.map(response =>
+			response.status === 200
+				? response.json() as CheckResult[]
+				: null)
+		.catch(handleError)
+		.first();
 	}
 }

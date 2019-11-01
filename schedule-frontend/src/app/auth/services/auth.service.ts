@@ -38,13 +38,23 @@ export class AuthService {
 				{
 					headers: this.getHeaders()
 				})
-				.map(response =>
-					response.status === 200
+				.map(response => {
+					return response.status === 200
 						? response.json() as User
-						: null)
-				.catch(handleError)
+						: null;
+				})
+				.catch(err => {
+					if (err.status === 401) {
+						this.logout();
+					}
+					handleError(err);
+
+					return null;
+				})
 				.first()
 				.subscribe((user: User) => this.currentUserSource.next(user));
+		} else {
+			this.logout();
 		}
 	}
 

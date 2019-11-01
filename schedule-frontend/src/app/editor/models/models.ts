@@ -5,6 +5,7 @@ import { LecturersContext } from "./lecturers-context";
 import { GroupsContext } from "./groups-context";
 import { Action } from "./enums/action";
 import { ClassroomsContext } from "./classrooms-context";
+import { ScheduleCheckResult } from "./enums/schedule-check-result";
 
 export {
     Cell,
@@ -13,5 +14,6 @@ export {
     LecturersContext,
     GroupsContext,
     ClassroomsContext,
-    Action
+    Action,
+    ScheduleCheckResult
 };

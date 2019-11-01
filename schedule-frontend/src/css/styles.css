@@ -111,6 +111,10 @@ schedule-editor-view {
     width: 8em;
 }
 
+#combined div {
+    width: 100%;
+}
+
 .switch {
     position: relative;
     display: inline-block;

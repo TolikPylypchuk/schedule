@@ -23,7 +23,41 @@
                 <i class="fa fa-plus-square"></i>
             </span>
         </div>
-        <div class="col-3 text-right">
+        <div class="col-3 text-right m-0 p-0">
+            <button class="btn btn-sm btn-light" [ngbPopover]="popover" placement="left">
+                <i class="fa fa-calendar-check-o"></i>
+            </button>
+            <ng-template #popover>
+                <div [ngSwitch]="checkResult">
+                    <ng-container *ngSwitchCase="0">
+                        <div class="alert alert-success text-center">
+                            <span><i class="fa fa fa-smile-o"></i></span>
+                            <span class="alert-header">Розклад відповідає всім вимогам.</span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="1">
+                        <div class="alert alert-warning text-center">
+                            <span><i class="fa fa fa-meh-o"></i></span>
+                            <span class="alert-header">Розклад порушує деякі вимоги.</span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="2">
+                        <div class=" alert alert-danger text-center">
+                            <span><i class="fa fa fa-frown-o"></i></span>
+                            <span class="alert-header">Розклад не відповідає вимогам.</span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        <div class=" alert alert-light text-center">
+                            <span class="alert-header">Немає даних про розклад.</span>
+                        </div>
+                    </ng-container>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-light" (click)="checkSchedule()">Перевірити розклад</button>
+                    <button class="btn btn-sm btn-light"><i class="fa fa-sliders"></i></button>
+                </div>
+            </ng-template>
             <!-- <label>
                 Тільки факультет
                 <label class="switch">

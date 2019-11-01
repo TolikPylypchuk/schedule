@@ -1,0 +1,45 @@
+<div class="container">
+    <div id="combined" class="row text-center">
+        <ng-container [ngSwitch]="combinedResult()">
+            <ng-container *ngSwitchCase="0">
+                <div class="alert alert-success text-center h5 col">
+                    <span class="badge badge-success"><i class="fa fa-4x fa-smile-o"></i></span>
+                    <span class="alert-header">Розклад відповідає всім вимогам.</span>
+                </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="1">
+                <div class="alert alert-warning text-center h4">
+                    <div class="col"><i class="fa fa-2x fa-meh-o"></i></div>
+                    <div class="alert-header col">Розклад порушує деякі вимоги.</div>
+                </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="2">
+                <div class=" alert alert-danger text-center h5">
+                    <span class="badge badge-danger"><i class="fa fa-4x fa-frown-o"></i></span>
+                    <span class="alert-header">Розклад не відповідає вимогам.</span>
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+    <div id="detailed">
+        <ng-container *ngFor="let checkResult of checkResults">
+            <div *ngIf="checkResult.key.checkPassed" class="row alert alert-success m-3 p-2">
+                <div class="col-1">
+                    <i class="fa fa-2x fa-smile-o"></i>
+                </div>
+                <div class="col">
+                    <h6 class="alert-heading">{{ checkResult.key.message }}</h6>
+                </div>
+            </div>
+            <div *ngIf="!checkResult.key.checkPassed" class="row alert alert-danger m-3 p-2">
+                <div class="col-1">
+                    <i class="fa fa-2x fa-frown-o"></i>
+                </div>
+                <div class="col">
+                    <h6 class="alert-heading">{{ checkResult.key.message }}</h6>
+                    {{ checkResult.value}}
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
