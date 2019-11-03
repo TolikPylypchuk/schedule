@@ -1,6 +1,6 @@
 <div id="available-classes" class="table-responsive scroll-x" dropDirective (dropEvent)="addDropItem($event, -1, 0)">
     <div class="d-inline-flex text-white justify-content-center">
-        <div *ngIf="availableClasses.length === 0" class="m-1 bg-primary not-set-class">
+        <div *ngIf="availableClasses.length === 0" class="m-1 p-2 bg-primary all-set">
             Всі пари проставлено
         </div>
         <div *ngFor="let class of availableClasses" class="m-1 bg-primary not-set-class">

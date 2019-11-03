@@ -13,6 +13,8 @@ import { DragAndDropService } from "./drag-and-drop.service";
 import { Cell, MovingCell, ViewContext, Action } from "../models/models";
 import { AvailableClassesService } from "./available-classes.service";
 import { Observable } from "rxjs/Observable";
+import { CheckResult } from "../models/check-result";
+import { AnalyzerService } from "./analyser.service";
 
 @Injectable()
 export class ScheduleService {
@@ -25,7 +27,8 @@ export class ScheduleService {
         private classService: ClassService,
         private viewService: ViewService,
         private dragAndDropService: DragAndDropService,
-        private availableClassesService: AvailableClassesService) {
+        private availableClassesService: AvailableClassesService,
+        private analyzerService: AnalyzerService) {
         this.viewService.context.subscribe(viewContext => {
             this.viewContext = viewContext;
         });
@@ -50,8 +53,8 @@ export class ScheduleService {
         return viewClasses;
     }
 
-    getCheckResult(): Observable<models.CheckResult[]> {
-        return this.classService.checkSchedule(this.facultyId);
+    getCheckResult(): Observable<CheckResult[]> {
+        return this.analyzerService.checkSchedule(this.facultyId);
     }
 
     setFaculty(facultyId: number): void {

@@ -25,6 +25,7 @@ import { ViewService } from "./services/view.service";
 import { AvailableClassesComponent } from "./components/schedule/available_classes/available-classes.component";
 import { AvailableClassesService } from "./services/available-classes.service";
 import { AnalyserComponent } from "./components/schedule/analyser/analyser.component";
+import { AnalyzerService } from "./services/analyser.service";
 
 @NgModule({
 	declarations: [
@@ -61,7 +62,8 @@ import { AnalyserComponent } from "./components/schedule/analyser/analyser.compo
 		ScheduleService,
 		ViewService,
 		DragAndDropService,
-		AvailableClassesService
+		AvailableClassesService,
+		AnalyzerService
 	]
 })
 export class EditorModule { }

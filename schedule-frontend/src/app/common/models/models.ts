@@ -59,10 +59,6 @@ export interface Group extends EntityBase {
 }
 
 export interface Plan extends EntityBase {
-	// numLectures: number;
-	// numPractices: number;
-	// numLabs: number;
-	// lectureType: number;
 	year: number;
 	semester: number;
 	subject: Subject;
@@ -108,15 +104,4 @@ export interface Wish extends EntityBase {
 	year: number;
 	semester: number;
 	lecturer: User;
-}
-
-export interface RestrictionCheckResult {
-	restriction: string;
-    checkPassed: boolean;
-    message: string;
-}
-
-export interface CheckResult {
-	key: RestrictionCheckResult;
-	value: string;
 }

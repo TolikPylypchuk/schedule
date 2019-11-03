@@ -70,22 +70,11 @@ export class ScheduleComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		// this.view.viewToggle = ViewToggle.LECTURERS;
-		// this.view.getViewObjectName = getUserInitials;
-
 		this.authService.getCurrentUser()
 			.subscribe((user: models.User) => {
 				this.currentUser = user;
 				this.scheduleService.setFaculty(user.department.faculty.id);
 				this.scheduleService.setView(ViewToggle.LECTURERS);
-
-				// this.classService.getGeneratedClassesByFacultyAndYearAndSemester(
-				// 	user.department.faculty.id,
-				// 	getCurrentYear(),
-				// 	getCurrentSemester()
-				// ).subscribe((classes: models.Class[]) => {
-				// 	this.availableClasses = classes;
-				// });
 			});
 	}
 

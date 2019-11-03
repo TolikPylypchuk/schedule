@@ -6,6 +6,8 @@ import { GroupsContext } from "./groups-context";
 import { Action } from "./enums/action";
 import { ClassroomsContext } from "./classrooms-context";
 import { ScheduleCheckResult } from "./enums/schedule-check-result";
+import { RestrictionSettings } from "./restriction";
+import { CheckResult } from "./check-result";
 
 export {
     Cell,
@@ -15,5 +17,7 @@ export {
     GroupsContext,
     ClassroomsContext,
     Action,
-    ScheduleCheckResult
+    ScheduleCheckResult,
+    RestrictionSettings,
+    CheckResult
 };
