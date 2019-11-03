@@ -1,44 +1,32 @@
 package ua.edu.lnu.schedule.controllers;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.DayOfWeek;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import ua.edu.lnu.schedule.infrastructure.CalendarHelper;
 import ua.edu.lnu.schedule.models.*;
-import ua.edu.lnu.schedule.models.enums.*;
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.enums.Semester;
+import ua.edu.lnu.schedule.models.enums.ViewContextType;
 import ua.edu.lnu.schedule.repositories.*;
-import ua.edu.lnu.schedule.restrictions.RestrictionCheckResult;
-import ua.edu.lnu.schedule.restrictions.ScheduleRestrictionChecker;
+
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/classes")
 public class ClassController {
 	private ClassRepository classes;
 	private ClassroomRepository classrooms;
-	private ClassroomTypeRepository classroomTypes;
 	private DepartmentRepository departments;
 	private GroupRepository groups;
 	private PlanRepository plans;
 	private UserRepository users;
-    private AuthorityRepository authorities;
-    private RestrictionSettingsRepository restrictionSettings;
-    private WishRepository wishes;
-
-    @Autowired
-    public void setWishes(WishRepository wishes) {
-        this.wishes = wishes;
-    }
 
     @Autowired
 	public void setClasses(ClassRepository classes) {
@@ -48,11 +36,6 @@ public class ClassController {
 	@Autowired
 	public void setClassrooms(ClassroomRepository classrooms) {
 		this.classrooms = classrooms;
-	}
-
-	@Autowired
-	public void setClassroomTypes(ClassroomTypeRepository classroomTypes) {
-		this.classroomTypes = classroomTypes;
 	}
 	
 	@Autowired
@@ -74,16 +57,6 @@ public class ClassController {
 	public void setUsers(UserRepository users) {
 		this.users = users;
 	}
-
-    @Autowired
-    public void setAuthorities(AuthorityRepository authorities) {
-        this.authorities = authorities;
-    }
-
-    @Autowired
-    public void setRestrictionSettings(RestrictionSettingsRepository restrictionSettings) {
-        this.restrictionSettings = restrictionSettings;
-    }
 
     @GetMapping
 	public @ResponseBody Iterable<Class> getAll() {
@@ -246,60 +219,6 @@ public class ClassController {
 
 		return filtered;
 	}
-
-    @GetMapping("/check/faculty/{facultyId}")
-    public @ResponseBody Iterable<Pair<RestrictionCheckResult, String>> getCheckResult(
-            @PathVariable int facultyId
-    ) {
-        ScheduleRestrictionChecker checker = new ScheduleRestrictionChecker();
-
-        List<RestrictionSettings> restrictions = this.restrictionSettings.findAllByFaculty_IdAndActive(facultyId, true);
-        for (RestrictionSettings restrictionSettings :
-                restrictions.stream().filter(x -> !x.getRestriction().getName().startsWith("Lecturer"))
-                .collect(Collectors.toList())) {
-            Restriction restriction = restrictionSettings.getRestriction();
-            checker.addRestriction(restriction);
-        }
-
-        List<Group> groups = this.groups.findAllByDepartmentIn(
-                this.departments.findAllByFaculty_Id(facultyId));
-
-        for (Group group : groups) {
-            List<Class> classes = this.classes.findAllByGroupsContainingAndYearAndSemester(
-                    group, CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
-
-            String name = group.getName().replace(
-                    "0",
-                    Integer.toString(CalendarHelper.CurrentYear() - group.getYear() + 1));
-            checker.saveResult(name, classes);
-        }
-
-        checker.resetRestrictions();
-        for (RestrictionSettings restrictionSettings :
-                restrictions.stream().filter(x -> x.getRestriction().getName().startsWith("Lecturer"))
-                        .collect(Collectors.toList())) {
-            Restriction restriction = restrictionSettings.getRestriction();
-            checker.addRestriction(restriction);
-        }
-
-        List<User> lecturers = this.users.findAllByDepartmentInAndAuthoritiesContaining(
-                this.departments.findAllByFaculty_Id(facultyId),
-                this.authorities.findByName(Authority.Name.ROLE_LECTURER));
-
-        for(User lecturer : lecturers) {
-            List<Class> classes = this.classes.findAllByLecturersContainingAndYearAndSemester(
-                    lecturer, CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
-            List<Wish> wishes = this.wishes.findAllByLecturer_IdAndYearAndSemester(
-                    lecturer.getId(), CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
-
-            checker.setAdditionalContext(wishes);
-
-            String name = lecturer.getLastName() + " " + lecturer.getFirstName().substring(0, 1) + ".";
-            checker.saveResult(name, classes);
-        }
-
-        return checker.getCheckResults().values();
-    }
 	
 	@PostMapping
 	public ResponseEntity<?> post(@RequestBody Class c)

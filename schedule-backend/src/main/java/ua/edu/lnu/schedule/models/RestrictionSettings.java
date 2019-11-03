@@ -1,10 +1,13 @@
 package ua.edu.lnu.schedule.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "restriction_settings")
-public class RestrictionSettings {
+public class RestrictionSettings implements Serializable {
     private Integer id;
     private boolean isActive;
     private int settings;
@@ -34,6 +37,7 @@ public class RestrictionSettings {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty", nullable = false)
+    @JsonIgnore
     public Faculty getFaculty() {
         return faculty;
     }
