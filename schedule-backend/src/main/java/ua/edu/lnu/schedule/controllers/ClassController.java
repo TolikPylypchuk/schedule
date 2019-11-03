@@ -18,13 +18,8 @@ import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.enums.*;
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.repositories.*;
-import ua.edu.lnu.schedule.restrictions.IRestrictionChecker;
 import ua.edu.lnu.schedule.restrictions.RestrictionCheckResult;
 import ua.edu.lnu.schedule.restrictions.ScheduleRestrictionChecker;
-import ua.edu.lnu.schedule.restrictions.schedule.*;
-import ua.edu.lnu.schedule.restrictions.single.ClassroomCapacityRestriction;
-import ua.edu.lnu.schedule.restrictions.single.JuniorTimeRestriction;
-import ua.edu.lnu.schedule.restrictions.single.SeniorTimeRestriction;
 
 @RestController
 @RequestMapping("/classes")
@@ -37,6 +32,13 @@ public class ClassController {
 	private PlanRepository plans;
 	private UserRepository users;
     private AuthorityRepository authorities;
+    private RestrictionSettingsRepository restrictionSettings;
+    private WishRepository wishes;
+
+    @Autowired
+    public void setWishes(WishRepository wishes) {
+        this.wishes = wishes;
+    }
 
     @Autowired
 	public void setClasses(ClassRepository classes) {
@@ -76,6 +78,11 @@ public class ClassController {
     @Autowired
     public void setAuthorities(AuthorityRepository authorities) {
         this.authorities = authorities;
+    }
+
+    @Autowired
+    public void setRestrictionSettings(RestrictionSettingsRepository restrictionSettings) {
+        this.restrictionSettings = restrictionSettings;
     }
 
     @GetMapping
@@ -157,7 +164,6 @@ public class ClassController {
 						.noneMatch(authority -> authority.getName() == Authority.Name.ROLE_LECTURER)
 			? new ArrayList<>()
 			: this.classes.findAllByLecturersContaining(lecturer);
-		
 	}
 	
 	@GetMapping("/lecturerId/{lecturerId}/year/{year}/semester/{semester}")
@@ -223,17 +229,17 @@ public class ClassController {
 			List<Class> groupClasses = this.classes.findAllByGroupsInAndSubjectAndTypeAndYearAndSemester(
 					groups, c.getSubject(), c.getType(), year, Semester.fromNumber(semester));
 			if(groupClasses.size() > 0) {
-				switch (ViewContextType.fromNumber(contextFilter)) {
-					case GROUPS:
-						continue;
-					case LECTURERS:
-						if(groupClasses.stream().anyMatch(groupClass -> groupClass.getLecturers().size() > 0)) {
-							continue;
-						}
-					case CLASSROOMS:
-						continue;
-				}
-			}
+                switch (ViewContextType.fromNumber(contextFilter)) {
+                    case GROUPS:
+                        continue;
+                    case LECTURERS:
+                        if (groupClasses.stream().anyMatch(groupClass -> groupClass.getLecturers().size() > 0)) {
+                            continue;
+                        }
+                    case CLASSROOMS:
+                        continue;
+                }
+            }
 
 			filtered.add(c);
 		}
@@ -246,34 +252,36 @@ public class ClassController {
             @PathVariable int facultyId
     ) {
         ScheduleRestrictionChecker checker = new ScheduleRestrictionChecker();
-        checker.addScheduleRestriction(new BuildingChangeRestriction());
-        checker.addScheduleRestriction(new ClassAllocationRestriction());
-        checker.addScheduleRestriction(new ClassTypeRestriction());
-        checker.addScheduleRestriction(new CountPerDayRestriction());
-        checker.addScheduleRestriction(new UniformityRestriction());
-        checker.addScheduleRestriction(new WindowCountRestriction());
 
-        checker.addSingleRestriction(new ClassroomCapacityRestriction());
-        checker.addSingleRestriction(new JuniorTimeRestriction());
-        checker.addSingleRestriction(new SeniorTimeRestriction());
+        List<RestrictionSettings> restrictions = this.restrictionSettings.findAllByFaculty_IdAndActive(facultyId, true);
+        for (RestrictionSettings restrictionSettings :
+                restrictions.stream().filter(x -> !x.getRestriction().getName().startsWith("Lecturer"))
+                .collect(Collectors.toList())) {
+            Restriction restriction = restrictionSettings.getRestriction();
+            checker.addRestriction(restriction);
+        }
 
         List<Group> groups = this.groups.findAllByDepartmentIn(
                 this.departments.findAllByFaculty_Id(facultyId));
 
-        for(Group group : groups) {
+        for (Group group : groups) {
             List<Class> classes = this.classes.findAllByGroupsContainingAndYearAndSemester(
                     group, CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
 
             String name = group.getName().replace(
                     "0",
-                    new Integer(CalendarHelper.CurrentYear() - group.getYear() + 1).toString());
+                    Integer.toString(CalendarHelper.CurrentYear() - group.getYear() + 1));
             checker.saveResult(name, classes);
         }
 
         checker.resetRestrictions();
-        checker.addScheduleRestriction(new BuildingChangeRestriction());
-        checker.addScheduleRestriction(new CountPerDayRestriction());
-        checker.addScheduleRestriction(new WindowCountRestriction());
+        for (RestrictionSettings restrictionSettings :
+                restrictions.stream().filter(x -> x.getRestriction().getName().startsWith("Lecturer"))
+                        .collect(Collectors.toList())) {
+            Restriction restriction = restrictionSettings.getRestriction();
+            checker.addRestriction(restriction);
+        }
+
         List<User> lecturers = this.users.findAllByDepartmentInAndAuthoritiesContaining(
                 this.departments.findAllByFaculty_Id(facultyId),
                 this.authorities.findByName(Authority.Name.ROLE_LECTURER));
@@ -281,6 +289,10 @@ public class ClassController {
         for(User lecturer : lecturers) {
             List<Class> classes = this.classes.findAllByLecturersContainingAndYearAndSemester(
                     lecturer, CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
+            List<Wish> wishes = this.wishes.findAllByLecturer_IdAndYearAndSemester(
+                    lecturer.getId(), CalendarHelper.CurrentYear(), CalendarHelper.CurrentSemester());
+
+            checker.setAdditionalContext(wishes);
 
             String name = lecturer.getLastName() + " " + lecturer.getFirstName().substring(0, 1) + ".";
             checker.saveResult(name, classes);

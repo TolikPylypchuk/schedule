@@ -12,6 +12,7 @@ import java.util.Optional;
 public class LecturerWishesRestriction implements IScheduleRestriction {
 
     private List<Wish> lecturerWishes;
+
     private Time[] startTimes = {
             Time.valueOf("08:30:00"),
             Time.valueOf("10:10:00"),
@@ -23,6 +24,7 @@ public class LecturerWishesRestriction implements IScheduleRestriction {
             Time.valueOf("19:35:00"),
             Time.valueOf("21:00:00"),
     };
+
     private Time[] endTimes = {
             Time.valueOf("09:50:00"),
             Time.valueOf("11:30:00"),
@@ -35,7 +37,7 @@ public class LecturerWishesRestriction implements IScheduleRestriction {
             Time.valueOf("22:20:00"),
     };
 
-    public LecturerWishesRestriction(List<Wish> lecturerWishes) {
+    public void setLecturerWishes(List<Wish> lecturerWishes) {
         this.lecturerWishes = lecturerWishes;
     }
 

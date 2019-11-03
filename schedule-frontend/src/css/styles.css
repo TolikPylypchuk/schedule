@@ -80,6 +80,10 @@ schedule-editor-view {
     border-right: 10px solid #dae0e5;
 }
 
+#available-classes .all-set {
+    width: 100%;
+}
+
 .available-classes-collapsed {
     margin-bottom: 1em;
 }

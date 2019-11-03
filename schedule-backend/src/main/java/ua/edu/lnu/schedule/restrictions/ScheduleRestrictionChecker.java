@@ -2,9 +2,14 @@ package ua.edu.lnu.schedule.restrictions;
 
 import javafx.util.Pair;
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.Restriction;
+import ua.edu.lnu.schedule.models.Wish;
+import ua.edu.lnu.schedule.models.enums.RestrictionType;
 import ua.edu.lnu.schedule.restrictions.schedule.IScheduleRestriction;
+import ua.edu.lnu.schedule.restrictions.schedule.LecturerWishesRestriction;
 import ua.edu.lnu.schedule.restrictions.single.ISingleClassRestriction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,12 +19,31 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
     private List<ISingleClassRestriction> singleRestrictions = new ArrayList<>();
     private Map<String, Pair<RestrictionCheckResult, String>> checkResults = new HashMap<>();
 
+    private List<Wish> contextWishes;
+
     public void addScheduleRestriction(IScheduleRestriction restriction) {
         scheduleRestrictions.add(restriction);
     }
 
     public void addSingleRestriction(ISingleClassRestriction restriction) {
         singleRestrictions.add(restriction);
+    }
+
+    public void addRestriction(Restriction restriction) {
+        try {
+            if (restriction.getType() == RestrictionType.SCHEDULE) {
+                IScheduleRestriction scheduleRestriction = (IScheduleRestriction) java.lang.Class
+                        .forName(ScheduleRestrictionChecker.class.getPackage().getName() + ".schedule." + restriction.getName())
+                        .getConstructor().newInstance();
+                this.addScheduleRestriction(scheduleRestriction);
+            } else {
+                this.addSingleRestriction((ISingleClassRestriction) java.lang.Class
+                        .forName(ScheduleRestrictionChecker.class.getPackage().getName() + ".single." + restriction.getName())
+                        .getConstructor().newInstance());
+            }
+        } catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     public void reset() {
@@ -36,6 +60,8 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
     public void resetResult() {
         checkResults = new HashMap<>();
     }
+
+    public void setAdditionalContext(List<Wish> lecturerWishes) { this.contextWishes = lecturerWishes; }
 
     public Map<String, Pair<RestrictionCheckResult, String>> getCheckResults() {
         return checkResults;
@@ -79,6 +105,11 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
 
 
         for(IScheduleRestriction restriction : scheduleRestrictions) {
+            if(restriction.getClass().getSimpleName()
+                    .equalsIgnoreCase(LecturerWishesRestriction.class.getSimpleName())) {
+                ((LecturerWishesRestriction) restriction).setLecturerWishes(contextWishes);
+            }
+
             result = restriction.check(numerator) + restriction.check(denominator);
             boolean checkPassed = restriction.checkResult(result);
             String message = checkPassed ? restriction.getPassedMessage() : restriction.getFailedMessage();
