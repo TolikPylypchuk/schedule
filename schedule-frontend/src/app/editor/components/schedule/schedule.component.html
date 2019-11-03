@@ -24,7 +24,7 @@
             </span>
         </div>
         <div class="col-3 text-right m-0 p-0">
-            <button class="btn btn-sm btn-light" [ngbPopover]="popover" placement="left" ngbTooltip="Аналіз розкладу">
+            <button class="btn btn-sm btn-light" [ngbPopover]="popover" #pop="ngbPopover" data-toggle="popover" data-trigger="focus" placement="left" ngbTooltip="Аналіз розкладу">
                 <i class="fa fa-calendar-check-o"></i>
             </button>
             <ng-template #popover>
@@ -54,8 +54,8 @@
                     </ng-container>
                 </div>
                 <div>
-                    <button class="btn btn-sm btn-light" (click)="checkSchedule()">Перевірити розклад</button>
-                    <button class="btn btn-sm btn-light"><i class="fa fa-sliders"></i></button>
+                    <button class="btn btn-sm btn-light" (click)="checkSchedule(); pop.close();">Перевірити розклад</button>
+                    <button class="btn btn-sm btn-light" (click)="openSettings(); pop.close();"><i class="fa fa-sliders"></i></button>
                 </div>
             </ng-template>
             <!-- <label>

@@ -37,7 +37,7 @@ export class AnalyzerService {
 			.first();
 	}
 
-	updateClass(restriction: RestrictionSettings): ConnectableObservable<Response> {
+	updateRestriction(restriction: RestrictionSettings): ConnectableObservable<Response> {
 		return this.http.put(
 			`${this.analyzerUrl}/${restriction.id}`,
 			JSON.stringify(restriction),

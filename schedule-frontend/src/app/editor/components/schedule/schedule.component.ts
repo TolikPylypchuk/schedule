@@ -22,6 +22,7 @@ import { ScheduleService } from "../../services/schedule.service";
 import { AnalyserComponent } from "./analyser/analyser.component";
 import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 import { ScheduleCheckResult } from "../../models/models";
+import { AnalyserSettingsComponent } from "./analyser/settings/settings.component";
 
 @Component({
 	selector: "schedule-editor-schedule",
@@ -89,6 +90,12 @@ export class ScheduleComponent implements OnInit {
 
 	changeViewType(toggle: ViewToggle) {
 		this.scheduleService.setView(toggle);
+	}
+
+	openSettings() {
+		const modalRef = this.modalService.open(AnalyserSettingsComponent, {size: "lg"});
+		const modal = modalRef.componentInstance as AnalyserSettingsComponent;
+		modal.facultyId = this.currentUser.department.faculty.id;
 	}
 
 	checkSchedule() {

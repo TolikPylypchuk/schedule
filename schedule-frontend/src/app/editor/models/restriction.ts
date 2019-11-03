@@ -6,6 +6,6 @@ export interface Restriction {
 export interface RestrictionSettings {
     id: number;
     restriction: Restriction;
-    isActive: boolean;
+    active: boolean;
     settings: number;
 }

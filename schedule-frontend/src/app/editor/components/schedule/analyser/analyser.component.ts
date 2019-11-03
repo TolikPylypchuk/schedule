@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { CheckResult } from "../../../../common/models/models";
-import { ScheduleCheckResult } from "../../../models/models";
+import { ScheduleCheckResult, CheckResult } from "../../../models/models";
 
 @Component({
 	selector: "schedule-editor-analyser",

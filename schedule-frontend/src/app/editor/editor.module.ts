@@ -26,6 +26,7 @@ import { AvailableClassesComponent } from "./components/schedule/available_class
 import { AvailableClassesService } from "./services/available-classes.service";
 import { AnalyserComponent } from "./components/schedule/analyser/analyser.component";
 import { AnalyzerService } from "./services/analyser.service";
+import { AnalyserSettingsComponent } from "./components/schedule/analyser/settings/settings.component";
 
 @NgModule({
 	declarations: [
@@ -38,7 +39,8 @@ import { AnalyzerService } from "./services/analyser.service";
 		GroupModalComponent,
 		PlansComponent,
 		PlanModalComponent,
-		AnalyserComponent
+		AnalyserComponent,
+		AnalyserSettingsComponent
 	],
 	imports: [
 		BrowserModule,
@@ -56,7 +58,8 @@ import { AnalyzerService } from "./services/analyser.service";
 		PlanModalComponent,
 		ViewComponent,
 		AvailableClassesComponent,
-		AnalyserComponent
+		AnalyserComponent,
+		AnalyserSettingsComponent
 	],
 	providers: [
 		ScheduleService,
