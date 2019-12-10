@@ -9,6 +9,13 @@ import java.util.Map;
 public class CountPerDayRestriction implements IScheduleRestriction {
     private int maxClassesPerDay = 5;
 
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public int check(Map<DayOfWeek, List<Class>> schedule) {
         int count = 0;

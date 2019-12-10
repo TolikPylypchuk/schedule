@@ -13,6 +13,12 @@ import java.util.stream.Collectors;
 public class BuildingChangeRestriction implements IScheduleRestriction {
     private int maxChange = 2;
 
+    private int weight = 1;
+
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public int check(Map<DayOfWeek, List<Class>> schedule) {
         int result = 0;

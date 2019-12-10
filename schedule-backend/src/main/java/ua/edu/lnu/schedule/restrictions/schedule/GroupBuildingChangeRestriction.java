@@ -1,6 +1,13 @@
 package ua.edu.lnu.schedule.restrictions.schedule;
 
 public class GroupBuildingChangeRestriction extends BuildingChangeRestriction {
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public String getPassedMessage() {
         return "Кількість переходів між корпусами для груп не перевищує дозволену.";

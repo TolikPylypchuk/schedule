@@ -12,13 +12,20 @@ import java.util.stream.Stream;
 public class ClassAllocationRestriction implements IScheduleRestriction {
     private int maxDifference = 2;
 
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public int check(Map<DayOfWeek, List<Class>> schedule) {
         List<Integer> classesPerDay = schedule.values().stream().map(List::size).collect(Collectors.toList());
         Integer maxPerDay = classesPerDay.stream().reduce(Math::max).orElse(0);
         Integer minPerDay = classesPerDay.stream().reduce(Math::min).orElse(0);
 
-        return maxPerDay - minPerDay;
+        return (maxPerDay - minPerDay);
     }
 
     @Override

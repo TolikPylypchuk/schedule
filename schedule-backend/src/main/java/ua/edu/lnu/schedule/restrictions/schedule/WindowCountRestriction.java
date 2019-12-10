@@ -8,6 +8,13 @@ import java.util.Map;
 
 public class WindowCountRestriction implements IScheduleRestriction {
 
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     public int check(Map<DayOfWeek, List<Class>> schedule) {
         int result = 0;
 

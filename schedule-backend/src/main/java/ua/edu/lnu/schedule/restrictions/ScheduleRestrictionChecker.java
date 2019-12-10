@@ -69,7 +69,6 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
 
     @Override
     public List<RestrictionCheckResult> getCheckResult(List<Class> contextClasses) {
-        int result = 0;
         List<RestrictionCheckResult> checkResults = new ArrayList<>();
         Map<DayOfWeek, List<Class>> schedule = contextClasses.stream()
                 .collect(Collectors.groupingBy(Class::getDayOfWeek));
@@ -103,28 +102,19 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
                             return classes;
                         }));
 
-
         for(IScheduleRestriction restriction : scheduleRestrictions) {
             if(restriction.getClass().getSimpleName()
                     .equalsIgnoreCase(LecturerWishesRestriction.class.getSimpleName())) {
                 ((LecturerWishesRestriction) restriction).setLecturerWishes(contextWishes);
             }
 
-            result = restriction.check(numerator) + restriction.check(denominator);
-            boolean checkPassed = restriction.checkResult(result);
-            String message = checkPassed ? restriction.getPassedMessage() : restriction.getFailedMessage();
-            checkResults.add(new RestrictionCheckResult(restriction.getClass().getSimpleName(), checkPassed, message));
+            int checkResult = restriction.check(numerator) + restriction.check(denominator);
+            checkResults.add(getCheckResult(restriction, checkResult));
         }
 
         for (ISingleClassRestriction restriction : singleRestrictions) {
-            boolean checkPassed = true;
-            String message = restriction.getPassedMessage();
-            if (!restriction.checkResult(restriction.check(contextClasses))) {
-                checkPassed = false;
-                message = restriction.getFailedMessage();
-            }
-
-            checkResults.add(new RestrictionCheckResult(restriction.getClass().getSimpleName(), checkPassed, message));
+            int checkResult = restriction.check(contextClasses);
+            checkResults.add(getCheckResult(restriction, checkResult));
         }
 
         return checkResults;
@@ -150,5 +140,19 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
                 });
             }
         }
+    }
+
+    private RestrictionCheckResult getCheckResult(IRestriction restriction, int checkResult) {
+        boolean checkPassed = restriction.checkResult(checkResult);
+        String message = "";
+        int result = 0;
+        if (checkPassed) {
+            message = restriction.getFailedMessage();
+        } else {
+            result = checkResult * restriction.getWeight();
+            message = restriction.getPassedMessage();
+        }
+
+        return new RestrictionCheckResult(restriction.getClass().getSimpleName(), checkPassed, message, result);
     }
 }

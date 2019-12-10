@@ -9,6 +9,13 @@ public class SeniorTimeRestriction implements ISingleClassRestriction {
     private int middleCourse = 3;
     private int minNumber = 3;
 
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public int check(List<Class> classes) {
         int result = 0;

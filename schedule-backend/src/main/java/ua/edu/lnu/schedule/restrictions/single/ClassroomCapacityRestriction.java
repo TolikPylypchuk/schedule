@@ -9,6 +9,13 @@ import java.util.List;
 public class ClassroomCapacityRestriction implements ISingleClassRestriction {
     private int maxDifference = 20;
 
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public int check(List<Class> classes) {
         int result = 0;

@@ -11,6 +11,13 @@ import java.util.Optional;
 
 public class LecturerWishesRestriction implements IScheduleRestriction {
 
+    private int weight = 1;
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
     private List<Wish> lecturerWishes;
 
     private Time[] startTimes = {

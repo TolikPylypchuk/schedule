@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class RestrictionSettings implements Serializable {
     private Integer id;
     private boolean isActive;
+//    private int priority;
     private int settings;
 
     private Restriction restriction;
