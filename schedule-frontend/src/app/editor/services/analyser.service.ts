@@ -27,7 +27,7 @@ export class AnalyzerService {
 			.first();
 	}
 
-	getClass(id: number): Observable<RestrictionSettings> {
+	getRestriction(id: number): Observable<RestrictionSettings> {
 		return this.http.get(`${this.analyzerUrl}/${id}`)
 			.map(response =>
 				response.status === 200
@@ -47,11 +47,11 @@ export class AnalyzerService {
 			.publish();
 	}
 
-	checkSchedule(facultyId: number): Observable<CheckResult[]> {
+	checkSchedule(facultyId: number): Observable<CheckResult> {
 		return this.http.get(`${this.analyzerUrl}/check/faculty/${facultyId}`)
 		.map(response =>
 			response.status === 200
-				? response.json() as CheckResult[]
+				? response.json() as CheckResult
 				: null)
 		.catch(handleError)
 		.first();

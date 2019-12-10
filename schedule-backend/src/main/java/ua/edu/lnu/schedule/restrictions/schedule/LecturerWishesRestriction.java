@@ -2,16 +2,18 @@ package ua.edu.lnu.schedule.restrictions.schedule;
 
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.Wish;
+import ua.edu.lnu.schedule.restrictions.ClassesHelper;
 
 import java.sql.Time;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class LecturerWishesRestriction implements IScheduleRestriction {
 
-    private int weight = 1;
+    private int weight = 5;
 
     @Override
     public int getWeight() {
@@ -61,6 +63,15 @@ public class LecturerWishesRestriction implements IScheduleRestriction {
         }
 
         return result;
+    }
+
+    @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        int wishesCount = lecturerWishes.stream().filter(wish -> !wish.isSuitable())
+                .collect(Collectors.toList()).size();
+        int classesCount = ClassesHelper.reduce(schedule).size();
+
+        return wishesCount > classesCount ? classesCount : wishesCount;
     }
 
     @Override

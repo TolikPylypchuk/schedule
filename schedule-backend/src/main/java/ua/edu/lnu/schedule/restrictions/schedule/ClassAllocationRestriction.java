@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class ClassAllocationRestriction implements IScheduleRestriction {
     private int maxDifference = 2;
 
-    private int weight = 1;
+    private int weight = 5;
 
     @Override
     public int getWeight() {
@@ -26,6 +26,13 @@ public class ClassAllocationRestriction implements IScheduleRestriction {
         Integer minPerDay = classesPerDay.stream().reduce(Math::min).orElse(0);
 
         return (maxPerDay - minPerDay);
+    }
+
+    @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        int totalCount = schedule.values().stream().map(List::size).reduce(Math::addExact).orElse(0);
+
+        return totalCount - 1;
     }
 
     @Override

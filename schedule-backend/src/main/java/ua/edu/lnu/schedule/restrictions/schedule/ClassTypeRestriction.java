@@ -3,6 +3,7 @@ package ua.edu.lnu.schedule.restrictions.schedule;
 import ua.edu.lnu.schedule.infrastructure.CalendarHelper;
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.models.enums.Semester;
+import ua.edu.lnu.schedule.restrictions.ClassesHelper;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 
 public class ClassTypeRestriction implements IScheduleRestriction {
 
-    private int weight = 1;
+    private int weight = 5;
 
     @Override
     public int getWeight() {
@@ -23,15 +24,12 @@ public class ClassTypeRestriction implements IScheduleRestriction {
     @Override
     public int check(Map<DayOfWeek, List<Class>> schedule) {
         int result = 0;
-        Optional<List<Class>> classes = schedule.values().stream().reduce((list1, list2) ->
-                Stream.concat(list1.stream(), list2.stream()).collect(Collectors.toList()));
-        if(!classes.isPresent())
-            return result;
+        List<Class> classes = ClassesHelper.reduce(schedule);
 
-        List<Class> lectures = classes.get().stream().filter(c -> c.getType() == Class.Type.LECTURE)
+        List<Class> lectures = classes.stream().filter(c -> c.getType() == Class.Type.LECTURE)
                 .collect(Collectors.toList());
         for (Class lecture : lectures) {
-            Optional<Class> other = classes.get().stream().filter(c ->
+            Optional<Class> other = classes.stream().filter(c ->
                     c.getSubject().getId().equals(lecture.getSubject().getId()) &&
                             c.getType() != Class.Type.LECTURE)
                     .findFirst();
@@ -41,6 +39,15 @@ public class ClassTypeRestriction implements IScheduleRestriction {
         }
 
         return result;
+    }
+
+    @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        List<Class> classes = ClassesHelper.reduce(schedule);
+        List<Class> lectures = classes.stream().filter(c -> c.getType() == Class.Type.LECTURE)
+                .collect(Collectors.toList());
+
+        return lectures.size();
     }
 
     @Override

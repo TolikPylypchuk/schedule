@@ -1,10 +1,16 @@
 export interface RestrictionCheckResult {
 	restriction: string;
     checkPassed: boolean;
-    message: string;
+	message: string;
+	result: number;
+}
+
+export interface Pair {
+	key: RestrictionCheckResult;
+	value: string;
 }
 
 export interface CheckResult {
-	key: RestrictionCheckResult;
-	value: string;
+	calculatedResult: number;
+	details: Map<string, Pair>;
 }

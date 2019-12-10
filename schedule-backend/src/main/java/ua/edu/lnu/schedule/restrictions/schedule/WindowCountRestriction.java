@@ -22,8 +22,19 @@ public class WindowCountRestriction implements IScheduleRestriction {
             for(int i = 0; i < classes.size() - 1; i++) {
                 Class current = classes.get(i);
                 Class next = classes.get(i + 1);
-                result += next.getNumber() - current.getNumber();
+                result += next.getNumber() - current.getNumber() - 1;
             }
+        }
+
+        return result;
+    }
+
+    @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        int result = 0;
+
+        for(List<Class> classes : schedule.values()){
+            result += classes.size() - 1;
         }
 
         return result;

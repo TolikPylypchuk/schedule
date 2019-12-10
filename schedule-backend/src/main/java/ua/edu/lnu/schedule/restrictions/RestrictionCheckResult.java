@@ -5,12 +5,15 @@ public class RestrictionCheckResult {
     private boolean checkPassed;
     private String message;
     private int result;
-//
-//    public RestrictionCheckResult(String restriction, boolean checkPassed, String message) {
-//        this.restriction = restriction;
-//        this.checkPassed = checkPassed;
-//        this.message = message;
-//    }
+    private int violence;
+
+    public RestrictionCheckResult(String restriction, boolean checkPassed, String message, int result, int violence) {
+        this.restriction = restriction;
+        this.checkPassed = checkPassed;
+        this.message = message;
+        this.result = result;
+        this.violence = violence;
+    }
 
     public RestrictionCheckResult(String restriction, boolean checkPassed, String message, int result) {
         this.restriction = restriction;
@@ -21,6 +24,10 @@ public class RestrictionCheckResult {
 
     public int getResult() {
         return result;
+    }
+
+    public int getViolence() {
+        return violence;
     }
 
 

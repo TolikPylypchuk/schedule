@@ -2,7 +2,7 @@ package ua.edu.lnu.schedule.restrictions.schedule;
 
 public class GroupWindowCountRestriction extends WindowCountRestriction {
 
-    private int weight = 1;
+    private int weight = 5;
 
     @Override
     public int getWeight() {

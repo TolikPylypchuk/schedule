@@ -53,7 +53,7 @@ export class ScheduleService {
         return viewClasses;
     }
 
-    getCheckResult(): Observable<CheckResult[]> {
+    getCheckResult(): Observable<CheckResult> {
         return this.analyzerService.checkSchedule(this.facultyId);
     }
 

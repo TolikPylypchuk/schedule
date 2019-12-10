@@ -20,6 +20,11 @@ public class FrequencyRestriction implements IScheduleRestriction {
     }
 
     @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        return 0;
+    }
+
+    @Override
     public boolean checkResult(int result) {
         return false;
     }

@@ -8,6 +8,7 @@ import ua.edu.lnu.schedule.infrastructure.CalendarHelper;
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
 import ua.edu.lnu.schedule.repositories.*;
+import ua.edu.lnu.schedule.restrictions.CompleteResult;
 import ua.edu.lnu.schedule.restrictions.RestrictionCheckResult;
 import ua.edu.lnu.schedule.restrictions.ScheduleRestrictionChecker;
 
@@ -97,8 +98,8 @@ public class RestrictionController {
     }
 
     @GetMapping("/check/faculty/{facultyId}")
-    public @ResponseBody
-    Iterable<Pair<RestrictionCheckResult, String>> getCheckResult(
+//    Iterable<Pair<RestrictionCheckResult, String>> getCheckResult(
+    public @ResponseBody CompleteResult getCheckResult(
             @PathVariable int facultyId
     ) {
         ScheduleRestrictionChecker checker = new ScheduleRestrictionChecker();
@@ -148,6 +149,6 @@ public class RestrictionController {
             checker.saveResult(name, classes);
         }
 
-        return checker.getCheckResults().values();
+        return checker.getCheckResults();
     }
 }

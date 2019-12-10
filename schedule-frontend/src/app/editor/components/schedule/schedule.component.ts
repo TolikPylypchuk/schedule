@@ -23,6 +23,7 @@ import { AnalyserComponent } from "./analyser/analyser.component";
 import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 import { ScheduleCheckResult } from "../../models/models";
 import { AnalyserSettingsComponent } from "./analyser/settings/settings.component";
+import { Result } from "../../models/check_results/result";
 
 @Component({
 	selector: "schedule-editor-schedule",
@@ -55,7 +56,7 @@ export class ScheduleComponent implements OnInit {
 
 	availableClasses: models.Class[] = [];
 
-	checkResult: ScheduleCheckResult;
+	checkResult: Result;
 
 	getDayOfWeekName = getDayOfWeekName;
 	getLecturersAsString = getUsersAsString;
@@ -103,9 +104,9 @@ export class ScheduleComponent implements OnInit {
 			.subscribe(checkResult => {
 				const modalRef = this.modalService.open(AnalyserComponent);
 				const modal = modalRef.componentInstance as AnalyserComponent;
-				modal.checkResults = checkResult;
-				modalRef.result.then(() => this.checkResult = modal.combinedResult(),
-				() => this.checkResult = modal.combinedResult());
+				modal.checkResult = checkResult;
+				modalRef.result.then(() => this.checkResult = modal.combinedResult,
+				() => this.checkResult = modal.combinedResult);
 			});
 	}
 

@@ -2,7 +2,7 @@ package ua.edu.lnu.schedule.restrictions.schedule;
 
 public class LecturerBuildingChangeRestriction extends BuildingChangeRestriction {
 
-    private int weight = 1;
+    private int weight = 3;
 
     @Override
     public int getWeight() {

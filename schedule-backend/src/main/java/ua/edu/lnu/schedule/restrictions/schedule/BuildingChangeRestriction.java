@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class BuildingChangeRestriction implements IScheduleRestriction {
     private int maxChange = 2;
 
-    private int weight = 1;
+    private int weight = 3;
 
     public int getWeight() {
         return weight;
@@ -38,6 +38,17 @@ public class BuildingChangeRestriction implements IScheduleRestriction {
                     result += current.size();
                 }
             }
+        }
+
+        return result;
+    }
+
+    @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        int result = 0;
+
+        for(List<Class> classes : schedule.values()){
+            result += classes.size() - 1;
         }
 
         return result;

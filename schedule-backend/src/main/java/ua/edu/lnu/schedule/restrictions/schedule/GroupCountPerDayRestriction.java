@@ -2,7 +2,7 @@ package ua.edu.lnu.schedule.restrictions.schedule;
 
 public class GroupCountPerDayRestriction extends CountPerDayRestriction {
 
-    private int weight = 1;
+    private int weight = 8;
 
     @Override
     public int getWeight() {

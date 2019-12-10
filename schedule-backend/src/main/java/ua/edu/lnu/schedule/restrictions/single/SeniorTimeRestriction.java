@@ -31,6 +31,11 @@ public class SeniorTimeRestriction implements ISingleClassRestriction {
     }
 
     @Override
+    public int maxViolence(List<Class> classes) {
+        return classes.size();
+    }
+
+    @Override
     public boolean checkResult(int result) {
         return result == 0;
     }

@@ -9,7 +9,7 @@ public class JuniorTimeRestriction implements ISingleClassRestriction {
     private int middleCourse = 3;
     private int maxNumber = 4;
 
-    private int weight = 1;
+    private int weight = 2;
 
     @Override
     public int getWeight() {
@@ -27,6 +27,11 @@ public class JuniorTimeRestriction implements ISingleClassRestriction {
         }
 
         return result;
+    }
+
+    @Override
+    public int maxViolence(List<Class> classes) {
+        return classes.size();
     }
 
     @Override

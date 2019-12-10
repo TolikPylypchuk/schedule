@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ISingleClassRestriction extends IRestriction{
     int check(List<Class> classes);
+    int maxViolence(List<Class> classes);
 }

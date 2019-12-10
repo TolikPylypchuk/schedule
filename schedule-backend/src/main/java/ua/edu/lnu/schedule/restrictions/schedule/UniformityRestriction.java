@@ -6,11 +6,12 @@ import ua.edu.lnu.schedule.models.Class;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UniformityRestriction implements IScheduleRestriction {
 
-    private int weight = 1;
+    private int weight = 2;
 
     @Override
     public int getWeight() {
@@ -38,6 +39,19 @@ public class UniformityRestriction implements IScheduleRestriction {
             if(Math.abs(current.getValue() - next.getValue()) > 1) {
                 result++;
             }
+        }
+
+        return result;
+    }
+
+    @Override
+    public int maxViolence(Map<DayOfWeek, List<Class>> schedule) {
+        int result = 0;
+        List<DayOfWeek> keys = schedule.keySet().stream().collect(Collectors.toList());
+        for(int i = 0; i < schedule.size() - 1; i++) {
+            List<Class> current = schedule.get(keys.get(i));
+            List<Class> next = schedule.get(keys.get(i + 1));
+            result += 8 - Math.abs(current.size() - next.size());
         }
 
         return result;

@@ -63,8 +63,18 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
 
     public void setAdditionalContext(List<Wish> lecturerWishes) { this.contextWishes = lecturerWishes; }
 
-    public Map<String, Pair<RestrictionCheckResult, String>> getCheckResults() {
-        return checkResults;
+    public CompleteResult getCheckResults() {
+        double actual = 0;
+        double max = 0;
+        List<RestrictionCheckResult> results = checkResults.values().stream().map(Pair::getKey)
+                .collect(Collectors.toList());
+
+        for(RestrictionCheckResult checkResult : results) {
+            actual += checkResult.getResult();
+            max += checkResult.getViolence();
+        }
+
+        return new CompleteResult((1 - actual / max) * 100, checkResults);
     }
 
     @Override
@@ -109,12 +119,15 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
             }
 
             int checkResult = restriction.check(numerator) + restriction.check(denominator);
-            checkResults.add(getCheckResult(restriction, checkResult));
+            int maxViolence = restriction.maxViolence(numerator) + restriction.maxViolence(denominator);
+
+            checkResults.add(getCheckResult(restriction, checkResult, maxViolence));
         }
 
         for (ISingleClassRestriction restriction : singleRestrictions) {
             int checkResult = restriction.check(contextClasses);
-            checkResults.add(getCheckResult(restriction, checkResult));
+            int violence = restriction.maxViolence(contextClasses);
+            checkResults.add(getCheckResult(restriction, checkResult, violence));
         }
 
         return checkResults;
@@ -142,17 +155,22 @@ public class ScheduleRestrictionChecker implements IRestrictionChecker {
         }
     }
 
-    private RestrictionCheckResult getCheckResult(IRestriction restriction, int checkResult) {
+    private RestrictionCheckResult getCheckResult(IRestriction restriction, int checkResult, int violence) {
         boolean checkPassed = restriction.checkResult(checkResult);
         String message = "";
         int result = 0;
         if (checkPassed) {
-            message = restriction.getFailedMessage();
+            message = restriction.getPassedMessage();
         } else {
             result = checkResult * restriction.getWeight();
-            message = restriction.getPassedMessage();
+            message = restriction.getFailedMessage();
         }
 
-        return new RestrictionCheckResult(restriction.getClass().getSimpleName(), checkPassed, message, result);
+        return new RestrictionCheckResult(
+                restriction.getClass().getSimpleName(),
+                checkPassed,
+                message,
+                result,
+                violence * restriction.getWeight());
     }
 }

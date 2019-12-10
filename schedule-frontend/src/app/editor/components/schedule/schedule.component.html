@@ -24,11 +24,21 @@
             </span>
         </div>
         <div class="col-3 text-right m-0 p-0">
-            <button class="btn btn-sm btn-light" [ngbPopover]="popover" #pop="ngbPopover" data-toggle="popover" data-trigger="focus" placement="left" ngbTooltip="Аналіз розкладу">
-                <i class="fa fa-calendar-check-o"></i>
+            <button class="btn btn-sm btn-light" [ngbPopover]="popover" #pop="ngbPopover" data-toggle="popover" data-trigger="focus" placement="left">
+                <i class="fa fa-calendar-check-o"></i>Аналіз розкладу
             </button>
             <ng-template #popover>
-                <div [ngSwitch]="checkResult">
+                <div *ngIf="checkResult; else noData" class="alert alert-{{checkResult.color}} text-center">
+                    <span class="col"><i class="fa {{checkResult.icon}}"></i></span>
+                    <span class="alert-header">{{checkResult.message}}</span>
+                </div>
+
+                <ng-template #noData>
+                    <div class="alert alert-light text-center">
+                        <span class="alert-header">Немає даних про розклад.</span>
+                    </div>
+                </ng-template>
+                <!-- <div [ngSwitch]="checkResult">
                     <ng-container *ngSwitchCase="0">
                         <div class="alert alert-success text-center">
                             <span><i class="fa fa fa-smile-o"></i></span>
@@ -52,7 +62,7 @@
                             <span class="alert-header">Немає даних про розклад.</span>
                         </div>
                     </ng-container>
-                </div>
+                </div> -->
                 <div>
                     <button class="btn btn-sm btn-light" (click)="checkSchedule(); pop.close();">Перевірити розклад</button>
                     <button class="btn btn-sm btn-light" (click)="openSettings(); pop.close();"><i class="fa fa-sliders"></i></button>
