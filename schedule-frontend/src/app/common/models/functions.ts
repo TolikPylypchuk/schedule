@@ -1,6 +1,14 @@
 import {
-	Authority, Classroom, Group, User
+	Authority, Classroom, Group, User, Department, Class
 } from "./models";
+
+import {
+	ClassSpreading, ClassType
+} from "./enums";
+
+export function getArrayOfNumbers(num: number): number[] {
+	return Array.apply(null, { length: num }).map(Number.call, Number);
+}
 
 export function getCurrentYear(): number {
 	const now = new Date();
@@ -38,8 +46,7 @@ export function getCurrentGroupName(group: Group): string {
 export function getClassStart(num: number): string {
 	let result = "";
 
-	if (!num)
-	{
+	if (!num) {
 		return result;
 	}
 
@@ -79,8 +86,7 @@ export function getClassStart(num: number): string {
 export function getClassEnd(num: number): string {
 	let result = "";
 
-	if (!num)
-	{
+	if (!num) {
 		return result;
 	}
 
@@ -104,7 +110,7 @@ export function getClassEnd(num: number): string {
 			result = "18:00";
 			break;
 		case 7:
-			result = "19:35";
+			result = "19:25";
 			break;
 		case 8:
 			result = "20:55";
@@ -194,6 +200,14 @@ export function getFrequencyAsEnumString(frequency: string) {
 	return result;
 }
 
+export function getDepartmentsAsString(departments: Department[]): string {
+	return departments
+		? departments.reduce(
+			(result: string, department: Department) => `${result}, ${department.name}`,
+			"").substr(2)
+		: "";
+}
+
 export function getClassroomsAsString(classrooms: Classroom[]): string {
 	return classrooms
 		? classrooms.reduce(
@@ -238,15 +252,44 @@ export function getAuthorityName(authority: Authority): string {
 	return result;
 }
 
+export function getClassSpreadingName(type: number) {
+	let result = "";
+
+	switch (type) {
+		case ClassSpreading.GROUP:
+			result = "Для групи";
+			break;
+		case ClassSpreading.DEPARTMENT:
+			result = "Для спеціальності";
+			break;
+		case ClassSpreading.COURSE:
+			result = "Для курсу";
+			break;
+	}
+
+	return result;
+}
+
+export function getClassTypeName(type: number) {
+	switch (type) {
+		case ClassType.LECTURE:
+		return "Лекція";
+		case ClassType.PRACTICE:
+		return "Практична";
+		case ClassType.LAB:
+		return "Лабораторна";
+		default:
+		return "";
+	}
+}
+
 export function compareUsersByName(u1: User, u2: User) {
 	let result = u1.lastName.localeCompare(u2.lastName);
 
-	if (result === 0)
-	{
+	if (result === 0) {
 		result = u1.firstName.localeCompare(u2.firstName);
 
-		if (result === 0)
-		{
+		if (result === 0) {
 			result = u1.middleName.localeCompare(u2.middleName);
 		}
 	}
@@ -254,9 +297,33 @@ export function compareUsersByName(u1: User, u2: User) {
 	return result;
 }
 
+export function compareClassesByShortName(c1: Class, c2: Class) {
+	return getShortName(c1.subject.name).localeCompare(getShortName(c2.subject.name));
+}
+
+export function compareClassrooms(c1: Classroom, c2: Classroom) {
+	return c1.number.localeCompare(c2.number);
+}
+
 export function groupBy<T>(xs: Array<T>, key: string): { key: any, items: T[] }[] {
 	return xs.reduce((prev, item) => {
 		(prev[item[key]] = prev[item[key]] || []).push(item);
 		return prev;
-	}, { } as any);
+	}, {} as any);
+}
+
+export function getShortName(name: string): string {
+	let shortName = "";
+	const words = name.split(" ");
+	for (let i = 0; i < words.length; i++) {
+		if (words[i].length <= 3) {
+			shortName += shortName.length === 0
+				? words[i]
+				: ` ${words[i]} `;
+		} else {
+			shortName += words[i][0].toUpperCase();
+		}
+	}
+
+	return shortName;
 }

@@ -1,8 +1,12 @@
+import { ClassFrequency } from "../../editor/components/helpers";
+import { ClassSpreading } from "./enums";
+
 export interface EntityBase {
 	id?: number;
 }
 
 export interface Authority extends EntityBase {
+	id?: number;
 	name: string;
 }
 
@@ -19,7 +23,7 @@ export interface Class extends EntityBase {
 	year: number;
 	semester: number;
 	type: string;
-	classroomType: ClassroomType;
+	classroomType?: ClassroomType;
 	subject: Subject;
 	classrooms?: Classroom[];
 	groups?: Group[];
@@ -41,38 +45,54 @@ export interface Faculty extends EntityBase {
 	name: string;
 }
 
+export interface Department extends EntityBase {
+	name: string;
+	faculty: Faculty;
+	groups: Group[];
+}
+
 export interface Group extends EntityBase {
 	name: string;
 	numStudents: number;
 	year: number;
-	faculty: Faculty;
+	department: Department;
 }
 
 export interface Plan extends EntityBase {
-	numLectures: number;
-	numPractice: number;
-	numLabs: number;
 	year: number;
 	semester: number;
 	subject: Subject;
-	group: Group;
+	course: number;
+	departments: Department[];
+	lectureDetails: PlanDetails;
+	practiceDetails: PlanDetails;
+	labDetails: PlanDetails;
+}
+
+export interface PlanDetails extends EntityBase {
+	frequency: string;
+	spreading: ClassSpreading;
+	classroomType: ClassroomType;
+	relatedGroups: Group[];
 }
 
 export interface Subject extends EntityBase {
 	name: string;
 	lecturers: User[];
+	requiredClassroomType: ClassroomType;
 }
 
 export interface User extends EntityBase {
 	username?: string;
 	password?: string;
-	authorities: Authority[],
+	authorities: Authority[];
 
 	firstName: string;
 	middleName: string;
 	lastName: string;
 	position: string;
-	faculty: Faculty;
+	department: Department;
+	relatedDepartments?: Department[];
 }
 
 export interface Wish extends EntityBase {

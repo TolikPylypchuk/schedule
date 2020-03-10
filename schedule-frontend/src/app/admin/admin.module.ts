@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
-import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModalModule, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { RoutesModule } from "./routes.module";
 import { AuthModule } from "../auth/auth";
@@ -10,23 +10,32 @@ import { AuthModule } from "../auth/auth";
 import { AdminComponent } from "./admin.component";
 
 import { UsersComponent } from "./components/users.component";
-import { SettingsComponent } from "./components/settings.component";
-import { BuildingModalComponent } from "./components/building-modal.component";
-import { ClassroomModalComponent } from "./components/classroom-modal.component";
-import { ClassroomTypeModalComponent } from "./components/classroom-type-modal.component";
-import { FacultyModalComponent } from "./components/faculty-modal.component";
-import { SubjectModalComponent } from "./components/subject-modal.component";
+
+import { FacultiesComponent } from "./components/faculty/faculties.component";
+import { FacultyModalComponent } from "./components/faculty/faculty-modal.component";
+import { DepartmentModalComponent } from "./components/faculty/department-modal.component";
+
+import { ClassroomsComponent } from "./components/classroom/classrooms.component";
+import { BuildingModalComponent } from "./components/classroom/building-modal.component";
+import { ClassroomModalComponent } from "./components/classroom/classroom-modal.component";
+import { ClassroomTypeModalComponent } from "./components/classroom/classroom-type-modal.component";
+
+import { SubjectsComponent } from "./components/subject/subjects.component";
+import { SubjectModalComponent } from "./components/subject/subject-modal.component";
 import { UserModalComponent } from "./components/user-modal.component";
 
 @NgModule({
 	declarations: [
 		AdminComponent,
 		UsersComponent,
-		SettingsComponent,
+		FacultiesComponent,
+		FacultyModalComponent,
+		DepartmentModalComponent,
+		ClassroomsComponent,
 		BuildingModalComponent,
 		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
-		FacultyModalComponent,
+		SubjectsComponent,
 		SubjectModalComponent,
 		UserModalComponent
 	],
@@ -35,6 +44,7 @@ import { UserModalComponent } from "./components/user-modal.component";
 		FormsModule,
 		HttpModule,
 		NgbModalModule,
+		NgbModule,
 		AuthModule,
 		RoutesModule
 	],
@@ -43,6 +53,7 @@ import { UserModalComponent } from "./components/user-modal.component";
 		ClassroomModalComponent,
 		ClassroomTypeModalComponent,
 		FacultyModalComponent,
+		DepartmentModalComponent,
 		SubjectModalComponent,
 		UserModalComponent
 	]

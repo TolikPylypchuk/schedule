@@ -4,12 +4,11 @@ import { RoutesModule } from "./routes.module";
 import { AdminComponent } from "./admin.component";
 
 import { UsersComponent } from "./components/users.component";
-import { SettingsComponent } from "./components/settings.component";
-import { BuildingModalComponent } from "./components/building-modal.component";
-import { ClassroomModalComponent } from "./components/classroom-modal.component";
-import { ClassroomTypeModalComponent } from "./components/classroom-type-modal.component";
-import { FacultyModalComponent } from "./components/faculty-modal.component";
-import { SubjectModalComponent } from "./components/subject-modal.component";
+import { BuildingModalComponent } from "./components/classroom/building-modal.component";
+import { ClassroomModalComponent } from "./components/classroom/classroom-modal.component";
+import { ClassroomTypeModalComponent } from "./components/classroom/classroom-type-modal.component";
+import { FacultyModalComponent } from "./components/faculty/faculty-modal.component";
+import { SubjectModalComponent } from "./components/subject/subject-modal.component";
 import { UserModalComponent } from "./components/user-modal.component";
 
 export {
@@ -18,11 +17,10 @@ export {
 
 	AdminComponent,
 	UsersComponent,
-	SettingsComponent,
 	BuildingModalComponent,
 	ClassroomModalComponent,
 	ClassroomTypeModalComponent,
 	FacultyModalComponent,
 	SubjectModalComponent,
 	UserModalComponent
-}
+};

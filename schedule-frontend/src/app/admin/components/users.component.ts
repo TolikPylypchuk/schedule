@@ -2,13 +2,14 @@ import { Component, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import {
-	getUserInitials, compareUsersByName
+	getUserInitials, compareUsersByName,
+	getAuthorityName
 } from "../../common/models/functions";
 
 import { Faculty, User } from "../../common/models/models";
 import { FacultyService, UserService } from "../../common/services/services";
 
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from "../../auth/services/auth.service";
 
 import { UserModalComponent } from "./user-modal.component";
 
@@ -24,11 +25,15 @@ export class UsersComponent implements OnInit {
 	private userService: UserService;
 
 	faculties: Faculty[] = [];
-	lecturers: Map<number, User[]> = new Map();
-	editors: Map<number, User[]> = new Map();
+	lecturers: User[] = [];
+	editors: User[] = [];
 	admins: User[] = [];
 
 	currentAdmin: User;
+	currentFaculty: Faculty;
+
+	getUserInitials = getUserInitials;
+	getAuthorityName = getAuthorityName;
 
 	constructor(
 		modalService: NgbModal,
@@ -42,6 +47,8 @@ export class UsersComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.currentFaculty = null;
+
 		this.authService.getCurrentUser()
 			.subscribe((user: User) => this.currentAdmin = user);
 
@@ -49,64 +56,44 @@ export class UsersComponent implements OnInit {
 			.subscribe((faculties: Faculty[]) => {
 				this.faculties = faculties.sort(
 					(f1, f2) => f1.name.localeCompare(f2.name));
-
-				this.userService.getAdmins()
-					.subscribe((admins: User[]) => this.admins = admins);
-
-				for (const faculty of faculties) {
-					this.userService.getLecturersByFaculty(faculty.id)
-						.subscribe((lecturers: User[]) =>
-							this.lecturers.set(
-								faculty.id, lecturers.sort(compareUsersByName)));
-
-					this.userService.getEditorsByFaculty(faculty.id)
-						.subscribe((editors: User[]) =>
-							this.editors.set(
-								faculty.id, editors.sort(compareUsersByName)));
-				}
 			});
+
+		this.userService.getAdmins()
+			.subscribe((admins: User[]) => this.admins = admins);
+	}
+
+	setUsers(): void {
+		this.userService.getLecturersByFaculty(this.currentFaculty.id)
+			.subscribe((lecturers: User[]) =>
+				this.lecturers = lecturers.sort(compareUsersByName));
+
+		this.userService.getEditorsByFaculty(this.currentFaculty.id)
+			.subscribe((editors: User[]) =>
+				this.editors = editors.sort(compareUsersByName));
 	}
 
 	addUser(): void {
 		const modalRef = this.modalService.open(UserModalComponent);
 		const modal = modalRef.componentInstance as UserModalComponent;
 
-		for (const faculty of this.faculties) {
-			const lecturers = this.lecturers.get(faculty.id);
-
-			if (lecturers && lecturers.length !== 0) {
-				modal.authorities.push(lecturers[0].authorities.find(
-					a => a.name === "ROLE_LECTURER"));
-				break;
-			}
-		}
-
-		for (const faculty of this.faculties) {
-			const editors = this.editors.get(faculty.id);
-
-			if (editors && editors.length !== 0) {
-				modal.authorities.push(editors[0].authorities.find(
-					a => a.name === "ROLE_EDITOR"));
-				break;
-			}
-		}
-
-		modal.authorities.push(this.admins[0].authorities.find(
-			a => a.name === "ROLE_ADMIN"));
+		modal.authorities.push({id: 1, name: "ROLE_LECTURER"});
+		modal.authorities.push({id: 2, name: "ROLE_EDITOR"});
+		modal.authorities.push({id: 3, name: "ROLE_ADMIN"});
 
 		modal.faculties = this.faculties;
+		modal.currentFaculty = this.currentFaculty;
 
 		modalRef.result.then(
 			(user: User) => {
 				for (const authority of user.authorities) {
 					switch (authority.name) {
 						case "ROLE_LECTURER":
-							this.lecturers.get(user.faculty.id).push(user);
-							this.lecturers.get(user.faculty.id).sort(compareUsersByName);
+							this.lecturers.push(user);
+							this.lecturers.sort(compareUsersByName);
 							break;
 						case "ROLE_EDITOR":
-							this.editors.get(user.faculty.id).push(user);
-							this.editors.get(user.faculty.id).sort(compareUsersByName);
+							this.editors.push(user);
+							this.editors.sort(compareUsersByName);
 							break;
 						case "ROLE_ADMIN":
 							this.admins.push(user);
@@ -122,30 +109,31 @@ export class UsersComponent implements OnInit {
 		const modalRef = this.modalService.open(UserModalComponent);
 		const modal = modalRef.componentInstance as UserModalComponent;
 
-		for (const faculty of this.faculties) {
-			const lecturers = this.lecturers.get(faculty.id);
+		// for (const faculty of this.faculties) {
+		// 	const lecturers = this.lecturers.get(faculty.id);
 
-			if (lecturers && lecturers.length !== 0) {
-				modal.authorities.push(lecturers[0].authorities.find(
-					a => a.name === "ROLE_LECTURER"));
-				break;
-			}
+		if (this.lecturers && this.lecturers.length !== 0) {
+			modal.authorities.push(this.lecturers[0].authorities.find(
+				a => a.name === "ROLE_LECTURER"));
+			// break;
 		}
+		// }
 
-		for (const faculty of this.faculties) {
-			const editors = this.editors.get(faculty.id);
+		// for (const faculty of this.faculties) {
+		// const editors = this.editors.get(faculty.id);
 
-			if (editors && editors.length !== 0) {
-				modal.authorities.push(editors[0].authorities.find(
-					a => a.name === "ROLE_EDITOR"));
-				break;
-			}
+		if (this.editors && this.editors.length !== 0) {
+			modal.authorities.push(this.editors[0].authorities.find(
+				a => a.name === "ROLE_EDITOR"));
+			// break;
 		}
+		// }
 
 		modal.authorities.push(this.admins[0].authorities.find(
 			a => a.name === "ROLE_ADMIN"));
 
 		modal.faculties = this.faculties;
+		modal.currentFaculty = user.department.faculty;
 		modal.isEditing = true;
 
 		modal.user = {
@@ -155,7 +143,7 @@ export class UsersComponent implements OnInit {
 			middleName: user.middleName,
 			lastName: user.lastName,
 			position: user.position,
-			faculty: user.faculty,
+			department: user.department,
 			authorities: []
 		};
 
@@ -171,16 +159,13 @@ export class UsersComponent implements OnInit {
 				user.middleName = updatedUser.middleName;
 				user.lastName = updatedUser.lastName;
 				user.position = updatedUser.position;
-				user.faculty = updatedUser.faculty;
+				user.department = updatedUser.department;
 
 				if (!!user.authorities.find(a => a.name === "ROLE_LECTURER")) {
 					if (!updatedUser.authorities.find(a => a.name === "ROLE_LECTURER")) {
-						this.lecturers.set(
-							user.faculty.id,
-							this.lecturers.get(user.faculty.id).filter(u => u.id !== user.id));
+						this.lecturers = this.lecturers.filter(u => u.id !== user.id);
 					} else {
-						const lecturer = this.lecturers.get(user.faculty.id)
-							.find(l => l.id === user.id);
+						const lecturer = this.lecturers.find(l => l.id === user.id);
 
 						lecturer.username = updatedUser.username;
 						lecturer.username = updatedUser.username;
@@ -188,22 +173,19 @@ export class UsersComponent implements OnInit {
 						lecturer.middleName = updatedUser.middleName;
 						lecturer.lastName = updatedUser.lastName;
 						lecturer.position = updatedUser.position;
-						lecturer.faculty = updatedUser.faculty;
+						lecturer.department = updatedUser.department;
 					}
-				} else if (!user.authorities.find(a => a.name === "ROLE_LECTURER" &&
-					!!updatedUser.authorities.find(a => a.name === "ROLE_LECTURER"))) {
-					this.lecturers.get(user.faculty.id).push(user);
-					this.lecturers.get(user.faculty.id).sort(compareUsersByName);
+				} else if (!user.authorities.find(a => a.name === "ROLE_LECTURER") &&
+					!!updatedUser.authorities.find(a => a.name === "ROLE_LECTURER")) {
+					this.lecturers.push(user);
+					this.lecturers.sort(compareUsersByName);
 				}
 
 				if (!!user.authorities.find(a => a.name === "ROLE_EDITOR")) {
 					if (!updatedUser.authorities.find(a => a.name === "ROLE_EDITOR")) {
-						this.editors.set(
-							user.faculty.id,
-							this.editors.get(user.faculty.id).filter(u => u.id !== user.id));
+						this.editors = this.editors.filter(u => u.id !== user.id);
 					} else {
-						const editor = this.editors.get(user.faculty.id)
-							.find(e => e.id === user.id);
+						const editor = this.editors.find(e => e.id === user.id);
 
 						editor.username = updatedUser.username;
 						editor.username = updatedUser.username;
@@ -211,12 +193,12 @@ export class UsersComponent implements OnInit {
 						editor.middleName = updatedUser.middleName;
 						editor.lastName = updatedUser.lastName;
 						editor.position = updatedUser.position;
-						editor.faculty = updatedUser.faculty;
+						editor.department = updatedUser.department;
 					}
-				} else if (!user.authorities.find(a => a.name === "ROLE_EDITOR" &&
-					!!updatedUser.authorities.find(a => a.name === "ROLE_EDITOR"))) {
-					this.editors.get(user.faculty.id).push(user);
-					this.editors.get(user.faculty.id).sort(compareUsersByName);
+				} else if (!user.authorities.find(a => a.name === "ROLE_EDITOR") &&
+					!!updatedUser.authorities.find(a => a.name === "ROLE_EDITOR")) {
+					this.editors.push(user);
+					this.editors.sort(compareUsersByName);
 				}
 
 				if (!!user.authorities.find(a => a.name === "ROLE_ADMIN")) {
@@ -231,10 +213,10 @@ export class UsersComponent implements OnInit {
 						admin.middleName = updatedUser.middleName;
 						admin.lastName = updatedUser.lastName;
 						admin.position = updatedUser.position;
-						admin.faculty = updatedUser.faculty;
+						admin.department = updatedUser.department;
 					}
-				} else if (!user.authorities.find(a => a.name === "ROLE_ADMIN" &&
-					!!updatedUser.authorities.find(a => a.name === "ROLE_ADMIN"))) {
+				} else if (!user.authorities.find(a => a.name === "ROLE_ADMIN") &&
+					!!updatedUser.authorities.find(a => a.name === "ROLE_ADMIN")) {
 					this.admins.push(user);
 					this.admins.sort(compareUsersByName);
 				}
@@ -248,23 +230,17 @@ export class UsersComponent implements OnInit {
 		const action = this.userService.deleteUser(user.id);
 
 		action.subscribe(
-				() => {
-					this.lecturers.set(
-						user.faculty.id,
-						this.lecturers.get(user.faculty.id).filter(
-							l => l.id !== user.id));
+			() => {
+				this.lecturers = this.lecturers.filter(
+					l => l.id !== user.id);
 
-					this.editors.set(
-						user.faculty.id,
-						this.editors.get(user.faculty.id).filter(
-							e => e.id !== user.id));
+				this.editors = this.editors.filter(
+					e => e.id !== user.id);
 
-					this.admins = this.admins.filter(a => a.id !== user.id);
-				},
-				() => { });
+				this.admins = this.admins.filter(a => a.id !== user.id);
+			},
+			() => { });
 
 		action.connect();
 	}
-
-	getUserInitials = getUserInitials;
 }

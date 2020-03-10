@@ -5,6 +5,7 @@ import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
 import { Class } from "../models/models";
 import { handleError, getHeaders } from "../functions";
+import { ViewToggle } from "../../editor/components/helpers";
 
 @Injectable()
 export class ClassService {
@@ -94,6 +95,30 @@ export class ClassService {
 		lecturerId: number, year: number, semester: number): Observable<Class[]> {
 		return this.http.get(
 			`${this.classesUrl}/lecturerId/${lecturerId}/year/${year}/semester/${semester}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Class[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
+	getGeneratedClassesByFacultyAndYearAndSemester(
+		facultyId: number, year: number, semester: number): Observable<Class[]> {
+		return this.http.get(
+			`${this.classesUrl}/generate/faculty/${facultyId}/year/${year}/semester/${semester}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Class[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
+	getGeneratedClassesByContextAndFacultyAndYearAndSemester(
+		toggle: ViewToggle, facultyId: number, year: number, semester: number): Observable<Class[]> {
+		return this.http.get(
+			`${this.classesUrl}/generate/${toggle}/faculty/${facultyId}/year/${year}/semester/${semester}`)
 			.map(response =>
 				response.status === 200
 					? response.json() as Class[]

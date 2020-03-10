@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ua.edu.lnu.schedule.models.*;
 import ua.edu.lnu.schedule.models.Class;
+import ua.edu.lnu.schedule.models.enums.Semester;
 import ua.edu.lnu.schedule.models.viewmodels.ChangePasswordModel;
 import ua.edu.lnu.schedule.repositories.*;
 import ua.edu.lnu.schedule.security.services.UserService;
@@ -30,6 +31,7 @@ public class UserController {
 	private SubjectRepository subjects;
 	private UserRepository users;
 	private WishRepository wishes;
+	private DepartmentRepository departments;
 	
 	private UserService userService;
 	
@@ -57,6 +59,11 @@ public class UserController {
 	public void setWishes(WishRepository wishes) {
 		this.wishes = wishes;
 	}
+
+	@Autowired
+	public void setDepartments(DepartmentRepository departments) {
+		this.departments = departments;
+	}
 	
 	@Autowired
 	public void setUserService(UserService userService) {
@@ -83,7 +90,10 @@ public class UserController {
 	
 	@GetMapping("/current")
 	public @ResponseBody User getCurrentUser(Principal p) {
-		return this.users.findByUsername(p.getName());
+
+		return p != null
+				? this.users.findByUsername(p.getName())
+				: new User();
 	}
 	
 	@GetMapping("/role/{role}")
@@ -100,7 +110,7 @@ public class UserController {
 	@GetMapping("/facultyId/{facultyId}")
 	public @ResponseBody Iterable<User> getByFaculty(
 		@PathVariable("facultyId") int facultyId) {
-		return this.users.findAllByFaculty_Id(facultyId);
+		return this.users.findAllByDepartmentIn(this.departments.findAllByFaculty_Id(facultyId));
 	}
 	
 	@GetMapping("/role/{role}/facultyId/{facultyId}")
@@ -112,10 +122,46 @@ public class UserController {
 		
 		return authority == null
 			? new ArrayList<>()
-			: this.users.findAllByFaculty_IdAndAuthoritiesContaining(
-				facultyId,
+			: this.users.findAllByDepartmentInAndAuthoritiesContaining(
+				this.departments.findAllByFaculty_Id(facultyId),
 				this.authorities.findByName(
 					this.userService.getAuthorityName(role)));
+	}
+
+	@GetMapping("/related/role/{role}/facultyId/{facultyId}")
+	public @ResponseBody Iterable<User> getRelatedByRoleAndFaculty(
+			@PathVariable("role") String role,
+			@PathVariable("facultyId") int facultyId) {
+		Authority authority = this.authorities.findByName(
+				this.userService.getAuthorityName(role));
+
+		return authority == null
+				? new ArrayList<>()
+				: this.users.findAllByRelatedDepartmentsInAndAuthoritiesContaining(
+				this.departments.findAllByFaculty_Id(facultyId),
+				this.authorities.findByName(
+						this.userService.getAuthorityName(role)));
+	}
+
+	@GetMapping("/role/{role}/facultyId/{facultyId}/includeRelated")
+	public @ResponseBody Iterable<User> getByRoleAndFacultyIncludeRelated(
+			@PathVariable("role") String role,
+			@PathVariable("facultyId") int facultyId) {
+		Authority authority = this.authorities.findByName(
+				this.userService.getAuthorityName(role));
+		List<User> users = new ArrayList<>();
+		if (authority != null) {
+			users = this.users.findAllByDepartmentInAndAuthoritiesContaining(
+					this.departments.findAllByFaculty_Id(facultyId),
+					this.authorities.findByName(
+							this.userService.getAuthorityName(role)));
+			users.addAll(this.users.findAllByRelatedDepartmentsInAndAuthoritiesContaining(
+					this.departments.findAllByFaculty_Id(facultyId),
+					this.authorities.findByName(
+							this.userService.getAuthorityName(role))));
+		}
+
+		return users;
 	}
 	
 	@GetMapping("/subjectId/{subjectId}")
@@ -176,7 +222,8 @@ public class UserController {
 		
 		return subject == null
 			? new ArrayList<>()
-			: this.users.findAllByFaculty_IdAndSubjectsContaining(facultyId, subject)
+			: this.users.findAllByDepartmentInAndSubjectsContaining(
+					this.departments.findAllByFaculty_Id(facultyId), subject)
 			.stream()
 			.filter(lecturer -> potentialClasses.stream()
 				.flatMap(c -> c.getLecturers().stream())

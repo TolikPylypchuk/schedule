@@ -3,10 +3,11 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { EditorComponent } from "./editor.component";
 
-import { HomeComponent } from "./components/home.component";
-import { ScheduleComponent } from './components/schedule.component';
+import { ScheduleComponent } from "./components/schedule/schedule.component";
+import { PlansComponent } from "./components/plans/plans.component";
+import { GroupsComponent } from "./components/groups/groups.component";
 
-import { AuthGuard, EditorGuard } from '../auth/auth';
+import { AuthGuard, EditorGuard } from "../auth/auth";
 
 const routes: Routes = [
 	{
@@ -14,7 +15,9 @@ const routes: Routes = [
 		component: EditorComponent,
 		children: [
 			{ path: "schedule", component: ScheduleComponent },
-			{ path: "", component: HomeComponent, pathMatch: "full" }
+			{ path: "plans", component: PlansComponent },
+			{ path: "groups", component: GroupsComponent },
+			{ path: "", component: ScheduleComponent, pathMatch: "full" }
 		],
 		canActivate: [ AuthGuard, EditorGuard ],
 		canActivateChild: [ AuthGuard, EditorGuard ]

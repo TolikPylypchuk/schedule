@@ -11,6 +11,7 @@ import ua.edu.lnu.schedule.models.Subject;
 
 public interface SubjectRepository extends CrudRepository<Subject, Integer> {
 	Subject findByPlansContaining(Plan plan);
+	List<Subject> findByPlansIn(List<Plan> plans);
 	Subject findByClassesContaining(Class c);
 	List<Subject> findAllByLecturersContaining(User l);
 }

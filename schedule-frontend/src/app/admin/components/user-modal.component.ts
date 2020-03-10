@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { getAuthorityName } from "../../common/models/functions";
-import { Authority, Faculty, User } from "../../common/models/models";
-import { FacultyService, UserService } from "../../common/services/services";
+import { getAuthorityName, getDepartmentsAsString } from "../../common/models/functions";
+import { Authority, Faculty, User, Department } from "../../common/models/models";
+import { FacultyService, UserService, DepartmentService } from "../../common/services/services";
 
 @Component({
 	selector: "schedule-admin-user-modal",
@@ -13,7 +13,11 @@ export class UserModalComponent implements OnInit {
 	private activeModal: NgbActiveModal;
 
 	private facultyService: FacultyService;
+	private departmentService: DepartmentService;
 	private userService: UserService;
+
+	getAuthorityName = getAuthorityName;
+	getDepartmentsAsString = getDepartmentsAsString;
 
 	user: User = {
 		username: null,
@@ -22,12 +26,21 @@ export class UserModalComponent implements OnInit {
 		lastName: null,
 		position: null,
 		password: "pass",
-		faculty: null,
-		authorities: []
+		department: null,
+		authorities: [],
+		relatedDepartments: []
 	};
 
 	authorities: Authority[] = [];
 	faculties: Faculty[] = [];
+	departments: Department[] = [];
+
+	facultyDepartments: {
+		faculty: Faculty;
+		departments: Department[];
+	}[] = [];
+
+	currentFaculty: Faculty;
 
 	isEditing = false;
 	error = false;
@@ -36,18 +49,73 @@ export class UserModalComponent implements OnInit {
 	constructor(
 		activeModal: NgbActiveModal,
 		facultyService: FacultyService,
+		departmentService: DepartmentService,
 		userService: UserService) {
 		this.activeModal = activeModal;
 		this.facultyService = facultyService;
+		this.departmentService = departmentService;
 		this.userService = userService;
 	}
 
 	ngOnInit(): void {
 		if (this.isEditing) {
-			this.user.faculty = this.faculties.find(
-				f => f.id === this.user.faculty.id);
+			this.currentFaculty = this.faculties.find(f => f.id === this.user.department.faculty.id);
+
+			this.setDepartments();
+			this.setFacultyDepartments();
+			this.setRelatedDepartments();
 		}
 	}
+
+	setDepartments(): void {
+		this.departments = [];
+
+		if (!this.currentFaculty) {
+			return;
+		}
+
+		this.departmentService.getDepartmentsByFaculty(this.currentFaculty.id)
+			.subscribe((departments: Department[]) => {
+				this.departments = departments;
+				this.user.department = this.departments.find(d => d.id === this.user.department.id);
+			});
+	}
+
+	setRelatedDepartments(): void {
+		this.departmentService.getDepartmentsByRelatedLecturer(
+			this.user.id
+		).subscribe(departments => this.user.relatedDepartments = departments);
+	}
+
+	setFacultyDepartments(): void {
+		this.facultyDepartments = [];
+
+		for (const faculty of this.faculties) {
+			this.departmentService.getDepartmentsByFaculty(
+				faculty.id)
+				.subscribe((departments: Department[]) =>
+					this.facultyDepartments.push({
+						faculty: faculty,
+						departments: departments
+							.sort((d1, d2) => d1.name.localeCompare(d2.name))
+					}));
+		}
+	}
+
+	departmentChecked(department: Department): void {
+		if (this.user.relatedDepartments.includes(department)) {
+			this.user.relatedDepartments = this.user.relatedDepartments.filter(
+				d => d.id !== department.id);
+		} else {
+			this.user.relatedDepartments.push(department);
+		}
+	}
+
+	isDepartmentChecked(department: Department): boolean {
+		return !this.user.relatedDepartments ||
+			this.user.relatedDepartments.find(d => d.id === department.id) as any;
+	}
+
 
 	isAuthorityChecked(authority: Authority): boolean {
 		return !!this.user.authorities.find(a => a.id === authority.id);
@@ -70,7 +138,7 @@ export class UserModalComponent implements OnInit {
 	submit(): void {
 		if (!this.isUserValid()) {
 			this.error = true;
-			this.errorText = "Дані неправильно заповнені."
+			this.errorText = "Дані неправильно заповнені.";
 		}
 
 		const action = this.isEditing
@@ -82,7 +150,7 @@ export class UserModalComponent implements OnInit {
 			() => {
 				this.error = true;
 				this.errorText = "Не вдалося зберегти";
-		});
+			});
 
 		action.connect();
 	}
@@ -94,8 +162,6 @@ export class UserModalComponent implements OnInit {
 			this.user.middleName && this.user.middleName.length !== 0 &&
 			this.user.lastName && this.user.lastName.length !== 0 &&
 			this.user.position && this.user.position.length !== 0 &&
-			this.user.faculty !== null;
+			this.user.department !== null;
 	}
-
-	getAuthorityName = getAuthorityName;
 }

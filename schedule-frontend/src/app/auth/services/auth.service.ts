@@ -38,13 +38,23 @@ export class AuthService {
 				{
 					headers: this.getHeaders()
 				})
-				.map(response =>
-					response.status === 200
+				.map(response => {
+					return response.status === 200
 						? response.json() as User
-						: null)
-				.catch(handleError)
+						: null;
+				})
+				.catch(err => {
+					if (err.status === 401) {
+						this.logout();
+					}
+					handleError(err);
+
+					return null;
+				})
 				.first()
 				.subscribe((user: User) => this.currentUserSource.next(user));
+		} else {
+			this.logout();
 		}
 	}
 
@@ -71,7 +81,6 @@ export class AuthService {
 			{ headers: this.getHeaders() })
 			.map((response: Response) => {
 				const token = response.json() && response.json().token;
-
 				if (token) {
 					localStorage.setItem("scheduleAuthToken", token);
 					this.loggedIn = true;
@@ -81,9 +90,9 @@ export class AuthService {
 						{
 							headers: this.getHeaders()
 						})
-						.map(response =>
-							response.status === 200
-								? response.json() as User
+						.map(res =>
+							res.status === 200
+								? res.json() as User
 								: null)
 						.catch(handleError)
 						.subscribe((user: User) => {
@@ -141,6 +150,7 @@ export class AuthService {
 
 	getToken(): string {
 		const token = localStorage.getItem("scheduleAuthToken");
+
 		return token ? token : null;
 	}
 

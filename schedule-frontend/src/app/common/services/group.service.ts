@@ -3,6 +3,8 @@ import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
+import { environment } from "../../../environments/environment";
+
 import { Group } from "../models/models";
 import { handleError, getHeaders } from "../functions";
 
@@ -68,6 +70,18 @@ export class GroupService {
 			.first();
 	}
 
+	getGroupsByFacultyAndCourse(
+		facultyId: number, course: number): Observable<Group[]> {
+		return this.http.get(
+			`${this.groupsUrl}/facultyId/${facultyId}/course/${course}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Group[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
 	getGroupsByFacultyAndYearSince(
 		facultyId: number, year: number): Observable<Group[]> {
 		return this.http.get(
@@ -90,15 +104,15 @@ export class GroupService {
 			.first();
 	}
 
-	getGroupByPlan(planId: number): Observable<Group> {
-		return this.http.get(`${this.groupsUrl}/group/planId/${planId}`)
-			.map(response =>
-				response.status === 200
-					? response.json() as Group
-					: null)
-			.catch(handleError)
-			.first();
-	}
+	// getGroupByPlan(planId: number): Observable<Group> {
+	// 	return this.http.get(`${this.groupsUrl}/group/planId/${planId}`)
+	// 		.map(response =>
+	// 			response.status === 200
+	// 				? response.json() as Group
+	// 				: null)
+	// 		.catch(handleError)
+	// 		.first();
+	// }
 
 	getAvailableGroups(
 		facultyId: number,

@@ -21,7 +21,8 @@ public class User implements Serializable {
 	private String position;
 	private Date lastPasswordReset;
 	
-	private Faculty faculty;
+	private Department department;
+	private Set<Department> relatedDepartments;
 	private Set<Authority> authorities;
 	private Set<Subject> subjects;
 	private Set<Class> classes;
@@ -103,15 +104,15 @@ public class User implements Serializable {
 	public void setLastPasswordReset(Date lastPasswordReset) {
 		this.lastPasswordReset = lastPasswordReset;
 	}
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "faculty", nullable = false)
-	public Faculty getFaculty() {
-		return this.faculty;
+	@JoinColumn(name = "department", nullable = false)
+	public Department getDepartment() {
+		return this.department;
 	}
 	
-	public void setFaculty(Faculty faculty) {
-		this.faculty = faculty;
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 	
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -130,13 +131,23 @@ public class User implements Serializable {
 	public void setAuthorities(Set<Authority> authorities) {
 		this.authorities = authorities;
 	}
-	
+
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "relatedLecturers")
+	public Set<Department> getRelatedDepartments() {
+		return relatedDepartments;
+	}
+
+	public void setRelatedDepartments(Set<Department> departments) {
+		this.relatedDepartments = departments;
+	}
+
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lecturers")
 	public Set<Subject> getSubjects() {
 		return subjects;
 	}
-	
+
 	public void setSubjects(Set<Subject> subjects) {
 		this.subjects = subjects;
 	}

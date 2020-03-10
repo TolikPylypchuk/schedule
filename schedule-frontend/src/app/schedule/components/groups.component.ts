@@ -23,6 +23,8 @@ export class GroupsComponent implements OnInit {
 	faculties: Faculty[];
 	groups: Map<number, Group[]>;
 
+	getCurrentGroupName = getCurrentGroupName;
+
 	constructor(
 		router: Router,
 		facultyService: FacultyService,
@@ -39,7 +41,7 @@ export class GroupsComponent implements OnInit {
 				faculties.sort((f1, f2) => f1.name.localeCompare(f2.name));
 				this.faculties = faculties;
 
-				for (let faculty of faculties) {
+				for (const faculty of faculties) {
 					this.groupService.getGroupsByFaculty(faculty.id)
 						.subscribe((groups: Group[]) => {
 							groups.sort((g1, g2) =>
@@ -60,6 +62,4 @@ export class GroupsComponent implements OnInit {
 	navigateToGroup(groupId: number): void {
 		this.router.navigate([ "/schedule/group", groupId ]);
 	}
-
-	getCurrentGroupName = getCurrentGroupName;
 }

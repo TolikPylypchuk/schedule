@@ -58,6 +58,18 @@ export class PlanService {
 			.first();
 	}
 
+	getPlansByDepartmentAndYearAndSemester(
+		departmentId: number, year: number, semester: number): Observable<Plan[]> {
+		return this.http.get(
+			`${this.plansUrl}/departmentId/${departmentId}/year/${year}/semester/${semester}`)
+			.map(response =>
+				response.status === 200
+					? response.json() as Plan[]
+					: null)
+			.catch(handleError)
+			.first();
+	}
+
 	getPlansBySubject(subjectId: number): Observable<Plan[]> {
 		return this.http.get(`${this.plansUrl}/subjectId/${subjectId}`)
 			.map(response =>

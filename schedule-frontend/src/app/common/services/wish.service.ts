@@ -3,13 +3,12 @@ import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { ConnectableObservable } from "rxjs/Observable/ConnectableObservable";
 
-import { Wish } from "../models/models";
+import { Wish, User } from "../models/models";
 import { handleError, getHeaders } from "../functions";
 
 @Injectable()
 export class WishService {
 	private wishesUrl = "http://localhost:8080/wishes";
-
 	private http: Http;
 
 	constructor(http: Http) {
