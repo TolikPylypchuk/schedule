@@ -7,7 +7,7 @@ import { Observable } from "rxjs/Observable";
 import { ClassModalComponent } from "../editor";
 
 export class ClassroomsContext implements ViewContext {
-    toggle = ViewToggle.LECTURERS;
+    toggle = ViewToggle.CLASSROOMS;
     objects: Classroom[] = [];
 
     constructor(private classroomService: ClassroomService,
